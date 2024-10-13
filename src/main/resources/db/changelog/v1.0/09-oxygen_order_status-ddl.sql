@@ -1,0 +1,1 @@
+CREATE TYPE oxygen_order_status AS ENUM ('NEW', 'CANCEL', 'DONE');
