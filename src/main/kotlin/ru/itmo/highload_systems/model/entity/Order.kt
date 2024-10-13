@@ -1,21 +1,24 @@
 package ru.itmo.highload_systems.model.entity
 
-import jakarta.persistence.Entity
-import jakarta.persistence.FetchType
-import jakarta.persistence.Id
-import jakarta.persistence.ManyToOne
+import jakarta.persistence.*
 import org.hibernate.annotations.UuidGenerator
+import ru.itmo.highload_systems.model.enums.OrderStatus
 import java.time.OffsetDateTime
 import java.util.*
 
 @Entity
-class OxygenStorage(
+class Order(
     @Id
     @UuidGenerator
-    val id: UUID? = null,
+    val id: UUID,
+    @Enumerated(EnumType.STRING)
+    val status: OrderStatus,
     val size: Long,
-    val capacity: Long,
-    @ManyToOne(fetch = FetchType.LAZY)
+    @OneToOne
+    val person: Person? = null,
+    @ManyToOne
+    val room: Room,
+    @ManyToOne
     val department: Department,
     val createdAt: OffsetDateTime,
     val updatedAt: OffsetDateTime
