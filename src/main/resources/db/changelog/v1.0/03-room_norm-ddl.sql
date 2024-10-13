@@ -1,7 +1,0 @@
-CREATE TABLE IF NOT EXISTS room_norm
-(
-    id UUID DEFAULT uuid() PRIMARY KEY,
-    capacity BIGINT NOT NULL,
-    department_id UUID NOT NULL REFERENCES department,
-    created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW()
-);

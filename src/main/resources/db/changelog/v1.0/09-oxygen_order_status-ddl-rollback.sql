@@ -1,1 +1,0 @@
-DROP TYPE oxygen_order_status;
