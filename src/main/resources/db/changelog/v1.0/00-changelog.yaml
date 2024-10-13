@@ -26,17 +26,17 @@ databaseChangeLog:
             path: 02-oxygen_storage-ddl-rollback.sql
             relativeToChangelogFile: true
   - changeSet:
-      id: v1.0/03-room-ddl
+      id: v1.0/03-room_norm-ddl
       author: an.i.chernova
       tagDatabase:
-        tag: v1.0/03-room-ddl
+        tag: v1.0/03-room_norm-ddl
       changes:
         - sqlFile:
-            path: 03-room-ddl.sql
+            path: 03-room_norm-ddl.sql
             relativeToChangelogFile: true
       rollback:
         - sqlFile:
-            path: 03-room-ddl-rollback.sql
+            path: 03-room_norm-ddl-rollback.sql
             relativeToChangelogFile: true
   - changeSet:
       id: v1.0/04-person-ddl
@@ -55,14 +55,14 @@ databaseChangeLog:
       id: v1.0/05-room-ddl
       author: an.i.chernova
       tagDatabase:
-        tag: v1.0/05-room_norm-ddl
+        tag: v1.0/05-room-ddl
       changes:
         - sqlFile:
-            path: 05-room_norm-ddl.sql
+            path: 05-room-ddl.sql
             relativeToChangelogFile: true
       rollback:
         - sqlFile:
-            path: 05-room_norm-ddl-rollback.sql
+            path: 05-room-ddl-rollback.sql
             relativeToChangelogFile: true
   - changeSet:
       id: v1.0/06-order_status-ddl
@@ -104,15 +104,28 @@ databaseChangeLog:
             path: 08-order_room-ddl-rollback.sql
             relativeToChangelogFile: true
   - changeSet:
-      id: v1.0/09-oxygen_order-ddl
+      id: v1.0/09-oxygen_order_status-ddl
       author: an.i.chernova
       tagDatabase:
-        tag: v1.0/09-oxygen_order-ddl
+        tag: v1.0/09-oxygen_order_status-ddl
       changes:
         - sqlFile:
-            path: 09-oxygen_order-ddl.sql
+            path: 09-oxygen_order_status-ddl.sql
             relativeToChangelogFile: true
       rollback:
         - sqlFile:
-            path: 09-oxygen_order-ddl-rollback.sql
+            path: 09-oxygen_order_status-ddl-rollback.sql
+            relativeToChangelogFile: true
+  - changeSet:
+      id: v1.0/10-oxygen_order-ddl
+      author: an.i.chernova
+      tagDatabase:
+        tag: v1.0/10-oxygen_order-ddl
+      changes:
+        - sqlFile:
+            path: 10-oxygen_order-ddl.sql
+            relativeToChangelogFile: true
+      rollback:
+        - sqlFile:
+            path: 10-oxygen_order-ddl-rollback.sql
             relativeToChangelogFile: true
