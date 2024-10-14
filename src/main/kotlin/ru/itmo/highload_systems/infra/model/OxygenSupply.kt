@@ -11,12 +11,12 @@ import java.util.*
 @Entity
 class OxygenSupply(
     @Id @UuidGenerator
-    val id: UUID,
+    val id: UUID? = null,
     val size: Long,
     @ManyToOne
     var oxygenStorage: OxygenStorage? = null,
     @ManyToOne
     val department: Department,
-    val createdAt: OffsetDateTime,
-    val updatedAt: OffsetDateTime
+    val createdAt: OffsetDateTime? = null,
+    val updatedAt: OffsetDateTime? = null
 )
