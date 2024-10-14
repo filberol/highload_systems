@@ -6,7 +6,7 @@ import java.util.*
 
 data class OrderResponse(
     val id: UUID,
-    val status: OrderStatus,
+    val status: OrderStatusRequestResponse,
     val size: Long,
     val departmentId: UUID,
     val createdAt: OffsetDateTime,
