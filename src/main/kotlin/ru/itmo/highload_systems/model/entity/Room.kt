@@ -1,21 +1,26 @@
 package ru.itmo.highload_systems.model.entity
 
 import jakarta.persistence.Entity
-import jakarta.persistence.FetchType
 import jakarta.persistence.Id
 import jakarta.persistence.ManyToOne
+import jakarta.persistence.OneToMany
 import org.hibernate.annotations.UuidGenerator
 import java.time.OffsetDateTime
 import java.util.*
+import kotlin.collections.List
 
 @Entity
-class OxygenStorage(
+class Room(
     @Id
     @UuidGenerator
     val id: UUID? = null,
-    val size: Long,
+    val number: Long,
     val capacity: Long,
-    @ManyToOne(fetch = FetchType.LAZY)
+    @OneToMany
+    val orders: List<Order>,
+    @ManyToOne
+    val roomNorm: RoomNorm,
+    @ManyToOne
     val department: Department,
     val createdAt: OffsetDateTime,
     val updatedAt: OffsetDateTime

@@ -1,14 +1,21 @@
 package ru.itmo.highload_systems.model.entity
 
-import jakarta.persistence.*
+import jakarta.persistence.Entity
+import jakarta.persistence.Id
+import jakarta.persistence.OneToMany
+import org.hibernate.annotations.UuidGenerator
+import java.time.OffsetDateTime
+import java.util.*
 
 @Entity
 class Department(
-    @Id @GeneratedValue
-    val id: Long? = null,
+    @Id
+    @UuidGenerator
+    val id: UUID? = null,
     val name: String,
-    val oxygenStoragesCount: Int,
-    val workersCount: Int,
     @OneToMany
-    val oxygenStorages: List<OxygenStorage>
+    val oxygenStorages: List<OxygenStorage>,
+    @OneToMany
+    val rooms: List<Room>,
+    val createdAt: OffsetDateTime
 )
