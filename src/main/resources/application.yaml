@@ -1,3 +1,15 @@
 spring:
   application:
     name: highload_systems
+  datasource:
+    url: jdbc:postgresql://localhost:5432/oxygen
+    username: postgres
+    password: postgres
+    driverClassName: org.postgresql.Driver
+  liquibase:
+    enabled: true
+    drop-first: false
+    change-log: classpath:db/changelog/db.changelog-master.yaml
+    url: ${spring.datasource.jdbc-url}
+    user: ${spring.datasource.username}
+    password: ${spring.datasource.password}
