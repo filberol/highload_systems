@@ -17,7 +17,7 @@ class OxygenStorageService(
 ) {
 
     fun findAll(pageable: Pageable): Page<OxygenStorageResponse> {
-        return oxygenStorageApiMapper.toDto(oxygenStorageRepository.findAll(pageable))
+        return oxygenStorageRepository.findAll(pageable).map(oxygenStorageApiMapper::toDto)
     }
 
     fun findById(id: UUID): OxygenStorageResponse {

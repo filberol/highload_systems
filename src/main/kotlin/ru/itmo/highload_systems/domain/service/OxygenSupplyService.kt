@@ -44,11 +44,11 @@ class OxygenSupplyService(
     }
 
     fun findById(id: UUID): OxygenSupplyResponse {
-        return oxygenSupplyApiMapper.toDto(oxygenSupplyRepository.findById(id).orElseThrow());
+        return oxygenSupplyApiMapper.toDto(oxygenSupplyRepository.findById(id).orElseThrow())
     }
 
     fun findAll(pageable: Pageable): Page<OxygenSupplyResponse> {
-        return oxygenSupplyApiMapper.toDto(oxygenSupplyRepository.findAll(pageable))
+        return oxygenSupplyRepository.findAll(pageable).map(oxygenSupplyApiMapper::toDto)
     }
 
 }

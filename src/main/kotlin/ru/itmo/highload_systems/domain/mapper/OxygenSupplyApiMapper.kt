@@ -3,7 +3,6 @@ package ru.itmo.highload_systems.domain.mapper
 import org.mapstruct.Mapper
 import org.mapstruct.Mapping
 import org.mapstruct.MappingConstants
-import org.springframework.data.domain.Page
 import ru.itmo.highload_systems.api.dto.OxygenSupplyResponse
 import ru.itmo.highload_systems.infra.model.OxygenSupply
 
@@ -18,7 +17,4 @@ interface OxygenSupplyApiMapper {
     @Mapping(target = "departmentId", source = "department.id")
     fun toDto(entity: OxygenSupply): OxygenSupplyResponse
 
-    fun toDto(entities: List<OxygenSupply>): List<OxygenSupplyResponse>
-
-    fun toDto(entities: Page<OxygenSupply>): Page<OxygenSupplyResponse>
 }

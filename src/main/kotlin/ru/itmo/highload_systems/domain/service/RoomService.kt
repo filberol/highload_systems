@@ -26,10 +26,10 @@ class RoomService(
 
     fun findOrdersById(id: UUID): List<OrderResponse> {
         val room = roomRepository.findById(id).orElseThrow()
-        return orderApiMapper.toDto(room.orders);
+        return room.orders.map(orderApiMapper::toDto)
     }
 
     fun findAllByDepartmentId(departmentId: UUID, pageable: Pageable): Page<RoomResponse> {
-        return roomApiMapper.toDto(roomRepository.findAllByDepartmentId(departmentId, pageable))
+        return roomRepository.findAllByDepartmentId(departmentId, pageable).map(roomApiMapper::toDto)
     }
 }

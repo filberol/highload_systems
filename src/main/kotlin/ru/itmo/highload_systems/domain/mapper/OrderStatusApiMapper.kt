@@ -14,4 +14,5 @@ interface OrderStatusApiMapper {
     fun toDto(entity: OrderStatus): OrderStatusRequestResponse
 
     fun toEntity(dto: OrderStatusRequestResponse): OrderStatus
+
 }

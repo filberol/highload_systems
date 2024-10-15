@@ -60,7 +60,7 @@ class OrderService(
         expiredAt: OffsetDateTime,
         status: OrderStatusRequestResponse
     ): List<OrderResponse> {
-        var orders = orderRepository.findAllByUpdatedAtLessThanAndStatusEquals(
+        val orders = orderRepository.findAllByUpdatedAtLessThanAndStatusEquals(
             expiredAt,
             orderStatusApiMapper.toEntity(status)
         )
@@ -68,7 +68,7 @@ class OrderService(
                 order.status = OrderStatus.OXYGEN_WAITING
                 order
             }.toList()
-        return orderApiMapper.toDto(orderRepository.saveAll(orders))
+        return orderRepository.saveAll(orders).map(orderApiMapper::toDto)
     }
 
     fun cancelById(id: UUID): OrderResponse {
@@ -78,7 +78,7 @@ class OrderService(
     }
 
     fun findAll(pageable: Pageable): Page<OrderResponse> {
-        return orderApiMapper.toDto(orderRepository.findAll(pageable))
+        return orderRepository.findAll(pageable).map(orderApiMapper::toDto)
     }
 
     fun findById(id: UUID): OrderResponse {
