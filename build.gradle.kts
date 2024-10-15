@@ -40,6 +40,7 @@ dependencies {
     testImplementation("org.testcontainers:junit-jupiter")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
     testImplementation("org.testcontainers:postgresql")
+    testImplementation("io.mockk:mockk:1.4.1")
 }
 
 kotlin {

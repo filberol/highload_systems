@@ -27,3 +27,6 @@ class TestContainersConfiguration {
         return container
     }
 }
+
+@TestConfiguration(proxyBeanMethods = false)
+class TestcontainersConfiguration
