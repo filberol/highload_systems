@@ -3,6 +3,7 @@ package ru.itmo.highload_systems.domain.mapper
 import org.mapstruct.Mapper
 import org.mapstruct.Mapping
 import org.mapstruct.MappingConstants
+import org.springframework.data.domain.Page
 import ru.itmo.highload_systems.api.dto.OrderResponse
 import ru.itmo.highload_systems.infra.model.Order
 
@@ -17,4 +18,6 @@ interface OrderApiMapper {
     fun toDto(entity: Order): OrderResponse
 
     fun toDto(entities: List<Order>): List<OrderResponse>
+
+    fun toDto(entities: Page<Order>): Page<OrderResponse>
 }

@@ -1,5 +1,7 @@
 package ru.itmo.highload_systems.domain.service
 
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import ru.itmo.highload_systems.api.dto.OxygenStorageResponse
@@ -14,8 +16,13 @@ class OxygenStorageService(
     private val oxygenStorageApiMapper: OxygenStorageApiMapper
 ) {
 
-    fun findAll(): List<OxygenStorageResponse> {
-        return oxygenStorageApiMapper.toDto(oxygenStorageRepository.findAll())
+    fun findAll(pageable: Pageable): Page<OxygenStorageResponse> {
+        return oxygenStorageApiMapper.toDto(oxygenStorageRepository.findAll(pageable))
+    }
+
+    fun findById(id: UUID): OxygenStorageResponse {
+        val oxygenStorage = oxygenStorageRepository.findById(id).orElseThrow()
+        return oxygenStorageApiMapper.toDto(oxygenStorage)
     }
 
     fun findByDepartmentId(departmentId: UUID): OxygenStorageResponse {

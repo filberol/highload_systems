@@ -1,5 +1,7 @@
 package ru.itmo.highload_systems.domain.service
 
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import ru.itmo.highload_systems.api.dto.CreateOrderRequest
@@ -75,8 +77,8 @@ class OrderService(
         return orderApiMapper.toDto(orderRepository.save(order))
     }
 
-    fun findAll(): List<OrderResponse> {
-        return orderApiMapper.toDto(orderRepository.findAll())
+    fun findAll(pageable: Pageable): Page<OrderResponse> {
+        return orderApiMapper.toDto(orderRepository.findAll(pageable))
     }
 
     fun findById(id: UUID): OrderResponse {

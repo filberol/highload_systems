@@ -1,5 +1,7 @@
 package ru.itmo.highload_systems.domain.service
 
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import ru.itmo.highload_systems.api.dto.OrderResponse
@@ -27,7 +29,7 @@ class RoomService(
         return orderApiMapper.toDto(room.orders);
     }
 
-    fun findAllByDepartmentId(departmentId: UUID): List<RoomResponse> {
-        return roomApiMapper.toDto(roomRepository.findAllByDepartmentId(departmentId))
+    fun findAllByDepartmentId(departmentId: UUID, pageable: Pageable): Page<RoomResponse> {
+        return roomApiMapper.toDto(roomRepository.findAllByDepartmentId(departmentId, pageable))
     }
 }

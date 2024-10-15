@@ -2,6 +2,8 @@ package ru.itmo.highload_systems.api.controller
 
 import jakarta.validation.Valid
 import jakarta.validation.constraints.NotNull
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
 import org.springframework.web.bind.annotation.*
 import ru.itmo.highload_systems.api.dto.CreateOrderRequest
 import ru.itmo.highload_systems.api.dto.OrderResponse
@@ -39,8 +41,8 @@ class OrderController(
     }
 
     @GetMapping("/orders")
-    fun getOrders(): List<OrderResponse> {
-        return orderService.findAll()
+    fun getOrders(pageable: Pageable): Page<OrderResponse> {
+        return orderService.findAll(pageable)
     }
 
     @GetMapping("/orders/{id}")
