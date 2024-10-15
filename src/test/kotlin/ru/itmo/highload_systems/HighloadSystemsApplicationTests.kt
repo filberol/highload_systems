@@ -3,9 +3,9 @@ package ru.itmo.highload_systems
 import org.junit.jupiter.api.Test
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.context.annotation.Import
-import ru.itmo.highload_systems.common.config.TestContainersConfiguration
+import ru.itmo.highload_systems.common.config.TestcontainersConfiguration
 
-@Import(TestContainersConfiguration::class)
+@Import(TestcontainersConfiguration::class)
 @SpringBootTest
 class HighloadSystemsApplicationTests {
 
