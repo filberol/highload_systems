@@ -3,6 +3,7 @@ package ru.itmo.highload_systems.domain.mapper
 import org.mapstruct.Mapper
 import org.mapstruct.Mapping
 import org.mapstruct.MappingConstants
+import org.springframework.data.domain.Page
 import ru.itmo.highload_systems.api.dto.RoomResponse
 import ru.itmo.highload_systems.infra.model.Room
 
@@ -17,5 +18,5 @@ interface RoomApiMapper {
     fun toDto(entity: Room): RoomResponse
 
 
-    fun toDto(entities: List<Room>): List<RoomResponse>
+    fun toDto(entities: Page<Room>): Page<RoomResponse>
 }

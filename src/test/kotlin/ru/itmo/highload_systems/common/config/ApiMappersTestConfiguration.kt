@@ -1,4 +1,4 @@
-package ru.itmo.highload_systems.config
+package ru.itmo.highload_systems.common.config
 
 import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.ComponentScan

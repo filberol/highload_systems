@@ -1,13 +1,15 @@
 package ru.itmo.highload_systems.api.controller
 
 import jakarta.validation.constraints.Positive
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
 import org.springframework.web.bind.annotation.*
 import ru.itmo.highload_systems.api.dto.OxygenSupplyResponse
 import ru.itmo.highload_systems.domain.service.OxygenSupplyService
 import java.util.*
 
 @RestController
-class OxygenSupply(
+class OxygenSupplyController(
     private val oxygenSupplyService: OxygenSupplyService
 ) {
 
@@ -25,8 +27,8 @@ class OxygenSupply(
     }
 
     @GetMapping("/oxygen-supply")
-    fun getOxygenSupplies(): List<OxygenSupplyResponse> {
-        return oxygenSupplyService.findAll()
+    fun getOxygenSupplies(pageable: Pageable): Page<OxygenSupplyResponse> {
+        return oxygenSupplyService.findAll(pageable)
     }
 
     @GetMapping("/oxygen-supply/{id}")
