@@ -4,10 +4,8 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import org.assertj.core.api.Assertions.assertThat
-import org.assertj.core.internal.OffsetDateTimeByInstantComparator
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean
@@ -25,18 +23,17 @@ import java.time.OffsetDateTime
 import java.util.*
 
 @WebMvcTest(controllers = [RoomController::class])
-@AutoConfigureMockMvc(addFilters = false)
 @Import(RoomControllerTest.RoomControllerTestConfig::class)
 class RoomControllerTest : AbstractMvcTest() {
+
+    @Autowired
+    private lateinit var roomService: RoomService
 
     @TestConfiguration
     internal class RoomControllerTestConfig {
         @Bean
-        fun service() = mockk<RoomService>()
+        fun roomService() = mockk<RoomService>()
     }
-
-    @Autowired
-    private lateinit var roomService: RoomService
 
     @Test
     fun getRoomById_shouldInvokeServiceAndReturnResponse() {
@@ -62,17 +59,10 @@ class RoomControllerTest : AbstractMvcTest() {
                 .accept(MediaType.APPLICATION_JSON)
         ).andExpect(status().isOk)
             .andReturn().response.getContentAsString(StandardCharsets.UTF_8)
-
         val result = objectMapper.readValue(content, RoomResponse::class.java)
 
         //then
-        assertThat(result)
-            .usingComparatorForType(
-                OffsetDateTimeByInstantComparator.getInstance(),
-                OffsetDateTime::class.java
-            )
-            .usingRecursiveComparison()
-            .isEqualTo(expected)
+        assertThat(result).isEqualTo(expected)
         verify(exactly = 1) { roomService.findById(UUID.fromString(id)) }
     }
 
@@ -100,12 +90,12 @@ class RoomControllerTest : AbstractMvcTest() {
         result.andExpectAll(
             status().isOk(),
             content().contentType(MediaType.APPLICATION_JSON),
-            jsonPath("$[0].id").value(expected.id.toString()),
-            jsonPath("$[0].status").value(expected.status.toString()),
-            jsonPath("$[0].size").value(expected.size.toString()),
-            jsonPath("$[0].departmentId").value(expected.departmentId.toString()),
-            jsonPath("$[0].createdAt").value(expected.createdAt.toString()),
-            jsonPath("$[0].updatedAt").value(expected.updatedAt.toString())
+            jsonPath("$[0].id").value(expected.id),
+            jsonPath("$[0].status").value(expected.status),
+            jsonPath("$[0].size").value(expected.size),
+            jsonPath("$[0].departmentId").value(expected.departmentId),
+            jsonPath("$[0].createdAt").value(expected.createdAt),
+            jsonPath("$[0].updatedAt").value(expected.updatedAt)
         )
         verify(exactly = 1) { roomService.findOrdersById(UUID.fromString(id)) }
     }
