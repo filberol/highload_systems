@@ -8,10 +8,13 @@ import ru.itmo.highload_systems.infra.model.Order
 
 @Mapper(
     componentModel = MappingConstants.ComponentModel.SPRING,
-    disableSubMappingMethodsGeneration = true
+    disableSubMappingMethodsGeneration = true,
+    uses = [OrderStatusApiMapper::class]
 )
 interface OrderApiMapper {
 
     @Mapping(target = "departmentId", source = "department.id")
     fun toDto(entity: Order): OrderResponse
+
+    fun toDto(entities: List<Order>): List<OrderResponse>
 }

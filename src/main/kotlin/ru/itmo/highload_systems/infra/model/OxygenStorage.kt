@@ -13,10 +13,10 @@ class OxygenStorage(
     @Id
     @UuidGenerator
     val id: UUID? = null,
-    val size: Long,
+    var size: Long,
     val capacity: Long,
     @ManyToOne(fetch = FetchType.LAZY)
     val department: Department,
-    val createdAt: OffsetDateTime,
-    val updatedAt: OffsetDateTime
+    val createdAt: OffsetDateTime? = null,
+    val updatedAt: OffsetDateTime?=null
 )

@@ -12,9 +12,9 @@ class RoomNorm(
     @Id
     @UuidGenerator
     val id: UUID? = null,
-    val size: Long,
+    var size: Long,
     @ManyToOne
     val room: Room,
-    val avgPersonNorm: Float,
-    val createdAt: OffsetDateTime
+    var avgPersonNorm: Float,
+    val createdAt: OffsetDateTime? = null
 )

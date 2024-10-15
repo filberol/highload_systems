@@ -1,14 +1,13 @@
 package ru.itmo.highload_systems.api.dto
 
 import java.time.OffsetDateTime
-import java.util.UUID
+import java.util.*
 
-data class RoomResponse(
+data class OxygenStorageResponse(
     val id: UUID,
-    val number: Long,
     val size: Long,
     val capacity: Long,
-    val avgPersonNorm: Long,
+    val departmentId: UUID,
     val createdAt: OffsetDateTime,
     val updatedAt: OffsetDateTime
 )

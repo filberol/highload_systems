@@ -16,4 +16,7 @@ interface RoomRepository : CrudRepository<Room, UUID> {
         @Param("departmentId") departmentId: UUID,
         @Param("size") minValue: Long
     ): Optional<Room>
+
+
+    fun findAllByDepartmentId(departmentId: UUID): List<Room>
 }

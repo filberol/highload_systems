@@ -1,22 +1,28 @@
 package ru.itmo.highload_systems.domain.service
 
-import org.aspectj.weaver.ast.Or
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import ru.itmo.highload_systems.api.dto.CreateOrderRequest
 import ru.itmo.highload_systems.api.dto.OrderResponse
+import ru.itmo.highload_systems.api.dto.OrderStatusRequestResponse
 import ru.itmo.highload_systems.domain.mapper.OrderApiMapper
+import ru.itmo.highload_systems.domain.mapper.OrderStatusApiMapper
 import ru.itmo.highload_systems.infra.model.Order
 import ru.itmo.highload_systems.infra.model.enums.OrderStatus
-import ru.itmo.highload_systems.infra.repository.*
+import ru.itmo.highload_systems.infra.repository.DepartmentRepository
+import ru.itmo.highload_systems.infra.repository.OrderRepository
 import java.security.InvalidParameterException
 import java.time.OffsetDateTime
 import java.util.*
 
 @Service
+@Transactional(readOnly = true)
 class OrderService(
     private val departmentRepository: DepartmentRepository,
     private val orderRepository: OrderRepository,
-    private val orderApiMapper: OrderApiMapper
+    private val orderApiMapper: OrderApiMapper,
+    private val roomNormService: RoomNormService,
+    private val orderStatusApiMapper: OrderStatusApiMapper
 ) {
 
     fun create(request: CreateOrderRequest): OrderResponse {
@@ -31,11 +37,50 @@ class OrderService(
         return orderApiMapper.toDto(order)
     }
 
-//    fun process(id: UUID): OrderResponse {
-//        val order = orderRepository.findById(id).orElseThrow()
-//        if (order.status != OrderStatus.NEW) {
-//            throw InvalidParameterException()
-//        }
-//
-//    }
+    fun process(id: UUID): OrderResponse {
+        val order = orderRepository.findById(id).orElseThrow()
+        if (order.status != OrderStatus.NEW) {
+            throw InvalidParameterException()
+        }
+        val optionalRoom =
+            roomNormService.fillIfExistAndReturnRoom(order.department.id!!, order.size)
+        if (optionalRoom.isEmpty) {
+            order.status = OrderStatus.OXYGEN_WAITING
+            return orderApiMapper.toDto(orderRepository.save(order))
+        }
+        return orderApiMapper.toDto(order.apply {
+            status = OrderStatus.DONE
+            room = optionalRoom.get()
+        })
+    }
+
+    fun cancelExpiredOrders(
+        expiredAt: OffsetDateTime,
+        status: OrderStatusRequestResponse
+    ): List<OrderResponse> {
+        var orders = orderRepository.findAllByUpdatedAtLessThanAndStatusEquals(
+            expiredAt,
+            orderStatusApiMapper.toEntity(status)
+        )
+            .stream().map { order ->
+                order.status = OrderStatus.OXYGEN_WAITING
+                order
+            }.toList()
+        return orderApiMapper.toDto(orderRepository.saveAll(orders))
+    }
+
+    fun cancelById(id: UUID): OrderResponse {
+        val order = orderRepository.findById(id).orElseThrow()
+        order.status = OrderStatus.CANCEL
+        return orderApiMapper.toDto(orderRepository.save(order))
+    }
+
+    fun findAll(): List<OrderResponse> {
+        return orderApiMapper.toDto(orderRepository.findAll())
+    }
+
+    fun findById(id: UUID): OrderResponse {
+        val order = orderRepository.findById(id).orElseThrow()
+        return orderApiMapper.toDto(order)
+    }
 }
