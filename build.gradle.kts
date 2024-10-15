@@ -8,11 +8,11 @@ plugins {
 }
 
 group = "ru.itmo"
-version = "0.0.1-SNAPSHOT"
+version = "0.0.1"
 
 java {
     toolchain {
-
+        languageVersion.set(JavaLanguageVersion.of(21))
     }
 }
 
@@ -21,13 +21,15 @@ repositories {
 }
 
 dependencies {
+    // Db
+    implementation("org.postgresql:postgresql")
+
     // Run
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.springframework.boot:spring-boot-starter-validation")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.liquibase:liquibase-core")
-    runtimeOnly("com.h2database:h2")
     implementation("org.mapstruct:mapstruct:1.6.0")
     kapt("org.mapstruct:mapstruct-processor:1.6.0")
 
@@ -48,4 +50,24 @@ kotlin {
 
 tasks.withType<Test> {
     useJUnitPlatform()
+}
+
+tasks {
+    val bootJarTask = named("bootJar")
+
+    val buildDockerImage by creating(Exec::class) {
+        group = "docker"
+        description = "Build Docker image for the Spring Boot application"
+
+        dependsOn(bootJarTask)
+
+        val projectName = project.name
+        val projectVersion = project.version.toString()
+
+        commandLine("docker", "build",
+            "-t", "spring-highload:local",
+            "--build-arg", "JAR_FILE=$projectName-$projectVersion.jar",
+            ".")
+
+    }
 }
