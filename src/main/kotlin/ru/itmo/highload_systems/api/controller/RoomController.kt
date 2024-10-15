@@ -13,7 +13,7 @@ class RoomController(
     private val roomService: RoomService
 ) {
     @GetMapping("/rooms/{id}")
-    fun getRoom(@PathVariable id: UUID): RoomResponse {
+    fun getRoomById(@PathVariable id: UUID): RoomResponse {
         return roomService.findById(id)
     }
 
