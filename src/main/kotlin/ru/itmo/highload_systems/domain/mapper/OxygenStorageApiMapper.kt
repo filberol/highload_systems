@@ -13,7 +13,7 @@ import ru.itmo.highload_systems.infra.model.OxygenStorage
 )
 interface OxygenStorageApiMapper {
 
-    @Mapping(target = "departmentId", source = "department.ud")
+    @Mapping(target = "departmentId", source = "department.id")
     fun toDto(entity: OxygenStorage): OxygenStorageResponse
 
     fun toDto(entities: List<OxygenStorage>): List<OxygenStorageResponse>

@@ -22,7 +22,7 @@ class OrderController(
         return orderService.create(request)
     }
 
-    @PostMapping("/orders/{id/process}")
+    @PostMapping("/orders/{id}")
     fun process(@PathVariable @NotNull id: UUID): OrderResponse {
         return orderService.process(id)
     }
