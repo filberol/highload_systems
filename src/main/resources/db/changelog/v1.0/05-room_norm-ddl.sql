@@ -1,9 +1,9 @@
-CREATE TABLE IF NOT EXISTS room
+CREATE TABLE IF NOT EXISTS room_norm
 (
     id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
-    number BIGINT NOT NULL,
-    capacity BIGINT DEFAULT 0 NOT NULL,
-    department_id UUID NOT NULL REFERENCES department,
+    size BIGINT NOT NULL,
+    room_id UUID NOT NULL REFERENCES room,
+    avg_person_norm REAL NOT NULL DEFAULT 100.0,
     created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT current_timestamp,
     updatedAt TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT current_timestamp
 );

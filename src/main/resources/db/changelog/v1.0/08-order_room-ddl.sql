@@ -1,9 +1,8 @@
-CREATE TABLE IF NOT EXISTS room
+CREATE TABLE IF NOT EXISTS order_room
 (
     id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
-    number BIGINT NOT NULL,
-    capacity BIGINT DEFAULT 0 NOT NULL,
-    department_id UUID NOT NULL REFERENCES department,
+    room_id UUID NOT NULL REFERENCES room,
+    order_id UUID NOT NULL REFERENCES orders,
     created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT current_timestamp,
     updatedAt TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT current_timestamp
 );

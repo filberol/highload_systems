@@ -2,8 +2,6 @@ databaseChangeLog:
   - changeSet:
       id: v1.0/01-department-ddl
       author: an.i.chernova
-      tagDatabase:
-        tag: v1.0/01-department-ddl
       changes:
         - sqlFile:
             path: 01-department-ddl.sql
@@ -15,8 +13,6 @@ databaseChangeLog:
   - changeSet:
       id: v1.0/02-oxygen_storage-ddl
       author: an.i.chernova
-      tagDatabase:
-        tag: v1.0/02-oxygen_storage-ddl
       changes:
         - sqlFile:
             path: 02-oxygen_storage-ddl.sql
@@ -28,8 +24,6 @@ databaseChangeLog:
   - changeSet:
       id: v1.0/03-room-ddl
       author: an.i.chernova
-      tagDatabase:
-        tag: v1.0/03-room-ddl
       changes:
         - sqlFile:
             path: 03-room-ddl.sql
@@ -41,8 +35,6 @@ databaseChangeLog:
   - changeSet:
       id: v1.0/04-person-ddl
       author: an.i.chernova
-      tagDatabase:
-        tag: v1.0/04-person-ddl
       changes:
         - sqlFile:
             path: 04-person-ddl.sql
@@ -54,8 +46,6 @@ databaseChangeLog:
   - changeSet:
       id: v1.0/05-room-ddl
       author: an.i.chernova
-      tagDatabase:
-        tag: v1.0/05-room_norm-ddl
       changes:
         - sqlFile:
             path: 05-room_norm-ddl.sql
@@ -67,8 +57,6 @@ databaseChangeLog:
   - changeSet:
       id: v1.0/06-order_status-ddl
       author: an.i.chernova
-      tagDatabase:
-        tag: v1.0/06-order_status-ddl
       changes:
         - sqlFile:
             path: 06-order_status-ddl.sql
@@ -80,8 +68,6 @@ databaseChangeLog:
   - changeSet:
       id: v1.0/07-orders-ddl
       author: an.i.chernova
-      tagDatabase:
-        tag: v1.0/07-orders-ddl
       changes:
         - sqlFile:
             path: 07-orders-ddl.sql
@@ -93,8 +79,6 @@ databaseChangeLog:
   - changeSet:
       id: v1.0/08-order_room-ddl
       author: an.i.chernova
-      tagDatabase:
-        tag: v1.0/08-order_room-ddl
       changes:
         - sqlFile:
             path: 08-order_room-ddl.sql
@@ -106,13 +90,11 @@ databaseChangeLog:
   - changeSet:
       id: v1.0/09-oxygen_order-ddl
       author: an.i.chernova
-      tagDatabase:
-        tag: v1.0/09-oxygen_order-ddl
       changes:
         - sqlFile:
-            path: 09-oxygen_order-ddl.sql
+            path: 09-oxygen_supply-ddl.sql
             relativeToChangelogFile: true
       rollback:
         - sqlFile:
-            path: 09-oxygen_order-ddl-rollback.sql
+            path: 09-oxygen_supply-ddl-rollback.sql
             relativeToChangelogFile: true
