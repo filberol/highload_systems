@@ -11,18 +11,16 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
-      - name: Build Docker image
+      - name: Build Docker image and run tests
         run: |
           docker build -t filberol/highload-test:latest --target builder .
-      - name: Run tests
-        run: |
-          docker run --rm -v ./jacoco:/src/build/jacoco filberol/highload-test:latest gradle jacocoTestReport
       - name: Archive JaCoCo coverage report
         run: |
-          mkdir -p coverage
-          cp -r jacoco/ coverage/
+          id=$(docker create filberol/highload-test:latest)
+          docker cp $id:/build/jacoco/test.exec ./test.exec
+          docker rm -v $id
       - name: Upload coverage report
         uses: actions/upload-artifact@v3
         with:
           name: jacoco-coverage-report
-          path: coverage
+          path: ./test.exec
