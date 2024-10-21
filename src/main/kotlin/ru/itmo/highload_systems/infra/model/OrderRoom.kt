@@ -3,19 +3,21 @@ package ru.itmo.highload_systems.infra.model
 import jakarta.persistence.Entity
 import jakarta.persistence.Id
 import jakarta.persistence.ManyToOne
+import lombok.Builder
 import org.hibernate.annotations.UuidGenerator
 import java.time.OffsetDateTime
 import java.util.*
 
 @Entity
+@Builder(toBuilder = true)
 class OrderRoom(
     @Id
     @UuidGenerator
-    val id: UUID? = null,
+    var id: UUID? = null,
     @ManyToOne
-    val room: Room,
+    var room: Room,
     @ManyToOne
-    val order: Order,
-    val createdAt: OffsetDateTime? = null,
-    val updatedAt: OffsetDateTime? = null
+    var order: Order,
+    var createdAt: OffsetDateTime? = null,
+    var updatedAt: OffsetDateTime? = null
 )

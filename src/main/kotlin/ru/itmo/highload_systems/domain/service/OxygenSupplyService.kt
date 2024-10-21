@@ -7,7 +7,6 @@ import org.springframework.transaction.annotation.Transactional
 import ru.itmo.highload_systems.api.dto.OxygenSupplyResponse
 import ru.itmo.highload_systems.domain.mapper.OxygenSupplyApiMapper
 import ru.itmo.highload_systems.infra.model.OxygenSupply
-import ru.itmo.highload_systems.infra.repository.DepartmentRepository
 import ru.itmo.highload_systems.infra.repository.OxygenStorageRepository
 import ru.itmo.highload_systems.infra.repository.OxygenSupplyRepository
 import java.util.*
@@ -17,12 +16,13 @@ import java.util.*
 class OxygenSupplyService(
     private val oxygenSupplyRepository: OxygenSupplyRepository,
     private val oxygenSupplyApiMapper: OxygenSupplyApiMapper,
-    private val departmentRepository: DepartmentRepository,
+    private val departmentService: DepartmentService,
     private val oxygenStorageRepository: OxygenStorageRepository
 ) {
 
+    @Transactional(readOnly = false)
     fun create(size: Long, toDepartmentId: UUID): OxygenSupplyResponse {
-        val department = departmentRepository.findById(toDepartmentId).orElseThrow()
+        val department = departmentService.findById(toDepartmentId)
         val supply = OxygenSupply(
             size = size,
             department = department
@@ -31,6 +31,7 @@ class OxygenSupplyService(
     }
 
 
+    @Transactional(readOnly = false)
     fun processById(id: UUID): OxygenSupplyResponse {
         val supply = oxygenSupplyRepository.findById(id).orElseThrow()
         val storage = oxygenStorageRepository.findByDepartmentIdAndCapacityGreaterThan(

@@ -7,6 +7,7 @@ import org.springframework.transaction.annotation.Transactional
 import ru.itmo.highload_systems.api.dto.DepartmentResponse
 import ru.itmo.highload_systems.api.dto.RoomResponse
 import ru.itmo.highload_systems.domain.mapper.DepartmentApiMapper
+import ru.itmo.highload_systems.infra.model.Department
 import ru.itmo.highload_systems.infra.repository.DepartmentRepository
 import java.util.UUID
 
@@ -24,6 +25,10 @@ class DepartmentService(
     fun getRoomsById(id: UUID, pageable: Pageable): Page<RoomResponse>? {
         val department = departmentRepository.findById(id)
         return null
+    }
+
+    fun findById(id: UUID): Department {
+        return departmentRepository.findById(id).orElseThrow()
     }
 
 }

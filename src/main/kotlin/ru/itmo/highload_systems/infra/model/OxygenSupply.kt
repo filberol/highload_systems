@@ -4,19 +4,21 @@ import jakarta.persistence.Entity
 import jakarta.persistence.Id
 import jakarta.persistence.ManyToOne
 import jakarta.persistence.OneToMany
+import lombok.Builder
 import org.hibernate.annotations.UuidGenerator
 import java.time.OffsetDateTime
 import java.util.*
 
 @Entity
+@Builder(toBuilder = true)
 class OxygenSupply(
     @Id @UuidGenerator
-    val id: UUID? = null,
-    val size: Long,
+    var id: UUID? = null,
+    var size: Long,
     @ManyToOne
     var oxygenStorage: OxygenStorage? = null,
     @ManyToOne
-    val department: Department,
-    val createdAt: OffsetDateTime? = null,
-    val updatedAt: OffsetDateTime? = null
+    var department: Department,
+    var createdAt: OffsetDateTime? = null,
+    var updatedAt: OffsetDateTime? = null
 )

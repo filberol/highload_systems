@@ -11,7 +11,6 @@ import ru.itmo.highload_systems.domain.mapper.OrderApiMapper
 import ru.itmo.highload_systems.domain.mapper.OrderStatusApiMapper
 import ru.itmo.highload_systems.infra.model.Order
 import ru.itmo.highload_systems.infra.model.enums.OrderStatus
-import ru.itmo.highload_systems.infra.repository.DepartmentRepository
 import ru.itmo.highload_systems.infra.repository.OrderRepository
 import java.security.InvalidParameterException
 import java.time.OffsetDateTime
@@ -20,7 +19,7 @@ import java.util.*
 @Service
 @Transactional(readOnly = true)
 class OrderService(
-    private val departmentRepository: DepartmentRepository,
+    private val departmentService: DepartmentService,
     private val orderRepository: OrderRepository,
     private val orderApiMapper: OrderApiMapper,
     private val roomNormService: RoomNormService,
@@ -28,7 +27,7 @@ class OrderService(
 ) {
 
     fun create(request: CreateOrderRequest): OrderResponse {
-        val department = departmentRepository.findById(request.departmentId).orElseThrow()
+        val department = departmentService.findById(request.departmentId)
         val order = orderRepository.save(
             Order(
                 status = OrderStatus.NEW,
@@ -50,10 +49,9 @@ class OrderService(
             order.status = OrderStatus.OXYGEN_WAITING
             return orderApiMapper.toDto(orderRepository.save(order))
         }
-        return orderApiMapper.toDto(order.apply {
-            status = OrderStatus.DONE
-            room = optionalRoom.get()
-        })
+        order.status = OrderStatus.DONE
+        order.room = optionalRoom.get()
+        return orderApiMapper.toDto(orderRepository.save(order))
     }
 
     fun cancelExpiredOrders(
