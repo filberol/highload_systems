@@ -7,7 +7,7 @@ import org.springframework.test.context.DynamicPropertyRegistry
 import org.testcontainers.containers.PostgreSQLContainer
 
 
-@TestConfiguration
+@TestConfiguration(proxyBeanMethods = false)
 class TestContainersConfiguration {
 
     @Bean
@@ -27,6 +27,3 @@ class TestContainersConfiguration {
         return container
     }
 }
-
-@TestConfiguration(proxyBeanMethods = false)
-class TestcontainersConfiguration
