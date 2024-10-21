@@ -1,5 +1,9 @@
-FROM eclipse-temurin:21
-ARG JAR_FILE
-COPY ./build/libs/${JAR_FILE} app.jar
-EXPOSE 8080
-ENTRYPOINT ["java","-jar","/app.jar"]
+FROM gradle:jdk21 as builder
+WORKDIR /app
+COPY --chown=gradle:gradle . .
+RUN gradle build --no-daemon
+
+FROM openjdk:21-jdk-slim
+WORKDIR /app
+COPY --from=builder /app/build/libs/highload_systems.jar /app/highload_systems.jar
+ENTRYPOINT ["java", "-jar", "/app/highload_systems.jar"]

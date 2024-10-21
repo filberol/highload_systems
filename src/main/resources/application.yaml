@@ -1,0 +1,17 @@
+spring:
+  application:
+    name: highload_systems
+  datasource:
+    url: ${POSTGRES_DB_URL}${POSTGRES_DB}
+    username: ${POSTGRES_USER}
+    password: ${POSTGRES_PASSWORD}
+    driverClassName: org.postgresql.Driver
+  liquibase:
+    enabled: true
+    drop-first: false
+    change-log: classpath:db/changelog/db.changelog-master.yaml
+    url: ${POSTGRES_DB_URL}${POSTGRES_DB}
+    user: ${POSTGRES_USER}
+    password: ${POSTGRES_PASSWORD}
+  jackson:
+    property-naming-strategy: SNAKE_CASE
