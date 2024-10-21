@@ -1,4 +1,6 @@
 package ru.itmo.highload_systems.infra.repository
 
-class DepartmentRepositoryTest {
+import ru.itmo.highload_systems.common.AbstractDatabaseTest
+
+class DepartmentRepositoryTest : AbstractDatabaseTest() {
 }

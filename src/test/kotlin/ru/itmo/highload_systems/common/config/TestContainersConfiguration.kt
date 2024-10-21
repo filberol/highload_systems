@@ -14,12 +14,12 @@ class TestContainersConfiguration {
     @ServiceConnection
     fun container(registry: DynamicPropertyRegistry): PostgreSQLContainer<*> {
         val container: PostgreSQLContainer<*> = PostgreSQLContainer("postgres:14")
-            .withDatabaseName("mc_government")
+            .withDatabaseName("")
             .withReuse(true)
         with(registry) {
-            add("spring.datasource.mc-government.jdbc-url") { container.jdbcUrl }
-            add("spring.datasource.mc-government.username") { container.username }
-            add("spring.datasource.mc-government.password") { container.password }
+            add("spring.datasource.url") { container.jdbcUrl }
+            add("spring.datasource.username") { container.username }
+            add("spring.datasource.password") { container.password }
             add("spring.liquibase.url") { container.jdbcUrl }
             add("spring.liquibase.user") { container.username }
             add("spring.liquibase.password") { container.password }

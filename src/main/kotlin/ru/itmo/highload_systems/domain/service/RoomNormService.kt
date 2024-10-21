@@ -8,12 +8,12 @@ import ru.itmo.highload_systems.infra.repository.RoomRepository
 import java.util.*
 
 @Service
-@Transactional(readOnly = true)
 class RoomNormService(
     private val roomRepository: RoomRepository,
     private val roomNormRepository: RoomNormRepository
 ) {
 
+    @Transactional(readOnly = false)
     fun fillIfExistAndReturnRoom(departmentId: UUID, size: Long): Optional<Room> {
         val room = roomRepository.findFirstRoomByDepartmentAndSize(departmentId, size)
         if (room.isEmpty) {

@@ -3,19 +3,21 @@ package ru.itmo.highload_systems.infra.model
 import jakarta.persistence.Entity
 import jakarta.persistence.Id
 import jakarta.persistence.OneToMany
+import lombok.Builder
 import org.hibernate.annotations.UuidGenerator
 import java.time.OffsetDateTime
 import java.util.*
 
 @Entity
+@Builder(toBuilder = true)
 class Department(
     @Id
     @UuidGenerator
-    val id: UUID? = null,
+    var id: UUID? = null,
     var name: String,
     @OneToMany
-    val oxygenStorages: List<OxygenStorage>,
+    var oxygenStorages: List<OxygenStorage>,
     @OneToMany
-    val rooms: List<Room>,
-    val createdAt: OffsetDateTime
+    var rooms: List<Room>,
+    var createdAt: OffsetDateTime
 )

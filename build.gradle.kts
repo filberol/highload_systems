@@ -42,6 +42,7 @@ dependencies {
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
     testImplementation("org.testcontainers:postgresql")
     testImplementation("io.mockk:mockk:1.13.5")
+    compileOnly("org.projectlombok:lombok:1.18.20")
 }
 
 kotlin {

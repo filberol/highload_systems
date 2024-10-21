@@ -8,7 +8,7 @@ class RoomResponse(
     val number: Long,
     val size: Long,
     val capacity: Long,
-    val avgPersonNorm: Long,
+    val avgPersonNorm: Float,
     var createdAt: OffsetDateTime?,
     var updatedAt: OffsetDateTime?
 )
