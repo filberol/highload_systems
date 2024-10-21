@@ -2,6 +2,7 @@ package ru.itmo.highload_systems.api.controller
 
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
+import org.springframework.data.web.PageableDefault
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RestController
@@ -21,11 +22,14 @@ class DepartmentController(
 ) {
     @GetMapping("/departments")
     fun getDepartments(
-        pageable: Pageable,
+        @PageableDefault(sort = ["id"], size = 50) pageable: Pageable,
     ): Page<DepartmentResponse> = departmentService.getDepartments(pageable)
 
     @GetMapping("/departments/{id}/rooms")
-    fun getRooms(@PathVariable id: UUID, pageable: Pageable): Page<RoomResponse> {
+    fun getRooms(
+        @PathVariable id: UUID,
+        @PageableDefault(sort = ["id"], size = 50) pageable: Pageable
+    ): Page<RoomResponse> {
         return roomService.findAllByDepartmentId(id, pageable)
     }
 
