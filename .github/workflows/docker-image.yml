@@ -6,6 +6,7 @@ on:
       - main
 
 jobs:
+  # Build base image with jar
   build:
     runs-on: ubuntu-latest
     steps:
@@ -14,6 +15,28 @@ jobs:
       - name: Build Docker image and run tests
         run: |
           docker build -t filberol/highload-test:latest --target builder .
+      - name: Save Docker image to a file
+        run: docker save filberol/highload-test:latest -o highload.tar
+      - name: Upload Docker image as artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: docker-image
+          path: highload.tar
+  # Run tests on base image
+  test:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Download Docker image artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: docker-image
+          path: .
+      - name: Load Docker image
+        run: docker load -i highload.tar
+      - name: Build Docker image and run tests
+        run: |
+          docker build -t filberol/highload-test:latest --target tester .
       - name: Archive JaCoCo coverage report
         run: |
           docker create --name highload-test filberol/highload-test:latest
