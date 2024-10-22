@@ -1,4 +1,4 @@
-FROM gradle:jdk21 as builder
+FROM gradle:jdk21 AS builder
 WORKDIR /app
 COPY --chown=gradle:gradle . .
 RUN gradle build --no-daemon

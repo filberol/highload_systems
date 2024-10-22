@@ -16,9 +16,9 @@ jobs:
           docker build -t filberol/highload-test:latest --target builder .
       - name: Archive JaCoCo coverage report
         run: |
-          id=$(docker create filberol/highload-test:latest)
-          docker cp $id:/build/jacoco/test.exec ./test.exec
-          docker rm -v $id
+          docker create --name highload-test filberol/highload-test:latest
+          docker cp highload-test:/app/build/jacoco/test.exec ./test.exec
+          docker rm -v highload-test
       - name: Upload coverage report
         uses: actions/upload-artifact@v3
         with:
