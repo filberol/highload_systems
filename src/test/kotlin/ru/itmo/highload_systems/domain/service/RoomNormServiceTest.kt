@@ -47,7 +47,7 @@ class RoomNormServiceTest {
         val roomNorm = RoomNorm(
             id = UUID.randomUUID(),
             size = 10L,
-            avgPersonNorm = 53.1F,
+            avgPersonNorm = 53.1,
             createdAt = OffsetDateTime.now()
         )
         val department = Department(
