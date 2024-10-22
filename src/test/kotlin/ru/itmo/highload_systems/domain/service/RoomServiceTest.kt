@@ -216,12 +216,12 @@ class RoomServiceTest {
             updatedAt = room.updatedAt
         )
         val result = sut.findAllByDepartmentId(id, pageable)
-        assertThat(expected)
+        assertThat(result)
             .usingComparatorForType(
                 OffsetDateTimeByInstantComparator.getInstance(),
                 OffsetDateTime::class.java
             )
             .usingRecursiveComparison()
-            .isEqualTo(expected)
+            .isEqualTo(PageImpl(listOf(expected), pageable, 1))
     }
 }

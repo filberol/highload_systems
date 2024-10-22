@@ -1,18 +1,11 @@
 package ru.itmo.highload_systems.infra.model
 
-import jakarta.persistence.Entity
-import jakarta.persistence.Id
-import jakarta.persistence.ManyToOne
-import jakarta.persistence.OneToMany
-import jakarta.persistence.OneToOne
-import lombok.Builder
+import jakarta.persistence.*
 import org.hibernate.annotations.UuidGenerator
 import java.time.OffsetDateTime
 import java.util.*
-import kotlin.collections.List
 
 @Entity
-@Builder(toBuilder = true)
 class Room(
     @Id
     @UuidGenerator

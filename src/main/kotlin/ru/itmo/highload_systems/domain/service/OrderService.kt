@@ -63,7 +63,7 @@ class OrderService(
             orderStatusApiMapper.toEntity(status)
         )
             .stream().map { order ->
-                order.status = OrderStatus.OXYGEN_WAITING
+                order.status = OrderStatus.CANCEL
                 order
             }.toList()
         return orderRepository.saveAll(orders).map(orderApiMapper::toDto)
