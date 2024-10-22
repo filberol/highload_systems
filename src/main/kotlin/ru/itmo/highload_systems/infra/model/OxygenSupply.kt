@@ -3,14 +3,11 @@ package ru.itmo.highload_systems.infra.model
 import jakarta.persistence.Entity
 import jakarta.persistence.Id
 import jakarta.persistence.ManyToOne
-import jakarta.persistence.OneToMany
-import lombok.Builder
 import org.hibernate.annotations.UuidGenerator
 import java.time.OffsetDateTime
 import java.util.*
 
 @Entity
-@Builder(toBuilder = true)
 class OxygenSupply(
     @Id @UuidGenerator
     var id: UUID? = null,

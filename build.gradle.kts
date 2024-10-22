@@ -5,20 +5,16 @@ plugins {
     id("org.springframework.boot") version "3.2.0"
     id("io.spring.dependency-management") version "1.1.6"
     kotlin("plugin.jpa") version "1.9.25"
-    jacoco
 }
 
 group = "ru.itmo"
+version = "0.0.1"
 
 java {
     toolchain {
         languageVersion.set(JavaLanguageVersion.of(21))
     }
 }
-
-//tasks.bootJar {
-//    mainClass = ru.HighloadSystemApplication
-//}
 
 repositories {
     mavenCentral()
@@ -46,7 +42,6 @@ dependencies {
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
     testImplementation("org.testcontainers:postgresql")
     testImplementation("io.mockk:mockk:1.13.5")
-    compileOnly("org.projectlombok:lombok:1.18.20")
 }
 
 kotlin {
@@ -77,11 +72,4 @@ tasks {
             ".")
 
     }
-}
-
-tasks.test {
-    finalizedBy(tasks.jacocoTestReport)
-}
-tasks.jacocoTestReport {
-    dependsOn(tasks.test)
 }

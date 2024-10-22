@@ -47,7 +47,7 @@ class RoomControllerTest : AbstractMvcTest() {
             number = 1L,
             size = 2L,
             capacity = 3L,
-            avgPersonNorm = 4f,
+            avgPersonNorm = 4L,
             createdAt = OffsetDateTime.now(),
             updatedAt = OffsetDateTime.now()
         )
@@ -92,19 +92,21 @@ class RoomControllerTest : AbstractMvcTest() {
             .returns(listOf(expected))
 
         // when
-        mockMvc.perform(
+        val result = mockMvc.perform(
             get("/rooms/{id}/orders", id)
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
-        ).andExpect(status().isOk)
-//        result.andExpectAll(
-//            status().isOk(),
-//            content().contentType(MediaType.APPLICATION_JSON),
-//            jsonPath("$[0].id").value(expected.id.toString()),
-//            jsonPath("$[0].status").value(expected.status.toString()),
-//            jsonPath("$[0].size").value(expected.size.toString()),
-//            jsonPath("$[0].departmentId").value(expected.departmentId.toString())
-//        )
+        )
+        result.andExpectAll(
+            status().isOk(),
+            content().contentType(MediaType.APPLICATION_JSON),
+            jsonPath("$[0].id").value(expected.id.toString()),
+            jsonPath("$[0].status").value(expected.status.toString()),
+            jsonPath("$[0].size").value(expected.size.toString()),
+            jsonPath("$[0].departmentId").value(expected.departmentId.toString()),
+            jsonPath("$[0].createdAt").value(expected.createdAt.toString()),
+            jsonPath("$[0].updatedAt").value(expected.updatedAt.toString())
+        )
         verify(exactly = 1) { roomService.findOrdersById(UUID.fromString(id)) }
     }
 }
