@@ -92,7 +92,7 @@ class DepartmentControllerTest : AbstractMvcTest() {
             number = 1L,
             size = 2L,
             capacity = 3L,
-            avgPersonNorm = 4f,
+            avgPersonNorm = 4.1,
             createdAt = OffsetDateTime.now(),
             updatedAt = OffsetDateTime.now()
         )

@@ -53,7 +53,7 @@ class RoomServiceTest {
         val roomNorm = RoomNorm(
             id = UUID.randomUUID(),
             size = 6L,
-            avgPersonNorm = 53.1F,
+            avgPersonNorm = 53.1,
             createdAt = OffsetDateTime.now()
         )
         val department = Department(
@@ -111,7 +111,7 @@ class RoomServiceTest {
         val roomNorm = RoomNorm(
             id = UUID.randomUUID(),
             size = 6L,
-            avgPersonNorm = 53.1F,
+            avgPersonNorm = 53.1,
             createdAt = OffsetDateTime.now()
         )
         val department = Department(
@@ -178,7 +178,7 @@ class RoomServiceTest {
         val roomNorm = RoomNorm(
             id = UUID.randomUUID(),
             size = 6L,
-            avgPersonNorm = 53.1F,
+            avgPersonNorm = 53.1,
             createdAt = OffsetDateTime.now()
         )
         val department = Department(

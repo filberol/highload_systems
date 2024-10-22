@@ -13,7 +13,6 @@ class RoomNorm(
     @UuidGenerator
     var id: UUID? = null,
     var size: Long,
-    @ManyToOne
-    var avgPersonNorm: Float,
+    var avgPersonNorm: Double,
     var createdAt: OffsetDateTime? = null
 )
