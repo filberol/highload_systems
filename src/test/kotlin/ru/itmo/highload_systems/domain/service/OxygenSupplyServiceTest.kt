@@ -94,13 +94,6 @@ class OxygenSupplyServiceTest {
     fun create_shouldThrowException_whenDepartmentNotExist() {
         val size = 5L
         val departmentId = UUID.randomUUID()
-        val department = Department(
-            id = UUID.randomUUID(),
-            name = "department",
-            oxygenStorages = emptyList(),
-            rooms = emptyList(),
-            createdAt = OffsetDateTime.now()
-        )
         every { departmentService.findById(departmentId) }.throws(NoSuchElementException())
 
         assertThrows<NoSuchElementException> { sut.create(size, departmentId) }
@@ -170,5 +163,53 @@ class OxygenSupplyServiceTest {
             .usingRecursiveComparison()
             .ignoringFields("updatedAt")
             .isEqualTo(expected)
+    }
+
+    @Test
+    fun findById_shouldInvokeService() {
+        val departmentId = UUID.randomUUID()
+        val department = Department(
+            id = departmentId,
+            name = "department",
+            oxygenStorages = emptyList(),
+            rooms = emptyList(),
+            createdAt = OffsetDateTime.now()
+        )
+        val id = UUID.randomUUID()
+        val supply = OxygenSupply(
+            id = id,
+            size = 3L,
+            department = department,
+            createdAt = OffsetDateTime.now(),
+            updatedAt = OffsetDateTime.now()
+        )
+        every { oxygenSupplyRepository.findById(id) }
+            .returns(Optional.of(supply))
+        val expected = with(supply) {
+            OxygenSupplyResponse(
+                id = id,
+                size = 3L,
+                departmentId = departmentId,
+                createdAt = createdAt!!,
+                updatedAt = updatedAt!!
+            )
+        }
+        val result = sut.findById(id)
+        assertThat(result)
+            .usingComparatorForType(
+                OffsetDateTimeByInstantComparator.getInstance(),
+                OffsetDateTime::
+                class.java
+            )
+            .usingRecursiveComparison()
+            .isEqualTo(expected)
+    }
+
+    @Test
+    fun findById_shouldThrowException() {
+        val id = UUID.randomUUID()
+        every { oxygenSupplyRepository.findById(id) }
+            .returns(Optional.empty())
+        assertThrows<NoSuchElementException> { sut.findById(id) }
     }
 }

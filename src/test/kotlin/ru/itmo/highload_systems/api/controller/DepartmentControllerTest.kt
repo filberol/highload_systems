@@ -128,11 +128,6 @@ class DepartmentControllerTest : AbstractMvcTest() {
             createdAt = OffsetDateTime.now(),
             updatedAt = OffsetDateTime.now()
         )
-        val pageable = PageRequest.of(
-            0,
-            50,
-            Sort.by(Direction.ASC, "id")
-        )
         every {
             storageService.findByDepartmentId(
                 id

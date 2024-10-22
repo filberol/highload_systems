@@ -5,6 +5,7 @@ plugins {
     id("org.springframework.boot") version "3.2.0"
     id("io.spring.dependency-management") version "1.1.6"
     kotlin("plugin.jpa") version "1.9.25"
+    id("jacoco")
 }
 
 group = "ru.itmo"
@@ -67,10 +68,32 @@ tasks {
         val projectName = project.name
         val projectVersion = project.version.toString()
 
-        commandLine("docker", "build",
+        commandLine(
+            "docker", "build",
             "-t", "spring-highload:local",
             "--build-arg", "JAR_FILE=$projectName-$projectVersion.jar",
-            ".")
+            "."
+        )
 
+    }
+}
+
+tasks.jacocoTestReport {
+    dependsOn(tasks.test)
+    classDirectories.setFrom(
+        sourceSets.main.get().output.asFileTree.matching {
+            exclude(
+                "**/generated/**",
+                "ru/itmo/highload_systems/*.class",
+                "ru/itmo/highload_systems/controller/ControllerExceptionHandler.class"
+            )
+        }
+    )
+    reports {
+        xml.required.set(true)
+        xml.outputLocation.set(file("${layout.buildDirectory.get().asFile.path}/jacoco/jacoco.xml"))
+
+        csv.required.set(true)
+        csv.outputLocation.set(file("${layout.buildDirectory.get().asFile.path}/jacoco/jacoco.csv"))
     }
 }
