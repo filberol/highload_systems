@@ -17,11 +17,14 @@ class RoomNormService(
     fun fillIfExistAndReturnRoom(departmentId: UUID, size: Long): Optional<Room> {
         val room = roomRepository.findFirstRoomByDepartmentAndSize(departmentId, size)
         if (room.isEmpty) {
-            return room
+            return Optional.empty()
         }
         val roomNorm = room.get().roomNorm
-        roomNorm.size -= size
-        roomNormRepository.save(roomNorm);
-        return room
+        if (roomNorm != null) {
+            roomNorm.size -= size
+            roomNormRepository.save(roomNorm);
+            return room
+        }
+        return Optional.empty()
     }
 }

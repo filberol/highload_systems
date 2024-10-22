@@ -4,5 +4,5 @@ CREATE TABLE IF NOT EXISTS order_room
     room_id UUID NOT NULL REFERENCES room,
     order_id UUID NOT NULL REFERENCES orders,
     created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT current_timestamp,
-    updatedAt TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT current_timestamp
+    updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT current_timestamp
 );

@@ -15,7 +15,7 @@ class Room(
     @OneToMany
     var orders: List<Order>,
     @OneToOne
-    var roomNorm: RoomNorm,
+    var roomNorm: RoomNorm? = null,
     @ManyToOne
     var department: Department,
     var createdAt: OffsetDateTime,

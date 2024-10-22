@@ -32,7 +32,9 @@ class OrderService(
             Order(
                 status = OrderStatus.NEW,
                 size = request.size,
-                department = department
+                department = department,
+                updatedAt = OffsetDateTime.now(),
+                createdAt = OffsetDateTime.now()
             )
         )
         return orderApiMapper.toDto(order)
@@ -47,10 +49,12 @@ class OrderService(
             roomNormService.fillIfExistAndReturnRoom(order.department.id!!, order.size)
         if (optionalRoom.isEmpty) {
             order.status = OrderStatus.OXYGEN_WAITING
+            order.updatedAt = OffsetDateTime.now()
             return orderApiMapper.toDto(orderRepository.save(order))
         }
         order.status = OrderStatus.DONE
         order.room = optionalRoom.get()
+        order.updatedAt = OffsetDateTime.now()
         return orderApiMapper.toDto(orderRepository.save(order))
     }
 
@@ -64,6 +68,7 @@ class OrderService(
         )
             .stream().map { order ->
                 order.status = OrderStatus.CANCEL
+                order.updatedAt = OffsetDateTime.now()
                 order
             }.toList()
         return orderRepository.saveAll(orders).map(orderApiMapper::toDto)
@@ -72,6 +77,7 @@ class OrderService(
     fun cancelById(id: UUID): OrderResponse {
         val order = findEntityById(id)
         order.status = OrderStatus.CANCEL
+        order.updatedAt = OffsetDateTime.now()
         return orderApiMapper.toDto(orderRepository.save(order))
     }
 

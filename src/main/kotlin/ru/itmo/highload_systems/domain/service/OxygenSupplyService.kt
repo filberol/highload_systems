@@ -9,6 +9,7 @@ import ru.itmo.highload_systems.domain.mapper.OxygenSupplyApiMapper
 import ru.itmo.highload_systems.infra.model.OxygenSupply
 import ru.itmo.highload_systems.infra.repository.OxygenStorageRepository
 import ru.itmo.highload_systems.infra.repository.OxygenSupplyRepository
+import java.time.OffsetDateTime
 import java.util.*
 
 @Service
@@ -25,7 +26,9 @@ class OxygenSupplyService(
         val department = departmentService.findById(toDepartmentId)
         val supply = OxygenSupply(
             size = size,
-            department = department
+            department = department,
+            createdAt = OffsetDateTime.now(),
+            updatedAt = OffsetDateTime.now()
         )
         return oxygenSupplyApiMapper.toDto(oxygenSupplyRepository.save(supply))
     }
@@ -46,7 +49,9 @@ class OxygenSupplyService(
             )
         }
         storage.size += supply.size
+        storage.updatedAt = OffsetDateTime.now()
         supply.oxygenStorage = storage
+        supply.updatedAt = OffsetDateTime.now()
         oxygenStorageRepository.save(storage)
         return oxygenSupplyApiMapper.toDto(oxygenSupplyRepository.save(supply))
     }

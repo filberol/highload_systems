@@ -207,6 +207,7 @@ class OrderServiceTest {
                 OffsetDateTime::class.java
             )
             .usingRecursiveComparison()
+            .ignoringFields("updatedAt")
             .isEqualTo(expected)
     }
 

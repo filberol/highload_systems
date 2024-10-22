@@ -168,6 +168,7 @@ class OxygenSupplyServiceTest {
                 class.java
             )
             .usingRecursiveComparison()
+            .ignoringFields("updatedAt")
             .isEqualTo(expected)
     }
 }

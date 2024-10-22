@@ -1,1 +1,1 @@
-DROP TABLE IF EXISTS room_norm;
+DROP TABLE IF EXISTS room;
