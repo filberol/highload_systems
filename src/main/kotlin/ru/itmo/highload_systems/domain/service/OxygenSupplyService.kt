@@ -33,11 +33,18 @@ class OxygenSupplyService(
 
     @Transactional(readOnly = false)
     fun processById(id: UUID): OxygenSupplyResponse {
-        val supply = oxygenSupplyRepository.findById(id).orElseThrow()
+        val supply = findEntityById(id)
         val storage = oxygenStorageRepository.findByDepartmentIdAndCapacityGreaterThan(
             supply.department.id!!,
             supply.size
-        ).orElseThrow()
+        ).orElseThrow {
+            IllegalArgumentException(
+                "В департаменте с id %s нет свободного места %s".format(
+                    supply.department.id,
+                    supply.size
+                )
+            )
+        }
         storage.size += supply.size
         supply.oxygenStorage = storage
         oxygenStorageRepository.save(storage)
@@ -45,7 +52,18 @@ class OxygenSupplyService(
     }
 
     fun findById(id: UUID): OxygenSupplyResponse {
-        return oxygenSupplyApiMapper.toDto(oxygenSupplyRepository.findById(id).orElseThrow())
+        return oxygenSupplyApiMapper.toDto(findEntityById(id))
+    }
+
+    private fun findEntityById(id: UUID): OxygenSupply {
+        return oxygenSupplyRepository.findById(id)
+            .orElseThrow {
+                NoSuchElementException(
+                    "Заявка на снабжение кислородом с id %s не найдена".format(
+                        id
+                    )
+                )
+            }
     }
 
     fun findAll(pageable: Pageable): Page<OxygenSupplyResponse> {

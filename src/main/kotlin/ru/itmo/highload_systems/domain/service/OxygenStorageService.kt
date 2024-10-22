@@ -21,12 +21,19 @@ class OxygenStorageService(
     }
 
     fun findById(id: UUID): OxygenStorageResponse {
-        val oxygenStorage = oxygenStorageRepository.findById(id).orElseThrow()
+        val oxygenStorage = oxygenStorageRepository.findById(id)
+            .orElseThrow { NoSuchElementException("Хранилище c id %s не найдено".format(id)) }
         return oxygenStorageApiMapper.toDto(oxygenStorage)
     }
 
     fun findByDepartmentId(departmentId: UUID): OxygenStorageResponse {
-        val storage = oxygenStorageRepository.findByDepartmentId(departmentId).orElseThrow()
+        val storage = oxygenStorageRepository.findByDepartmentId(departmentId).orElseThrow {
+                NoSuchElementException(
+                    "Хранилище c departmentId %s не найдено".format(
+                        departmentId
+                    )
+                )
+            }
         return oxygenStorageApiMapper.toDto(storage)
     }
 }

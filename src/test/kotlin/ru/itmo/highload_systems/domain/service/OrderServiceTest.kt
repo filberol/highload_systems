@@ -70,11 +70,6 @@ class OrderServiceTest {
         )
         every { departmentService.findById(departmentId) }
             .returns(department)
-        val order = Order(
-            size = request.size,
-            status = OrderStatus.NEW,
-            department = department
-        )
         val createdAt = OffsetDateTime.now()
         val savedOrder = Order(
             id = orderId,
@@ -188,22 +183,6 @@ class OrderServiceTest {
             department = department,
             updatedAt = OffsetDateTime.now(),
             createdAt = OffsetDateTime.now()
-        )
-        val roomNorm = RoomNorm(
-            id = UUID.randomUUID(),
-            size = 10L,
-            avgPersonNorm = 53.1,
-            createdAt = OffsetDateTime.now()
-        )
-        val room = Room(
-            id = id,
-            number = 1L,
-            capacity = 3L,
-            orders = emptyList(),
-            roomNorm = roomNorm,
-            department = department,
-            createdAt = OffsetDateTime.now(),
-            updatedAt = OffsetDateTime.now()
         )
         every { orderRepository.findById(id) }.returns(Optional.of(order))
         every { roomNormService.fillIfExistAndReturnRoom(department.id!!, 5L) }

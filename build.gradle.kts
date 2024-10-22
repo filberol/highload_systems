@@ -33,6 +33,7 @@ dependencies {
     implementation("org.liquibase:liquibase-core")
     implementation("org.mapstruct:mapstruct:1.6.0")
     kapt("org.mapstruct:mapstruct-processor:1.6.0")
+    implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.6.0")
 
     // Test
     testImplementation("org.springframework.boot:spring-boot-starter-test")

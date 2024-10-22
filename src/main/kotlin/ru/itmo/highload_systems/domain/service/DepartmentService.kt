@@ -22,6 +22,7 @@ class DepartmentService(
     }
 
     fun findById(id: UUID): Department {
-        return departmentRepository.findById(id).orElseThrow()
+        return departmentRepository.findById(id)
+            .orElseThrow { NoSuchElementException("Департамент c id %s не найден".format(id)) }
     }
 }

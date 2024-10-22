@@ -56,11 +56,6 @@ class DepartmentServiceTest {
         val page: Page<Department> = PageImpl(listOf(department), pageable, 1)
         every { departmentRepository.findAll(pageable) }
             .returns(page)
-        val expected = DepartmentResponse(
-            id = department.id!!,
-            name = department.name,
-            createdAt = department.createdAt
-        )
         val result = sut.getDepartments(pageable)
         assertThat(result)
             .usingComparatorForType(

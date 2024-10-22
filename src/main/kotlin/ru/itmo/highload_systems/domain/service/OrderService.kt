@@ -39,9 +39,9 @@ class OrderService(
     }
 
     fun process(id: UUID): OrderResponse {
-        val order = orderRepository.findById(id).orElseThrow()
+        val order = findEntityById(id)
         if (order.status != OrderStatus.NEW) {
-            throw InvalidParameterException()
+            throw InvalidParameterException("Заявка с id %s не может быть обработана".format(id))
         }
         val optionalRoom =
             roomNormService.fillIfExistAndReturnRoom(order.department.id!!, order.size)
@@ -70,7 +70,7 @@ class OrderService(
     }
 
     fun cancelById(id: UUID): OrderResponse {
-        val order = orderRepository.findById(id).orElseThrow()
+        val order = findEntityById(id)
         order.status = OrderStatus.CANCEL
         return orderApiMapper.toDto(orderRepository.save(order))
     }
@@ -80,7 +80,12 @@ class OrderService(
     }
 
     fun findById(id: UUID): OrderResponse {
-        val order = orderRepository.findById(id).orElseThrow()
+        val order = findEntityById(id)
         return orderApiMapper.toDto(order)
+    }
+
+    private fun findEntityById(id: UUID): Order {
+        return orderRepository.findById(id)
+            .orElseThrow { NoSuchElementException("Заявка c id %s не найдена".format(id)) }
     }
 }

@@ -133,7 +133,6 @@ class DepartmentControllerTest : AbstractMvcTest() {
             50,
             Sort.by(Direction.ASC, "id")
         )
-        val page: Page<OxygenStorageResponse> = PageImpl(listOf(expected), pageable, 1)
         every {
             storageService.findByDepartmentId(
                 id

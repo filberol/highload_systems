@@ -64,10 +64,6 @@ class OxygenSupplyServiceTest {
             createdAt = OffsetDateTime.now()
         )
         every { departmentService.findById(departmentId) }.returns(department)
-        val supply = OxygenSupply(
-            size = 5L,
-            department = department
-        )
         val saveSupply = OxygenSupply(
             size = 5L,
             department = department,

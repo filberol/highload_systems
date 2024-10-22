@@ -20,16 +20,19 @@ class RoomService(
 ) {
 
     fun findById(id: UUID): RoomResponse {
-        val room = roomRepository.findById(id).orElseThrow()
+        val room = roomRepository.findById(id)
+            .orElseThrow { NoSuchElementException("Комнада с id %s не найдена") }
         return roomApiMapper.toDto(room)
     }
 
     fun findOrdersById(id: UUID): List<OrderResponse> {
-        val room = roomRepository.findById(id).orElseThrow()
+        val room = roomRepository.findById(id)
+            .orElseThrow { NoSuchElementException("Комнада с id %s не найдена") }
         return room.orders.map(orderApiMapper::toDto)
     }
 
     fun findAllByDepartmentId(departmentId: UUID, pageable: Pageable): Page<RoomResponse> {
-        return roomRepository.findAllByDepartmentId(departmentId, pageable).map(roomApiMapper::toDto)
+        return roomRepository.findAllByDepartmentId(departmentId, pageable)
+            .map(roomApiMapper::toDto)
     }
 }
