@@ -26,6 +26,7 @@ class OrderService(
     private val orderStatusApiMapper: OrderStatusApiMapper
 ) {
 
+    @Transactional(readOnly = false)
     fun create(request: CreateOrderRequest): OrderResponse {
         val department = departmentService.findById(request.departmentId)
         val order = orderRepository.save(
@@ -40,6 +41,7 @@ class OrderService(
         return orderApiMapper.toDto(order)
     }
 
+    @Transactional(readOnly = false)
     fun process(id: UUID): OrderResponse {
         val order = findEntityById(id)
         if (order.status != OrderStatus.NEW) {
@@ -58,6 +60,7 @@ class OrderService(
         return orderApiMapper.toDto(orderRepository.save(order))
     }
 
+    @Transactional(readOnly = false)
     fun cancelExpiredOrders(
         expiredAt: OffsetDateTime,
         status: OrderStatusRequestResponse
@@ -74,6 +77,7 @@ class OrderService(
         return orderRepository.saveAll(orders).map(orderApiMapper::toDto)
     }
 
+    @Transactional(readOnly = false)
     fun cancelById(id: UUID): OrderResponse {
         val order = findEntityById(id)
         order.status = OrderStatus.CANCEL
