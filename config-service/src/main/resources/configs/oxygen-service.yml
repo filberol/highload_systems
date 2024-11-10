@@ -1,0 +1,2 @@
+server:
+  port: ${OXYGEN_SERVICE_PORT:8094}
