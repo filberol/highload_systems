@@ -1,0 +1,12 @@
+spring:
+  cloud:
+    config:
+      enabled: false
+    discovery:
+      enabled: false
+  liquibase:
+    enabled: true
+  datasource:
+    driver-class-name: org:postgresql:Driver
+    username: test
+    password: test

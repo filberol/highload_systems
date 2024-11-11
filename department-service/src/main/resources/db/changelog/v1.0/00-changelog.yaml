@@ -1,0 +1,34 @@
+databaseChangeLog:
+  - changeSet:
+      id: v1.0/01-department-ddl
+      author: an.i.chernova
+      changes:
+        - sqlFile:
+            path: 01-department-ddl.sql
+            relativeToChangelogFile: true
+      rollback:
+        - sqlFile:
+            path: 01-department-ddl-rollback.sql
+            relativeToChangelogFile: true
+  - changeSet:
+      id: v1.0/02-room-ddl
+      author: an.i.chernova
+      changes:
+        - sqlFile:
+            path: 02-room-ddl.sql
+            relativeToChangelogFile: true
+      rollback:
+        - sqlFile:
+            path: 02-room-ddl-rollback.sql
+            relativeToChangelogFile: true
+  - changeSet:
+      id: v1.0/03-room_norm-ddl
+      author: an.i.chernova
+      changes:
+        - sqlFile:
+            path: 03-room_norm-ddl.sql
+            relativeToChangelogFile: true
+      rollback:
+        - sqlFile:
+            path: 03-room_norm-ddl-rollback.sql
+            relativeToChangelogFile: true
