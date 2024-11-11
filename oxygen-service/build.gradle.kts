@@ -8,9 +8,6 @@ plugins {
     id("jacoco")
 }
 
-group = "ru.itmo"
-version = "0.0.2"
-
 java {
     toolchain {
         languageVersion.set(JavaLanguageVersion.of(21))
