@@ -38,6 +38,10 @@ dependencies {
     runtimeOnly("io.jsonwebtoken:jjwt-impl:0.12.6")
 
     implementation("org.modelmapper:modelmapper:3.2.1")
+
+    // Cloud
+    implementation("org.springframework.cloud:spring-cloud-starter-config:4.1.3")
+    implementation("org.springframework.cloud:spring-cloud-starter-bootstrap:4.1.4")
 }
 
 kotlin {
