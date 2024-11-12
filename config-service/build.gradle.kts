@@ -23,6 +23,8 @@ dependencies {
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 
     implementation("org.springframework.cloud:spring-cloud-config-server:4.1.3")
+
+    implementation("org.springframework.cloud:spring-cloud-starter-netflix-eureka-client:4.1.3")
 }
 
 kotlin {
