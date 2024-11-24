@@ -18,5 +18,7 @@ interface RoomNormApiMapper {
     @Mapping(target = "balanceOxygen", expression = "java(room.getCapacity()-roomNorm.getSize())")
     @Mapping(target = "createdAt", source = "room.createdAt")
     @Mapping(target = "updatedAt", source = "room.updatedAt")
+    @Mapping(target = "avgPersonNorm", expression = "java(roomNorm.getSize()/ roomNorm.getPeopleCount())")
     fun toResponse(room: Room, roomNorm: RoomNorm): RoomNormResponse
+
 }

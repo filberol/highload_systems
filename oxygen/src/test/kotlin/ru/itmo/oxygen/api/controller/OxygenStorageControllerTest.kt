@@ -144,8 +144,6 @@ class OxygenStorageControllerTest : AbstractMvcTest() {
     @Test
     @WithMockUser(role = Role.MANAGER)
     fun createStorage_shouldThrowException() {
-        val id = "b797c253-d4ee-4da8-83bd-5b704b87bcb3"
-
         // when
         mockMvc.perform(
             post("/storages")

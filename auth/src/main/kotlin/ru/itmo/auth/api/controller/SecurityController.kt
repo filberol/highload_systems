@@ -39,14 +39,13 @@ class SecurityController(
         if (username.isEmpty()) {
             return ResponseEntity.ok(ValidateTokenResponse(isAuthenticated = false))
         } else {
-            val authorities: List<RoleRequestResponse> =
-                httpServletRequest.getAttribute("authorities") as List<RoleRequestResponse>
+            val authorities = httpServletRequest.getAttribute("authorities")
             val userId = httpServletRequest.getAttribute("userId") as UUID
             return ResponseEntity.ok(
                 ValidateTokenResponse(
                     userId = userId,
                     login = username,
-                    authorities = authorities,
+                    authorities = authorities as List<RoleRequestResponse>?,
                     isAuthenticated = true
                 )
             )

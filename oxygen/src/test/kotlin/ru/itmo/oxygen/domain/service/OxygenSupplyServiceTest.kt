@@ -53,9 +53,7 @@ class OxygenSupplyServiceTest : AbstractDatabaseTest() {
         ]
     )
     fun processById_shouldInvokeService() {
-        val size = 5L
         val id = UUID.fromString("20006109-1144-4aa6-8fbf-f45435264de5")
-        val departmentId = UUID.fromString("20006109-1144-4aa6-8fbf-f45435264de5")
 
         val result = sut.processById(id)
         assertThat(result.oxygenStorageId).isEqualTo(UUID.fromString("20006109-1144-4aa6-8fbf-f45435264de5"))

@@ -114,7 +114,6 @@ class OrderControllerTest : AbstractMvcTest() {
     @WithMockUser(role = Role.ADMIN)
     fun cancel_shouldInvokeService() {
         val expiredAt = OffsetDateTime.now()
-        val status = OrderStatusRequestResponse.CANCEL
         val expected = OrderResponse(
             id = UUID.randomUUID(),
             status = OrderStatusRequestResponse.NEW,

@@ -87,7 +87,7 @@ class RoomControllerTest : AbstractMvcTest() {
             id = roomId,
             peopleCount = 5L,
             balanceOxygen = 10L,
-            avgPersonNorm = 55.55,
+            avgPersonNorm = 55,
             createdAt = OffsetDateTime.now(),
             updatedAt = OffsetDateTime.now()
         )
@@ -124,7 +124,7 @@ class RoomControllerTest : AbstractMvcTest() {
             id = roomId,
             peopleCount = 5L,
             balanceOxygen = 10L,
-            avgPersonNorm = 55.55,
+            avgPersonNorm = 55,
             createdAt = OffsetDateTime.now(),
             updatedAt = OffsetDateTime.now()
         )

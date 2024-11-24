@@ -85,6 +85,7 @@ class RoomServiceTest : AbstractDatabaseTest() {
             id = roomId,
             peopleCount = 1L,
             balanceOxygen = 10L,
+            avgPersonNorm = 30 / 1,
             createdAt = OffsetDateTime.parse("2024-01-03T07:00:00.000000+00:00"),
             updatedAt = OffsetDateTime.parse("2024-01-03T07:00:00.000000+00:00")
         )
@@ -245,6 +246,7 @@ class RoomServiceTest : AbstractDatabaseTest() {
             id = room.id,
             peopleCount = 1L,
             balanceOxygen = 2L,
+            avgPersonNorm = 38L,
             createdAt = room.createdAt,
             updatedAt = room.updatedAt
         )
