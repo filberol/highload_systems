@@ -1,7 +1,12 @@
 rootProject.name = "highload_systems"
 
-include("config-service")
-include("oxygen-service")
-include("user-service")
-include("eureka-service")
-include("department-service")
+include("auth")
+include("config")
+include("department")
+include("eureka")
+include("gateway")
+include("order")
+include("oxygen")
+
+
+
