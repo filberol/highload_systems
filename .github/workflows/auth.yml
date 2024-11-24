@@ -27,7 +27,7 @@ jobs:
           cache: gradle
 
       - name: Gradle Build and Test
-        run: ./auth/gradlew build
+        run:  cd auth | gradle build
 
       - name: Generate JaCoCo Report
         uses: madrapps/jacoco-report@v1.6.1
