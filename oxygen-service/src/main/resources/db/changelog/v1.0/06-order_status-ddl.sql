@@ -1,1 +1,0 @@
-CREATE TYPE order_status AS ENUM ('NEW', 'OXYGEN_WAITING', 'CANCEL', 'DEATH', 'DONE');
