@@ -1,0 +1,23 @@
+databaseChangeLog:
+  - changeSet:
+      id: v1.0/01-order_status-ddl
+      author: an.i.chernova
+      changes:
+        - sqlFile:
+            path: 01-order_status-ddl.sql
+            relativeToChangelogFile: true
+      rollback:
+        - sqlFile:
+            path: 01-order_status-ddl-rollback.sql
+            relativeToChangelogFile: true
+  - changeSet:
+      id: v1.0/02-orders-ddl
+      author: an.i.chernova
+      changes:
+        - sqlFile:
+            path: 02-orders-ddl.sql
+            relativeToChangelogFile: true
+      rollback:
+        - sqlFile:
+            path: 02-orders-ddl-rollback.sql
+            relativeToChangelogFile: true

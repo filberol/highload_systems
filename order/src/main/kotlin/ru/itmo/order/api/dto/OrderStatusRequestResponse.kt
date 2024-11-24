@@ -1,4 +1,4 @@
-package ru.itmo.highload_systems.api.dto
+package ru.itmo.order.api.dto
 
 import com.fasterxml.jackson.databind.PropertyNamingStrategies
 import com.fasterxml.jackson.databind.annotation.JsonNaming
@@ -6,8 +6,6 @@ import com.fasterxml.jackson.databind.annotation.JsonNaming
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy::class)
 enum class OrderStatusRequestResponse {
     NEW,
-    OXYGEN_WAITING,
     CANCEL,
-    DEATH,
     DONE
 }

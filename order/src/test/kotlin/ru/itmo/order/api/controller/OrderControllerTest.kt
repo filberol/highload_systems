@@ -1,4 +1,4 @@
-package ru.itmo.highload_systems.api.controller
+package ru.itmo.order.api.controller
 
 import io.mockk.every
 import io.mockk.mockk
@@ -18,20 +18,22 @@ import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Sort
 import org.springframework.data.domain.Sort.Direction
 import org.springframework.http.MediaType
+import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
-import ru.itmo.highload_systems.api.dto.CreateOrderRequest
-import ru.itmo.highload_systems.api.dto.OrderResponse
-import ru.itmo.highload_systems.api.dto.OrderStatusRequestResponse
-import ru.itmo.highload_systems.common.AbstractMvcTest
-import ru.itmo.highload_systems.domain.service.OrderService
+import ru.itmo.order.api.dto.OrderResponse
+import ru.itmo.order.api.dto.OrderStatusRequestResponse
+import ru.itmo.order.common.AbstractMvcTest
+import ru.itmo.order.domain.service.OrderService
+import ru.itmo.order.infra.model.enums.Role
+import ru.itmo.order.security.WithMockUser
 import java.nio.charset.StandardCharsets
 import java.time.OffsetDateTime
 import java.util.*
 
 @WebMvcTest(controllers = [OrderController::class])
-@AutoConfigureMockMvc(addFilters = false)
+@AutoConfigureMockMvc
 @Import(OrderControllerTest.OrderControllerTestConfig::class)
 class OrderControllerTest : AbstractMvcTest() {
 
@@ -45,25 +47,25 @@ class OrderControllerTest : AbstractMvcTest() {
     private lateinit var orderService: OrderService
 
     @Test
+    @WithMockUser(role = Role.USER)
     fun create_shouldInvokeService() {
         val departmentId = UUID.randomUUID()
-        val request = CreateOrderRequest(5L, departmentId)
         val expected = OrderResponse(
             id = UUID.randomUUID(),
             status = OrderStatusRequestResponse.NEW,
-            size = 5L,
             departmentId = departmentId,
             createdAt = OffsetDateTime.now(),
             updatedAt = OffsetDateTime.now()
         )
-        every { orderService.create(request) }.returns(expected)
+        every { orderService.create(departmentId) }.returns(expected)
 
         // when
         val content = mockMvc.perform(
             post("/orders")
-                .content(objectMapper.writeValueAsString(request))
+                .param("departmentId", departmentId.toString())
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
+                .with(csrf())
         ).andExpect(status().isOk)
             .andReturn().response.getContentAsString(StandardCharsets.UTF_8)
         val result = objectMapper.readValue(content, OrderResponse::class.java)
@@ -73,16 +75,16 @@ class OrderControllerTest : AbstractMvcTest() {
         )
             .usingRecursiveComparison()
             .isEqualTo(expected)
-        verify(exactly = 1) { orderService.create(request) }
+        verify(exactly = 1) { orderService.create(departmentId) }
     }
 
     @Test
+    @WithMockUser(role = Role.MANAGER)
     fun process_shouldInvokeService() {
         val id = UUID.randomUUID()
         val expected = OrderResponse(
             id = id,
-            status = OrderStatusRequestResponse.NEW,
-            size = 5L,
+            status = OrderStatusRequestResponse.DONE,
             departmentId = UUID.randomUUID(),
             createdAt = OffsetDateTime.now(),
             updatedAt = OffsetDateTime.now()
@@ -95,6 +97,7 @@ class OrderControllerTest : AbstractMvcTest() {
             post("/orders/{id}", id.toString())
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
+                .with(csrf())
         ).andExpect(status().isOk)
             .andReturn().response.getContentAsString(StandardCharsets.UTF_8)
         val result = objectMapper.readValue(content, OrderResponse::class.java)
@@ -108,39 +111,39 @@ class OrderControllerTest : AbstractMvcTest() {
     }
 
     @Test
+    @WithMockUser(role = Role.ADMIN)
     fun cancel_shouldInvokeService() {
         val expiredAt = OffsetDateTime.now()
         val status = OrderStatusRequestResponse.CANCEL
         val expected = OrderResponse(
             id = UUID.randomUUID(),
             status = OrderStatusRequestResponse.NEW,
-            size = 5L,
             departmentId = UUID.randomUUID(),
             createdAt = OffsetDateTime.now(),
             updatedAt = OffsetDateTime.now()
         )
-        every { orderService.cancelExpiredOrders(expiredAt, status) }
+        every { orderService.cancelExpiredOrders(expiredAt) }
             .returns(listOf(expected))
 
         // when
         mockMvc.perform(
             post("/orders/cancel")
                 .param("expiredAt", expiredAt.toString())
-                .param("status", "CANCEL")
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
+                .with(csrf())
         ).andExpect(status().isOk)
             .andReturn().response.getContentAsString(StandardCharsets.UTF_8)
-        verify(exactly = 1) { orderService.cancelExpiredOrders(expiredAt, status) }
+        verify(exactly = 1) { orderService.cancelExpiredOrders(expiredAt) }
     }
 
     @Test
+    @WithMockUser(role = Role.MANAGER)
     fun cancelById_shouldInvokeService() {
         val id = UUID.randomUUID()
         val expected = OrderResponse(
             id = id,
             status = OrderStatusRequestResponse.CANCEL,
-            size = 5L,
             departmentId = UUID.randomUUID(),
             createdAt = OffsetDateTime.now(),
             updatedAt = OffsetDateTime.now()
@@ -151,6 +154,7 @@ class OrderControllerTest : AbstractMvcTest() {
             post("/orders/{id}/cancel", id.toString())
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
+                .with(csrf())
         ).andExpect(status().isOk)
             .andReturn().response.getContentAsString(StandardCharsets.UTF_8)
         val result = objectMapper.readValue(content, OrderResponse::class.java)
@@ -164,11 +168,11 @@ class OrderControllerTest : AbstractMvcTest() {
     }
 
     @Test
+    @WithMockUser(role = Role.USER)
     fun getOrders_shouldInvokeService() {
         val expected = OrderResponse(
             id = UUID.randomUUID(),
             status = OrderStatusRequestResponse.CANCEL,
-            size = 5L,
             departmentId = UUID.randomUUID(),
             createdAt = OffsetDateTime.now(),
             updatedAt = OffsetDateTime.now()
@@ -191,17 +195,18 @@ class OrderControllerTest : AbstractMvcTest() {
             get("/orders")
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
+                .with(csrf())
         )
         verify(exactly = 1) { orderService.findAll(any()) }
     }
 
     @Test
+    @WithMockUser(role = Role.MANAGER)
     fun getOrderById_shouldInvokeService() {
         val id = UUID.randomUUID()
         val expected = OrderResponse(
             id = id,
             status = OrderStatusRequestResponse.CANCEL,
-            size = 5L,
             departmentId = UUID.randomUUID(),
             createdAt = OffsetDateTime.now(),
             updatedAt = OffsetDateTime.now()
@@ -212,6 +217,7 @@ class OrderControllerTest : AbstractMvcTest() {
             get("/orders/{id}", id.toString())
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
+                .with(csrf())
         ).andExpect(status().isOk)
             .andReturn().response.getContentAsString(StandardCharsets.UTF_8)
         val result = objectMapper.readValue(content, OrderResponse::class.java)
