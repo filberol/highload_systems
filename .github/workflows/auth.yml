@@ -27,7 +27,7 @@ jobs:
           cache: gradle
 
       - name: Gradle Build and Test
-        run:  cd auth | gradle build
+        run:  gradle :auth:build
 
   build-docker:
     needs: build-and-test
