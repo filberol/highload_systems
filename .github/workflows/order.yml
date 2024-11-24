@@ -1,15 +1,15 @@
-name: department build
+name: order build
 
 on:
   workflow_dispatch:
   pull_request:
     paths:
-      - .github/workflows/department.yml
-      - department/**
+      - .github/workflows/order.yml
+      - order/**
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository }}/department
+  IMAGE_NAME: ${{ github.repository }}/order
 
 jobs:
   build-and-test:
@@ -27,7 +27,7 @@ jobs:
           cache: gradle
 
       - name: Gradle Build and Test
-        run:  gradle :department:build
+        run:  gradle :order:build
 
   build-docker:
     needs: build-and-test
@@ -49,6 +49,6 @@ jobs:
       - name: Build and Push Docker Image
         uses: docker/build-push-action@v5
         with:
-          context: ./department
+          context: ./order
           push: true
           tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest

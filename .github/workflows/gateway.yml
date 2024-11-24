@@ -1,15 +1,15 @@
-name: department build
+name: gateway build
 
 on:
   workflow_dispatch:
   pull_request:
     paths:
-      - .github/workflows/department.yml
-      - department/**
+      - .github/workflows/gateway.yml
+      - gateway/**
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository }}/department
+  IMAGE_NAME: ${{ github.repository }}/gateway
 
 jobs:
   build-and-test:
@@ -27,7 +27,7 @@ jobs:
           cache: gradle
 
       - name: Gradle Build and Test
-        run:  gradle :department:build
+        run:  gradle :gateway:build
 
   build-docker:
     needs: build-and-test
@@ -49,6 +49,6 @@ jobs:
       - name: Build and Push Docker Image
         uses: docker/build-push-action@v5
         with:
-          context: ./department
+          context: ./gateway
           push: true
           tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
