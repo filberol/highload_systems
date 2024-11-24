@@ -32,3 +32,22 @@ kotlin {
         freeCompilerArgs.addAll("-Xjsr305=strict")
     }
 }
+
+tasks {
+    val bootJarTask = named("bootJar")
+
+    val buildDockerImage by creating(Exec::class) {
+        group = "docker"
+        description = "Build Docker image for the Spring Boot application"
+
+        dependsOn(bootJarTask)
+
+        val projectName = project.name
+
+        commandLine("docker", "build",
+            "-t", "config:local",
+            "--build-arg", "JAR_FILE=$projectName.jar",
+            ".")
+
+    }
+}
