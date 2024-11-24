@@ -1,13 +1,14 @@
-package ru.itmo.highload_systems.api.dto
+package ru.itmo.auth.api.dto
 
 import com.fasterxml.jackson.databind.PropertyNamingStrategies
 import com.fasterxml.jackson.databind.annotation.JsonNaming
-import java.util.*
+import java.util.UUID
 
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy::class)
-data class CreatePersonResponse(
+data class UserResponse(
     val id: UUID,
-    val firstName: String,
-    val lastName: String,
-    val middleName: String?
+    val name: String,
+    val login: String,
+    val password: String,
+    val role: RoleRequestResponse
 )
