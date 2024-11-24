@@ -27,6 +27,7 @@ dependencies {
     // Cloud
     implementation("org.springframework.cloud:spring-cloud-starter-config:4.1.3")
     implementation("org.springframework.cloud:spring-cloud-starter-bootstrap:4.1.4")
+    implementation(kotlin("stdlib"))
 
 }
 
