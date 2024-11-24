@@ -7,7 +7,7 @@ on:
 
 jobs:
   # Build base image with jar
-  build:
+  build-auth:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
