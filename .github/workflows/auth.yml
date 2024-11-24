@@ -27,15 +27,13 @@ jobs:
           cache: gradle
 
       - name: Gradle Build and Test
-        run:  gradle :auth:build
+        run:  cd auth | gradle build
 
   build-docker:
     needs: build-and-test
     runs-on: ubuntu-latest
     name: Build Docker Image
-    permissions:
-      packages: write
-      contents: read
+
     steps:
       - uses: actions/checkout@v4
 
