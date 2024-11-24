@@ -1,0 +1,23 @@
+databaseChangeLog:
+  - changeSet:
+      id: v1.0/01-oxygen_storage-ddl
+      author: an.i.chernova
+      changes:
+        - sqlFile:
+            path: 01-oxygen_storage-ddl.sql
+            relativeToChangelogFile: true
+      rollback:
+        - sqlFile:
+            path: 01-oxygen_storage-ddl-rollback.sql
+            relativeToChangelogFile: true
+  - changeSet:
+      id: v1.0/02-oxygen_order-ddl
+      author: an.i.chernova
+      changes:
+        - sqlFile:
+            path: 02-oxygen_supply-ddl.sql
+            relativeToChangelogFile: true
+      rollback:
+        - sqlFile:
+            path: 02-oxygen_supply-ddl-rollback.sql
+            relativeToChangelogFile: true
