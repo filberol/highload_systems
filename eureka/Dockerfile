@@ -5,5 +5,5 @@ RUN gradle jar --no-daemon
 
 FROM openjdk:21-jdk-slim AS package
 WORKDIR /app
-COPY --from=builder /app/build/libs/config.jar /app/config.jar
-ENTRYPOINT ["java", "-jar", "/app/config.jar"]
+COPY --from=builder /app/build/libs/eureka.jar /app/eureka.jar
+ENTRYPOINT ["java", "-jar", "/app/eureka.jar"]

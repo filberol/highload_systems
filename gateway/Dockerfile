@@ -5,5 +5,5 @@ RUN gradle jar --no-daemon
 
 FROM openjdk:21-jdk-slim AS package
 WORKDIR /app
-COPY --from=builder /app/build/libs/config_service.jar /app/config_service.jar
-ENTRYPOINT ["java", "-jar", "/app/config_service.jar"]
+COPY --from=builder /app/build/libs/gateway.jar /app/gateway.jar
+ENTRYPOINT ["java", "-jar", "/app/gateway.jar"]
