@@ -37,9 +37,11 @@ class JwtService {
     }
 
     fun generateToken(
-        extraClaims: Map<String, Any>,
+        extraClaims: HashMap<String, Any>,
         userDetails: UserDetails
     ): String {
+        val roles = userDetails.authorities
+        extraClaims.put("roles", roles)
         return Jwts
             .builder()
             .setClaims(extraClaims)

@@ -6,13 +6,14 @@ import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.Authentication
+import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.context.SecurityContextHolder
+import org.springframework.stereotype.Component
 import org.springframework.web.filter.OncePerRequestFilter
-import ru.itmo.order.infra.model.enums.Role
 import java.io.IOException
 
-
-class JWTVerifierFilter : OncePerRequestFilter() {
+@Component
+class JwtFilter : OncePerRequestFilter() {
     private val BEARER = "Bearer"
 
     @Throws(ServletException::class, IOException::class)
@@ -26,10 +27,15 @@ class JWTVerifierFilter : OncePerRequestFilter() {
             filterChain.doFilter(request, response)
             return
         }
-        val username = request.getHeader("username")
-        val userRole = Role.valueOf(request.getHeader("authorities"))
+        val jwt = authHeader.substring(7).trim()
+        val username = JwtTokenUtils().getUsername(jwt)
+        val userRole = JwtTokenUtils().getRoles(jwt)!!
         val authentication: Authentication =
-            UsernamePasswordAuthenticationToken(username, null, listOf(userRole))
+            UsernamePasswordAuthenticationToken(
+                username,
+                null,
+                userRole.stream().map { role -> SimpleGrantedAuthority(role) }.toList()
+            )
         SecurityContextHolder.getContext().authentication = authentication
         filterChain.doFilter(request, response)
     }

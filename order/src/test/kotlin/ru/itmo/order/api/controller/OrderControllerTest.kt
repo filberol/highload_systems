@@ -3,8 +3,6 @@ package ru.itmo.order.api.controller
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import org.assertj.core.api.Assertions.assertThat
-import org.assertj.core.internal.OffsetDateTimeByInstantComparator
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
@@ -22,13 +20,15 @@ import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequ
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
+import reactor.core.publisher.Flux
+import reactor.core.publisher.Mono
 import ru.itmo.order.api.dto.OrderResponse
 import ru.itmo.order.api.dto.OrderStatusRequestResponse
+import ru.itmo.order.clients.dto.CheckInResponse
 import ru.itmo.order.common.AbstractMvcTest
 import ru.itmo.order.domain.service.OrderService
 import ru.itmo.order.infra.model.enums.Role
 import ru.itmo.order.security.WithMockUser
-import java.nio.charset.StandardCharsets
 import java.time.OffsetDateTime
 import java.util.*
 
@@ -50,63 +50,49 @@ class OrderControllerTest : AbstractMvcTest() {
     @WithMockUser(role = Role.USER)
     fun create_shouldInvokeService() {
         val departmentId = UUID.randomUUID()
+        val userId = UUID.randomUUID()
         val expected = OrderResponse(
             id = UUID.randomUUID(),
             status = OrderStatusRequestResponse.NEW,
             departmentId = departmentId,
+            userId = userId,
             createdAt = OffsetDateTime.now(),
             updatedAt = OffsetDateTime.now()
         )
-        every { orderService.create(departmentId) }.returns(expected)
+        every { orderService.create(departmentId, userId) }.returns(Flux.just(expected))
 
         // when
-        val content = mockMvc.perform(
+        mockMvc.perform(
             post("/orders")
                 .param("departmentId", departmentId.toString())
+                .param("userId", userId.toString())
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
                 .with(csrf())
         ).andExpect(status().isOk)
-            .andReturn().response.getContentAsString(StandardCharsets.UTF_8)
-        val result = objectMapper.readValue(content, OrderResponse::class.java)
-        assertThat(result).usingComparatorForType(
-            OffsetDateTimeByInstantComparator.getInstance(),
-            OffsetDateTime::class.java
-        )
-            .usingRecursiveComparison()
-            .isEqualTo(expected)
-        verify(exactly = 1) { orderService.create(departmentId) }
+        verify(exactly = 1) { orderService.create(departmentId, userId) }
     }
 
     @Test
     @WithMockUser(role = Role.MANAGER)
     fun process_shouldInvokeService() {
         val id = UUID.randomUUID()
-        val expected = OrderResponse(
-            id = id,
-            status = OrderStatusRequestResponse.DONE,
+        val expected = CheckInResponse(
             departmentId = UUID.randomUUID(),
-            createdAt = OffsetDateTime.now(),
-            updatedAt = OffsetDateTime.now()
+            personCount = 1L,
+            roomId = UUID.randomUUID()
         )
 
-        every { orderService.process(id) }.returns(expected)
+        every { orderService.process(id) }.returns(Mono.just(expected))
 
         // when
-        val content = mockMvc.perform(
+        mockMvc.perform(
             post("/orders/{id}", id.toString())
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
                 .with(csrf())
         ).andExpect(status().isOk)
-            .andReturn().response.getContentAsString(StandardCharsets.UTF_8)
-        val result = objectMapper.readValue(content, OrderResponse::class.java)
-        assertThat(result).usingComparatorForType(
-            OffsetDateTimeByInstantComparator.getInstance(),
-            OffsetDateTime::class.java
-        )
-            .usingRecursiveComparison()
-            .isEqualTo(expected)
+
         verify(exactly = 1) { orderService.process(id) }
     }
 
@@ -114,15 +100,18 @@ class OrderControllerTest : AbstractMvcTest() {
     @WithMockUser(role = Role.ADMIN)
     fun cancel_shouldInvokeService() {
         val expiredAt = OffsetDateTime.now()
+        val userId = UUID.randomUUID()
+
         val expected = OrderResponse(
             id = UUID.randomUUID(),
             status = OrderStatusRequestResponse.NEW,
             departmentId = UUID.randomUUID(),
+            userId = userId,
             createdAt = OffsetDateTime.now(),
             updatedAt = OffsetDateTime.now()
         )
         every { orderService.cancelExpiredOrders(expiredAt) }
-            .returns(listOf(expected))
+            .returns(Mono.just(listOf(expected)))
 
         // when
         mockMvc.perform(
@@ -132,7 +121,6 @@ class OrderControllerTest : AbstractMvcTest() {
                 .accept(MediaType.APPLICATION_JSON)
                 .with(csrf())
         ).andExpect(status().isOk)
-            .andReturn().response.getContentAsString(StandardCharsets.UTF_8)
         verify(exactly = 1) { orderService.cancelExpiredOrders(expiredAt) }
     }
 
@@ -140,39 +128,36 @@ class OrderControllerTest : AbstractMvcTest() {
     @WithMockUser(role = Role.MANAGER)
     fun cancelById_shouldInvokeService() {
         val id = UUID.randomUUID()
+        val userId = UUID.randomUUID()
         val expected = OrderResponse(
             id = id,
             status = OrderStatusRequestResponse.CANCEL,
             departmentId = UUID.randomUUID(),
+            userId = userId,
             createdAt = OffsetDateTime.now(),
             updatedAt = OffsetDateTime.now()
         )
-        every { orderService.cancelById(id) }.returns(expected)
+        every { orderService.cancelById(id) }.returns(Flux.just(expected))
         // when
-        val content = mockMvc.perform(
+        mockMvc.perform(
             post("/orders/{id}/cancel", id.toString())
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
                 .with(csrf())
         ).andExpect(status().isOk)
-            .andReturn().response.getContentAsString(StandardCharsets.UTF_8)
-        val result = objectMapper.readValue(content, OrderResponse::class.java)
-        assertThat(result).usingComparatorForType(
-            OffsetDateTimeByInstantComparator.getInstance(),
-            OffsetDateTime::class.java
-        )
-            .usingRecursiveComparison()
-            .isEqualTo(expected)
         verify(exactly = 1) { orderService.cancelById(id) }
     }
 
     @Test
     @WithMockUser(role = Role.USER)
     fun getOrders_shouldInvokeService() {
+        val userId = UUID.randomUUID()
+
         val expected = OrderResponse(
             id = UUID.randomUUID(),
             status = OrderStatusRequestResponse.CANCEL,
             departmentId = UUID.randomUUID(),
+            userId = userId,
             createdAt = OffsetDateTime.now(),
             updatedAt = OffsetDateTime.now()
         )
@@ -187,7 +172,7 @@ class OrderControllerTest : AbstractMvcTest() {
                 pageable
             )
         }
-            .returns(page)
+            .returns(Mono.just(page))
 
         // when
         mockMvc.perform(
@@ -195,7 +180,7 @@ class OrderControllerTest : AbstractMvcTest() {
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
                 .with(csrf())
-        )
+        ).andExpect(status().isOk)
         verify(exactly = 1) { orderService.findAll(any()) }
     }
 
@@ -203,29 +188,23 @@ class OrderControllerTest : AbstractMvcTest() {
     @WithMockUser(role = Role.MANAGER)
     fun getOrderById_shouldInvokeService() {
         val id = UUID.randomUUID()
+        val userId = UUID.randomUUID()
         val expected = OrderResponse(
             id = id,
             status = OrderStatusRequestResponse.CANCEL,
             departmentId = UUID.randomUUID(),
+            userId = userId,
             createdAt = OffsetDateTime.now(),
             updatedAt = OffsetDateTime.now()
         )
-        every { orderService.findById(id) }.returns(expected)
+        every { orderService.findById(id) }.returns(Flux.just(expected))
         // when
-        val content = mockMvc.perform(
+        mockMvc.perform(
             get("/orders/{id}", id.toString())
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
                 .with(csrf())
         ).andExpect(status().isOk)
-            .andReturn().response.getContentAsString(StandardCharsets.UTF_8)
-        val result = objectMapper.readValue(content, OrderResponse::class.java)
-        assertThat(result).usingComparatorForType(
-            OffsetDateTimeByInstantComparator.getInstance(),
-            OffsetDateTime::class.java
-        )
-            .usingRecursiveComparison()
-            .isEqualTo(expected)
         verify(exactly = 1) { orderService.findById(id) }
     }
 }

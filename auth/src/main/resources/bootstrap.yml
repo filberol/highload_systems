@@ -1,23 +1,5 @@
-server:
-  port: 8888
-
 spring:
   application:
-    name: configserver
-  cloud:
-    config:
-      server:
-        git:
-          uri: https://github.com/filberol/configs.git
-          default-label: master
-          search-paths: {application}
-  datasource:
-    driver-class-name: org.postgresql.Driver
-  jpa:
-    show-sql: true
-    properties:
-      hibernate:
-        format_sql: true
-        hbm2ddl:
-          auto: create
-        dialect: org.hibernate.dialect.PostgreSQLDialect
+    name: auth
+  config:
+    import: optional:configserver:http://config:8888

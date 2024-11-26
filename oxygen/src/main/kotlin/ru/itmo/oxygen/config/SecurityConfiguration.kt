@@ -10,13 +10,15 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.http.SessionCreationPolicy
 import org.springframework.security.web.SecurityFilterChain
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
-import ru.itmo.oxygen.config.filter.JWTVerifierFilter
+import ru.itmo.oxygen.config.filter.JwtFilter
 
 
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
-class SecurityConfiguration {
+class SecurityConfiguration(
+    private val jwtFilter: JwtFilter
+) {
 
     @Bean
     @Throws(Exception::class)
@@ -24,7 +26,7 @@ class SecurityConfiguration {
         http.csrf { value -> value.disable() }
             .sessionManagement { config -> config.sessionCreationPolicy(SessionCreationPolicy.STATELESS) }
             .addFilterBefore(
-                JWTVerifierFilter(), UsernamePasswordAuthenticationFilter::class.java
+                jwtFilter, UsernamePasswordAuthenticationFilter::class.java
             )
         return http.build()
     }

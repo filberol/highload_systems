@@ -2,10 +2,12 @@ package ru.itmo.department.infra.model
 
 import jakarta.persistence.*
 import org.hibernate.annotations.UuidGenerator
+import org.springframework.data.relational.core.mapping.Table
 import java.time.OffsetDateTime
 import java.util.*
 
 @Entity
+@Table(name = "room_norm")
 class RoomNorm(
     @Id
     @UuidGenerator

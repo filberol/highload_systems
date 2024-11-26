@@ -7,7 +7,10 @@ import org.springframework.data.domain.Pageable
 import org.springframework.data.web.PageableDefault
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.*
+import reactor.core.publisher.Flux
+import reactor.core.publisher.Mono
 import ru.itmo.order.api.dto.OrderResponse
+import ru.itmo.order.clients.dto.CheckInResponse
 import ru.itmo.order.domain.service.OrderService
 import java.time.OffsetDateTime
 import java.util.*
@@ -18,14 +21,17 @@ class OrderController(
 ) {
 
     @PostMapping("/orders")
-    @PreAuthorize("permitAll()")
-    fun create(@RequestParam @Valid departmentId: UUID): OrderResponse {
-        return orderService.create(departmentId)
+    @PreAuthorize("hasAnyAuthority('USER', 'ADMIN')")
+    fun create(
+        @RequestParam @Valid departmentId: UUID,
+        @RequestParam @Valid userId: UUID
+    ): Flux<OrderResponse> {
+        return orderService.create(departmentId, userId)
     }
 
     @PreAuthorize("hasAnyAuthority('MANAGER', 'ADMIN')")
     @PostMapping("/orders/{id}")
-    fun process(@PathVariable @NotNull id: UUID): OrderResponse {
+    fun process(@PathVariable @NotNull id: UUID): Mono<CheckInResponse> {
         return orderService.process(id)
     }
 
@@ -33,13 +39,13 @@ class OrderController(
     @PostMapping("/orders/cancel")
     fun cancel(
         @RequestParam expiredAt: OffsetDateTime
-    ): List<OrderResponse> {
+    ): Mono<List<OrderResponse>> {
         return orderService.cancelExpiredOrders(expiredAt)
     }
 
     @PreAuthorize("hasAnyAuthority('MANAGER', 'ADMIN')")
     @PostMapping("/orders/{id}/cancel")
-    fun cancelById(@PathVariable @NotNull id: UUID): OrderResponse {
+    fun cancelById(@PathVariable @NotNull id: UUID): Flux<OrderResponse> {
         return orderService.cancelById(id)
     }
 
@@ -47,13 +53,13 @@ class OrderController(
     @GetMapping("/orders")
     fun getOrders(
         @PageableDefault(sort = ["id"], size = 50) pageable: Pageable
-    ): Page<OrderResponse> {
+    ): Mono<Page<OrderResponse>> {
         return orderService.findAll(pageable)
     }
 
     @PreAuthorize("hasAnyAuthority('MANAGER', 'ADMIN')")
     @GetMapping("/orders/{id}")
-    fun getOrderById(@PathVariable @NotNull id: UUID): OrderResponse {
+    fun getOrderById(@PathVariable @NotNull id: UUID): Flux<OrderResponse> {
         return orderService.findById(id)
     }
 }

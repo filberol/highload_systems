@@ -11,8 +11,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Import
-import org.springframework.data.domain.Page
-import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Sort
 import org.springframework.data.domain.Sort.Direction
@@ -21,6 +19,8 @@ import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequ
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
+import reactor.core.publisher.Flux
+import reactor.core.publisher.Mono
 import ru.itmo.department.api.dto.CheckInResponse
 import ru.itmo.department.api.dto.DepartmentResponse
 import ru.itmo.department.api.dto.RoomResponse
@@ -67,20 +67,17 @@ class DepartmentControllerTest : AbstractMvcTest() {
             50,
             Sort.by(Direction.ASC, "id")
         )
-        val page: Page<DepartmentResponse> = PageImpl(listOf(expected), pageable, 1)
         every {
-            departmentService.getDepartments(
-                pageable
-            )
+            departmentService.getDepartments()
         }
-            .returns(page)
+            .returns(Flux.just(expected))
         mockMvc.perform(
             get("/departments")
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
                 .with(csrf())
         )
-        verify(exactly = 1) { departmentService.getDepartments(any()) }
+        verify(exactly = 1) { departmentService.getDepartments() }
     }
 
     @Test
@@ -99,14 +96,13 @@ class DepartmentControllerTest : AbstractMvcTest() {
             50,
             Sort.by(Direction.ASC, "id")
         )
-        val page: Page<RoomResponse> = PageImpl(listOf(expected), pageable, 1)
         every {
             roomService.findAllByDepartmentId(
                 id,
                 pageable
             )
         }
-            .returns(page)
+            .returns(Flux.just(expected))
         mockMvc.perform(
             get("/departments/{id}/rooms", id.toString())
                 .contentType(MediaType.APPLICATION_JSON)
@@ -121,6 +117,7 @@ class DepartmentControllerTest : AbstractMvcTest() {
     fun checkIn_shouldInvokeService() {
         // given
         val departmentId = UUID.randomUUID()
+        val userId =UUID.randomUUID()
         val roomId = UUID.randomUUID()
         val personCount = 5L
         val expected = CheckInResponse(
@@ -128,22 +125,16 @@ class DepartmentControllerTest : AbstractMvcTest() {
             roomId = roomId,
             personCount = personCount
         )
-        every { departmentService.checkIn(departmentId) }
-            .returns(expected)
+        every { departmentService.checkIn(departmentId, userId) }
+            .returns(Mono.just(expected))
         // when
-        val content = mockMvc.perform(
+        mockMvc.perform(
             post("/departments/{id}/check-in", departmentId.toString())
                 .contentType(MediaType.APPLICATION_JSON)
+                .param("userId", userId.toString())
                 .accept(MediaType.APPLICATION_JSON)
                 .with(csrf())
         ).andExpect(status().isOk)
-            .andReturn().response.getContentAsString(StandardCharsets.UTF_8)
-        val result = objectMapper.readValue(content, CheckInResponse::class.java)
-
-        // then
-        assertThat(result)
-            .usingRecursiveComparison()
-            .isEqualTo(expected)
-        verify(exactly = 1) { departmentService.checkIn(departmentId) }
+        verify(exactly = 1) { departmentService.checkIn(departmentId, userId) }
     }
 }

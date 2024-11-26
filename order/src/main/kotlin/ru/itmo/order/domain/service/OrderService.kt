@@ -4,12 +4,17 @@ import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import reactor.core.publisher.Flux
+import reactor.core.publisher.Mono
 import ru.itmo.order.api.dto.OrderResponse
+import ru.itmo.order.clients.DepartmentClient
+import ru.itmo.order.clients.UserClient
+import ru.itmo.order.clients.dto.CheckInResponse
+import ru.itmo.order.clients.exception.InternalServerException
 import ru.itmo.order.domain.mapper.OrderApiMapper
 import ru.itmo.order.infra.model.Order
 import ru.itmo.order.infra.model.enums.OrderStatus
 import ru.itmo.order.infra.repository.OrderRepository
-import java.security.InvalidParameterException
 import java.time.OffsetDateTime
 import java.util.*
 
@@ -17,17 +22,33 @@ import java.util.*
 @Transactional(readOnly = true)
 class OrderService(
     private val orderRepository: OrderRepository,
-    private val orderApiMapper: OrderApiMapper
+    private val orderApiMapper: OrderApiMapper,
+    private val userClient: UserClient,
+    private val departmentClient: DepartmentClient
 ) {
 
     @Transactional(readOnly = false)
-    fun create(departmentId: UUID): OrderResponse {
-        val order = orderRepository.save(Order(departmentId = departmentId))
-        return orderApiMapper.toResponse(order)
+    fun create(departmentId: UUID, userId: UUID): Flux<OrderResponse> {
+        return Mono.fromCallable { userClient.getById(userId) }.flatMapMany { response ->
+            if (response.statusCode.is2xxSuccessful) {
+                return@flatMapMany Flux.just(
+                    orderApiMapper.toResponse(
+                        orderRepository.save(
+                            Order(
+                                departmentId = departmentId,
+                                userId = userId
+                            )
+                        )
+                    )
+                )
+            } else {
+                return@flatMapMany Mono.error(NoSuchElementException("User с id: $userId не найден"))
+            }
+        }
     }
 
     @Transactional(readOnly = false)
-    fun process(id: UUID): OrderResponse {
+    fun process(id: UUID): Mono<CheckInResponse> {
         val order = findEntityById(id)
         if (order.status != OrderStatus.NEW) {
             throw IllegalArgumentException(
@@ -36,16 +57,21 @@ class OrderService(
                 )
             )
         }
-        order.status = OrderStatus.DONE
-        order.onSaveHook()
-        val saved = orderRepository.save(order)
-        return orderApiMapper.toResponse(saved)
+        return departmentClient.checkIn(id, order.userId!!)
+            .doOnSuccess {
+                order.status = OrderStatus.DONE
+                order.onSaveHook()
+                orderRepository.save(order)
+            }
+            .doOnError {
+                throw InternalServerException("department not available")
+            }
     }
 
     @Transactional(readOnly = false)
     fun cancelExpiredOrders(
         expiredAt: OffsetDateTime
-    ): List<OrderResponse> {
+    ): Mono<List<OrderResponse>> {
         val orders = orderRepository.findAllByUpdatedAtLessThan(expiredAt)
             .stream()
             .filter { order -> OrderStatus.NEW == order.status }
@@ -53,16 +79,16 @@ class OrderService(
                 order.status = OrderStatus.CANCEL
                 order
             }.toList()
-        return orderRepository.saveAll(orders).map(orderApiMapper::toResponse)
+        return Mono.just(orderRepository.saveAll(orders).map(orderApiMapper::toResponse))
     }
 
     @Transactional(readOnly = false)
-    fun cancelById(id: UUID): OrderResponse {
+    fun cancelById(id: UUID): Flux<OrderResponse> {
         val order = findEntityById(id)
         if (OrderStatus.NEW == order.status) {
             order.status = OrderStatus.CANCEL
             order.onSaveHook()
-            return orderApiMapper.toResponse(orderRepository.save(order))
+            return Flux.just(orderApiMapper.toResponse(orderRepository.save(order)))
         }
         throw IllegalArgumentException(
             "Заявка в статусе %s не может быть отменена".format(
@@ -71,13 +97,13 @@ class OrderService(
         )
     }
 
-    fun findAll(pageable: Pageable): Page<OrderResponse> {
-        return orderRepository.findAll(pageable).map(orderApiMapper::toResponse)
+    fun findAll(pageable: Pageable): Mono<Page<OrderResponse>> {
+        return Mono.from { orderRepository.findAll(pageable).map(orderApiMapper::toResponse) }
     }
 
-    fun findById(id: UUID): OrderResponse {
+    fun findById(id: UUID): Flux<OrderResponse> {
         val order = findEntityById(id)
-        return orderApiMapper.toResponse(order)
+        return Flux.from { orderApiMapper.toResponse(order) }
     }
 
     private fun findEntityById(id: UUID): Order {
