@@ -37,6 +37,11 @@ kotlin {
     }
 }
 
+tasks.jar {
+    manifest.attributes["Main-Class"] = "ru.itmo.gateway.GatewayApplication"
+}
+
+
 tasks {
     val bootJarTask = named("bootJar")
 

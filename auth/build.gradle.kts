@@ -67,6 +67,11 @@ kotlin {
     }
 }
 
+
+tasks.jar {
+    manifest.attributes["Main-Class"] = "ru.itmo.auth.AuthServiceApplication"
+}
+
 tasks.withType<Test> {
     useJUnitPlatform()
 }

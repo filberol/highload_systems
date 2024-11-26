@@ -71,6 +71,10 @@ tasks.withType<Test> {
     useJUnitPlatform()
 }
 
+tasks.jar {
+    manifest.attributes["Main-Class"] = "ru.itmo.oxygen.OxygenServiceApplication"
+}
+
 tasks.jacocoTestReport {
     dependsOn(tasks.test)
     classDirectories.setFrom(

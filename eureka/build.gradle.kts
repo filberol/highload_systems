@@ -40,7 +40,9 @@ kotlin {
         freeCompilerArgs.addAll("-Xjsr305=strict")
     }
 }
-
+tasks.jar {
+    manifest.attributes["Main-Class"] = "ru.itmo.eureka.EurekaApplication"
+}
 tasks.withType<Test> {
     useJUnitPlatform()
 }

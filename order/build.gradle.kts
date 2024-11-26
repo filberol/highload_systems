@@ -91,6 +91,11 @@ tasks.jacocoTestReport {
     }
 }
 
+tasks.jar {
+    manifest.attributes["Main-Class"] = "ru.itmo.order.OrderApplication"
+}
+
+
 tasks {
     val bootJarTask = named("bootJar")
 

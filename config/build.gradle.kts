@@ -36,6 +36,10 @@ kotlin {
     }
 }
 
+tasks.jar {
+    manifest.attributes["Main-Class"] = "ru.itmo.config.ConfigApplication"
+}
+
 tasks {
     val bootJarTask = named("bootJar")
 
