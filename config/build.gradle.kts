@@ -36,9 +36,15 @@ kotlin {
     }
 }
 
-springBoot {
-    mainClass.set("ru.itmo.config.ConfigApplication")
+tasks.withType<Jar>() {
+    manifest {
+        attributes["Main-Class"] = "ru.itmo.config.ConfigApplicationKt"
+    }
+    configurations["compileClasspath"].forEach { file: File ->
+        from(zipTree(file.absoluteFile))
+    }
 }
+
 tasks {
     val bootJarTask = named("bootJar")
 
