@@ -36,6 +36,9 @@ kotlin {
     }
 }
 
+springBoot {
+    mainClass.set("ru.itmo.config.ConfigApplication")
+}
 tasks {
     val bootJarTask = named("bootJar")
 
