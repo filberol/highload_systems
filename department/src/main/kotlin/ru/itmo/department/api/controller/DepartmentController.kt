@@ -32,7 +32,7 @@ class DepartmentController(
     fun checkIn(
         @PathVariable id: UUID,
         @RequestParam userId: UUID
-    ): Flux<CheckInResponse> {
+    ): Mono<CheckInResponse> {
         return departmentService.checkIn(id, userId)
     }
 
