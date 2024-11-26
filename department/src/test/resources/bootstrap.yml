@@ -4,10 +4,9 @@ spring:
       enabled: false
     discovery:
       enabled: false
-  liquibase:
-    enabled: true
-  r2dbc:
-    driver-class-name: org:postgresql:Driver
-    url: jdbc:postgresql://localhost:5432/postgres
-    username: test
-    password: test
+  main:
+    allow-circular-references: true
+
+eureka:
+  client:
+    enabled: false

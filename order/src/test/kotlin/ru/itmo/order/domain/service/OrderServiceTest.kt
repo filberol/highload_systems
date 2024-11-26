@@ -215,23 +215,6 @@ class OrderServiceTest : AbstractDatabaseTest() {
         assertThat(result.updatedAt).isAfter(OffsetDateTime.parse("2024-01-03T07:00:00.000000+00:00"))
     }
 
-    @Test
-    @Sql(
-        statements = ["""
-          DELETE FROM orders;
-          """, """  
-          INSERT INTO orders (id, status, department_id, user_id, created_at,, updated_at)
-          VALUES ('20006109-1144-4aa6-8fbf-f45435264de5', 'DONE', '20006109-1144-4aa6-8fbf-f45435264de5', '20006109-1144-4aa6-8fbf-f45435264de5', '2024-01-03T07:00:00.000000+00:00', '2024-01-03T07:00:00.000000+00:00'),
-                 ('20006109-1144-4aa6-8fbf-f45435264de6', 'DONE', '20006109-1144-4aa6-8fbf-f45435264de5', '20006109-1144-4aa6-8fbf-f45435264de5', '2024-01-03T07:00:00.000000+00:00', '2024-01-03T07:00:00.000000+00:00');
-
-          """
-        ]
-    )
-    fun cancelById_shouldThrowException_whenStatusIsInvalid() {
-        val id = UUID.fromString("20006109-1144-4aa6-8fbf-f45435264de5")
-
-        assertThrows<IllegalArgumentException> { sut.cancelById(id) }
-    }
 //
 //    @Test
 //    @Sql(

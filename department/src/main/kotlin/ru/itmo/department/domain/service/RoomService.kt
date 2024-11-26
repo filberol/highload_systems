@@ -31,12 +31,10 @@ class RoomService(
     fun findByDepartmentIdAndPersonOxygenNorm(
         departmentId: UUID,
         personOxygenNorm: Long
-    ): Flux<Room> {
-        return roomRepository.findRoomByDepartmentIdAndPersonNorm(
+    ): Mono<Room> {
+        return roomRepository.findById(
             departmentId,
-            personOxygenNorm
-        )
-    }
+        ) }
 
     fun supplyOxygen(id: UUID, size: Long): Mono<RoomNormResponse> {
         return roomRepository.findById(id)

@@ -9,7 +9,6 @@ import org.springframework.cloud.openfeign.EnableFeignClients
 @SpringBootApplication
 @EnableFeignClients
 @EnableHystrix
-
 class DepartmentServiceApplication
 
 fun main(args: Array<String>) {
