@@ -27,17 +27,13 @@ dependencies {
 
     // Config server
     implementation("org.springframework.cloud:spring-cloud-config-server:4.1.3")
-    implementation(kotlin("stdlib"))
+    implementation("org.jetbrains.kotlin:kotlin-stdlib:1.9.0")
 }
 
 kotlin {
     compilerOptions {
         freeCompilerArgs.addAll("-Xjsr305=strict")
     }
-}
-
-tasks.jar {
-    manifest.attributes["Main-Class"] = "ru.itmo.config.ConfigApplicationKt"
 }
 
 tasks {
