@@ -26,7 +26,7 @@ class DepartmentService(
     }
 
     @Transactional
-    fun checkIn(id: UUID, userId: UUID): Mono<CheckInResponse> {
+    fun checkIn(id: UUID, userId: UUID): Flux<CheckInResponse> {
         return roomService.findByDepartmentIdAndPersonOxygenNorm(id, 0L)
             .switchIfEmpty(
                 Mono.error(IllegalArgumentException("Сейчас нет свободных департаментов для заселения"))

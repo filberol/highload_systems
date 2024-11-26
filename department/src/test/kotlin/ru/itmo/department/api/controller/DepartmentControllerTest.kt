@@ -126,7 +126,7 @@ class DepartmentControllerTest : AbstractMvcTest() {
             personCount = personCount
         )
         every { departmentService.checkIn(departmentId, userId) }
-            .returns(Mono.just(expected))
+            .returns(Flux.just(expected))
         // when
         mockMvc.perform(
             post("/departments/{id}/check-in", departmentId.toString())

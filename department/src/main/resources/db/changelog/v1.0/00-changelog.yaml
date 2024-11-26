@@ -43,14 +43,3 @@ databaseChangeLog:
         - sqlFile:
             path: 04-department_user-ddl-rollback.sql
             relativeToChangelogFile: true
-  - changeSet:
-      id: v1.0/05-data-dml
-      author: an.i.chernova
-      changes:
-        - sqlFile:
-            path: 05-data-dml.sql
-            relativeToChangelogFile: true
-      rollback:
-        - sqlFile:
-            path: 05-data-dml-rollback.sql
-            relativeToChangelogFile: true
