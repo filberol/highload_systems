@@ -1,12 +1,12 @@
 package ru.itmo.department.domain.service
 
-import org.springframework.data.domain.Page
-import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import ru.itmo.department.config.DepartmentConfig.PERSON_OXYGEN_NORM
+import reactor.core.publisher.Flux
+import reactor.core.publisher.Mono
 import ru.itmo.department.api.dto.CheckInResponse
 import ru.itmo.department.api.dto.DepartmentResponse
+import ru.itmo.department.config.DepartmentConfig.PERSON_OXYGEN_NORM
 import ru.itmo.department.domain.mapper.DepartmentApiMapper
 import ru.itmo.department.infra.repository.DepartmentRepository
 import java.util.*
@@ -14,22 +14,48 @@ import java.util.*
 @Service
 @Transactional(readOnly = true)
 class DepartmentService(
-    private val departmentRepository: DepartmentRepository,
     private val departmentApiMapper: DepartmentApiMapper,
     private val roomService: RoomService,
-    private val roomNormService: RoomNormService
+    private val roomNormService: RoomNormService,
+    private val departmentRepository: DepartmentRepository
 ) {
 
-    fun getDepartments(pageable: Pageable): Page<DepartmentResponse> {
-        return departmentRepository.findAll(pageable).map(departmentApiMapper::toResponse)
+    fun getDepartments(): Flux<DepartmentResponse> {
+        return departmentRepository.findAll()
+            .map(departmentApiMapper::toResponse)
     }
 
-    @Transactional(readOnly = false)
-    fun checkIn(id: UUID): CheckInResponse {
-        val room = roomService.findByDepartmentIdAndPersonOxygenNorm(id, PERSON_OXYGEN_NORM)
-        val roomNorm = room.roomNorm
-        roomNorm?.peopleCount = roomNorm?.peopleCount!! + 1
-        roomNormService.save(roomNorm)
-        return CheckInResponse(id, room.id!!, roomNorm.peopleCount!!)
+    @Transactional
+    fun checkIn(id: UUID, userId: UUID): Flux<CheckInResponse> {
+        return roomService.findByDepartmentIdAndPersonOxygenNorm(id, 0L)
+            .switchIfEmpty(
+                Mono.error(IllegalArgumentException("Сейчас нет свободных департаментов для заселения"))
+            )
+            .flatMap { room ->
+                val roomNorm = room.roomNorm
+                    ?: return@flatMap Mono.error<CheckInResponse>(
+                        IllegalArgumentException("Комната не имеет RoomNorm")
+                    )
+
+                // Увеличиваем количество людей в комнате
+                roomNorm.peopleCount = (roomNorm.peopleCount ?: 0) + 1
+
+                val department = room.department
+                    ?: return@flatMap Mono.error<CheckInResponse>(
+                        IllegalArgumentException("Комната не связана с департаментом")
+                    )
+
+                // Сохраняем изменения в департаменте и RoomNorm
+                departmentRepository.save(department.addUser(userId))
+                    .then(roomNormService.save(roomNorm))
+                    .map {
+                        CheckInResponse(departmentId = id, roomId = room.id!!, personCount = roomNorm.peopleCount!!)
+                    }
+            }
+            .onErrorResume { error ->
+                println(error.message)
+                Mono.error(IllegalArgumentException("Сейчас нет свободных департаментов для заселения"))
+            }
     }
+
 }

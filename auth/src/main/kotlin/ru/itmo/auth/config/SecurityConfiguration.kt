@@ -14,6 +14,8 @@ import org.springframework.security.config.annotation.web.configurers.SessionMan
 import org.springframework.security.config.http.SessionCreationPolicy
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.security.web.SecurityFilterChain
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
+import ru.itmo.auth.config.filter.JwtFilter
 import ru.itmo.auth.domain.service.UserService
 
 
@@ -22,10 +24,10 @@ import ru.itmo.auth.domain.service.UserService
 @EnableMethodSecurity
 class SecurityConfiguration(
     private val passwordEncoder: PasswordEncoder,
-    private val userService: UserService
+    private val userService: UserService,
+    private val jwtFilter: JwtFilter
 ) {
     @Bean
-    @Throws(Exception::class)
     fun filterChain(http: HttpSecurity): SecurityFilterChain {
         http.csrf { obj: CsrfConfigurer<HttpSecurity> -> obj.disable() }
             .sessionManagement { config: SessionManagementConfigurer<HttpSecurity?> ->
@@ -39,6 +41,7 @@ class SecurityConfiguration(
                     .requestMatchers("/auth/**").permitAll()
                     .anyRequest().authenticated()
             }
+            .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter::class.java)
         return http.build()
     }
 

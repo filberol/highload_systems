@@ -5,10 +5,11 @@ import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestControllerAdvice
+import ru.itmo.auth.api.controller.SecurityController
 import ru.itmo.auth.api.controller.UserController
 
 
-@RestControllerAdvice(assignableTypes = [UserController::class])
+@RestControllerAdvice(assignableTypes = [UserController::class, SecurityController::class])
 class ControllerExceptionHandler {
 
     @ExceptionHandler(NoSuchElementException::class)

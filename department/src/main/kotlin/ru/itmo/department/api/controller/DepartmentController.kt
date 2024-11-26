@@ -1,13 +1,15 @@
 package ru.itmo.department.api.controller
 
-import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.web.PageableDefault
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
+import reactor.core.publisher.Flux
+import reactor.core.publisher.Mono
 import ru.itmo.department.api.dto.CheckInResponse
 import ru.itmo.department.api.dto.DepartmentResponse
 import ru.itmo.department.api.dto.RoomResponse
@@ -22,20 +24,16 @@ class DepartmentController(
 ) {
     @PreAuthorize("permitAll()")
     @GetMapping("/departments")
-    fun getDepartments(
-        @PageableDefault(
-            sort = ["id"],
-            size = 50
-        ) pageable: Pageable
-    ): Page<DepartmentResponse> = departmentService.getDepartments(pageable)
+    fun getDepartments(): Flux<DepartmentResponse> = departmentService.getDepartments()
 
 
     @PreAuthorize("hasAnyAuthority('MANAGER', 'ADMIN')")
     @PostMapping("/departments/{id}/check-in")
     fun checkIn(
         @PathVariable id: UUID,
-    ): CheckInResponse {
-        return departmentService.checkIn(id)
+        @RequestParam userId: UUID
+    ): Flux<CheckInResponse> {
+        return departmentService.checkIn(id, userId)
     }
 
     @PreAuthorize("permitAll()")
@@ -43,7 +41,7 @@ class DepartmentController(
     fun getRooms(
         @PathVariable id: UUID,
         @PageableDefault(sort = ["id"], size = 50) pageable: Pageable
-    ): Page<RoomResponse> {
+    ): Flux<RoomResponse> {
         return roomService.findAllByDepartmentId(id, pageable)
     }
 }

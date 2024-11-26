@@ -6,7 +6,8 @@ spring:
       enabled: false
   liquibase:
     enabled: true
-  datasource:
+  r2dbc:
     driver-class-name: org:postgresql:Driver
+    url: jdbc:postgresql://localhost:5432/postgres
     username: test
     password: test

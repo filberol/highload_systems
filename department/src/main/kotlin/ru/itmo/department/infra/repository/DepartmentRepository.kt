@@ -1,9 +1,9 @@
 package ru.itmo.department.infra.repository
 
-import org.springframework.data.jpa.repository.JpaRepository
+import org.springframework.data.repository.reactive.ReactiveCrudRepository
 import org.springframework.stereotype.Repository
 import ru.itmo.department.infra.model.Department
-import java.util.UUID
+import java.util.*
 
 @Repository
-interface DepartmentRepository: JpaRepository<Department, UUID>
+interface DepartmentRepository : ReactiveCrudRepository<Department, UUID>

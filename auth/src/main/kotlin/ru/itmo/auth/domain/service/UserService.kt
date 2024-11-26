@@ -39,7 +39,7 @@ class UserService(
     fun register(request: RegisterRequest): UserResponse {
         findOptionalByLogin(request.login)
             .ifPresent {
-                throw NoSuchElementException(
+                throw IllegalArgumentException(
                     "Пользователь с логином %s уже существует".format(
                         request.login
                     )
@@ -69,6 +69,18 @@ class UserService(
                 throw NoSuchElementException(
                     "Пользователь с логином %s не найден".format(
                         login
+                    )
+                )
+            }
+        return userMapper.toResponse(user)
+    }
+
+    fun findById(id: UUID): UserResponse {
+        val user = userRepository.findById(id)
+            .orElseThrow {
+                throw NoSuchElementException(
+                    "Пользователь с id %s не найден".format(
+                        id
                     )
                 )
             }

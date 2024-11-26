@@ -10,21 +10,23 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.http.SessionCreationPolicy
 import org.springframework.security.web.SecurityFilterChain
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
-import ru.itmo.order.config.filter.JWTVerifierFilter
+import ru.itmo.order.config.filter.JwtFilter
 
 
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
-class SecurityConfiguration {
+class SecurityConfiguration(
+    private val jwtFilter: JwtFilter
+) {
 
     @Bean
     @Throws(Exception::class)
     fun filterChain(http: HttpSecurity): SecurityFilterChain {
-        http.csrf { http -> http.disable() }
+        http.csrf { value -> value.disable() }
             .sessionManagement { config -> config.sessionCreationPolicy(SessionCreationPolicy.STATELESS) }
             .addFilterBefore(
-                JWTVerifierFilter(), UsernamePasswordAuthenticationFilter::class.java
+                jwtFilter, UsernamePasswordAuthenticationFilter::class.java
             )
         return http.build()
     }
@@ -32,6 +34,6 @@ class SecurityConfiguration {
     @Bean
     @Throws(Exception::class)
     fun authenticationManager(config: AuthenticationConfiguration): AuthenticationManager {
-        return config.authenticationManager
+        return config.getAuthenticationManager()
     }
 }

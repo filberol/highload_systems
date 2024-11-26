@@ -24,7 +24,7 @@ class User(
     @PrePersist
     @PreUpdate
     fun onSaveHook() {
-        this.role = UserRole.USER
+        this.role = if (this.role == null) UserRole.USER else this.role
         this.createdAt = if (createdAt == null) OffsetDateTime.now() else createdAt
     }
 }

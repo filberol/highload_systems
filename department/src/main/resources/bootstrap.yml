@@ -1,13 +1,7 @@
-server:
-  port: 8888
-
 spring:
   application:
-    name: configserver
-  cloud:
-    config:
-      server:
-        git:
-          uri: https://github.com/filberol/configs.git
-          default-label: master
-          search-paths: {application}
+    name: department
+  config:
+    import: optional:configserver:http://config:8888
+  main:
+    allow-circular-references: true

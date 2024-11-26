@@ -8,13 +8,14 @@ import org.springframework.http.HttpHeaders
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource
+import org.springframework.stereotype.Component
 import org.springframework.web.filter.OncePerRequestFilter
 import ru.itmo.auth.domain.mapper.UserMapper
 import ru.itmo.auth.domain.service.JwtService
 import ru.itmo.auth.domain.service.UserService
 import java.io.IOException
 
-
+@Component
 class JwtFilter(
     private val jwtService: JwtService,
     private val userService: UserService,

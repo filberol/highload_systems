@@ -32,24 +32,4 @@ class SecurityController(
             .map { response -> ResponseEntity.ok(response) }
             .orElse(ResponseEntity.badRequest().build())
     }
-
-    @GetMapping("/validate")
-    fun validateToken(httpServletRequest: HttpServletRequest): ResponseEntity<ValidateTokenResponse> {
-        val username = httpServletRequest.getAttribute("username") as String
-        if (username.isEmpty()) {
-            return ResponseEntity.ok(ValidateTokenResponse(isAuthenticated = false))
-        } else {
-            val authorities = httpServletRequest.getAttribute("authorities")
-            val userId = httpServletRequest.getAttribute("userId") as UUID
-            return ResponseEntity.ok(
-                ValidateTokenResponse(
-                    userId = userId,
-                    login = username,
-                    authorities = authorities as List<RoleRequestResponse>?,
-                    isAuthenticated = true
-                )
-            )
-        }
-    }
-
 }

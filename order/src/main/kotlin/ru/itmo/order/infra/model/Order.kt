@@ -15,6 +15,7 @@ class Order(
     @Enumerated(EnumType.STRING)
     var status: OrderStatus? = null,
     var departmentId: UUID? = null,
+    var userId: UUID? = null,
     var createdAt: OffsetDateTime? = null,
     var updatedAt: OffsetDateTime? = null
 ) {

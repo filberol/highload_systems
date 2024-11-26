@@ -37,14 +37,14 @@ class RoomNormServiceTest : AbstractDatabaseTest() {
         )
 
         // when
-        val result = sut.save(roomNorm)
+        val result = sut.save(roomNorm).block()!!
 
         // then
         assertThat(result.id).isNotNull
         assertThat(result.updatedAt).isNotNull
         assertThat(result.createdAt).isNotNull
 
-        val saved = roomNormRepository.findById(roomNorm.id!!).orElse(null)
+        val saved = roomNormRepository.findById(roomNorm.id!!).block()!!
         assertThat(saved).isNotNull
         assertThat(saved.room!!.id).isEqualTo(UUID.fromString("20006109-1144-4aa6-8fbf-f45435264de5"))
     }

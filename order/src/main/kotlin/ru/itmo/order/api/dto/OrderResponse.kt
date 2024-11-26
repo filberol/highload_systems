@@ -10,6 +10,7 @@ data class OrderResponse(
     val id: UUID,
     val status: OrderStatusRequestResponse,
     val departmentId: UUID,
+    val userId: UUID,
     val createdAt: OffsetDateTime,
     val updatedAt: OffsetDateTime
 )

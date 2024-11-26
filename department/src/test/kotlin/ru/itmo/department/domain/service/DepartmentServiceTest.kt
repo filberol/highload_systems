@@ -9,7 +9,9 @@ import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Sort
 import org.springframework.data.domain.Sort.Direction
 import org.springframework.test.context.jdbc.Sql
+import reactor.core.publisher.Flux
 import ru.itmo.department.api.dto.CheckInResponse
+import ru.itmo.department.api.dto.DepartmentResponse
 import ru.itmo.department.common.AbstractDatabaseTest
 import ru.itmo.department.infra.model.Department
 import java.time.OffsetDateTime
@@ -30,7 +32,7 @@ class DepartmentServiceTest : AbstractDatabaseTest() {
         ]
     )
     fun getDepartments_shouldInvokeRepository() {
-        val department = Department(
+        val department = DepartmentResponse(
             id = UUID.fromString("20006109-1144-4aa6-8fbf-f45435264de5"),
             name = "department",
             createdAt = OffsetDateTime.parse("2024-01-03T07:00:00.000000+00:00")
@@ -42,7 +44,7 @@ class DepartmentServiceTest : AbstractDatabaseTest() {
         )
 
         // when
-        val result = sut.getDepartments(pageable)
+        val result = sut.getDepartments()
 
         // then
         assertThat(result)
@@ -51,7 +53,7 @@ class DepartmentServiceTest : AbstractDatabaseTest() {
                 OffsetDateTime::class.java
             )
             .usingRecursiveComparison()
-            .isEqualTo(PageImpl(listOf(department), pageable, 1))
+            .isEqualTo(Flux.just(department))
     }
 
     @Test
@@ -70,6 +72,7 @@ class DepartmentServiceTest : AbstractDatabaseTest() {
     )
     fun checkIn_shouldInvokeRepositoryAndReturnResult() {
         val departmentId = UUID.fromString("20006109-1144-4aa6-8fbf-f45435264de5")
+        val  userId = UUID.fromString("20006109-1144-4aa6-8fbf-f45435264de5")
         val expected = CheckInResponse(
             departmentId = departmentId,
             roomId = UUID.fromString("20006109-1144-4aa6-8fbf-f45435264de5"),
@@ -77,11 +80,11 @@ class DepartmentServiceTest : AbstractDatabaseTest() {
         )
 
         // when
-        val result = sut.checkIn(departmentId)
+        val result = sut.checkIn(departmentId, userId)
 
         // then
         assertThat(result)
             .usingRecursiveComparison()
-            .isEqualTo(expected)
+            .isEqualTo(Flux.just(expected))
     }
 }
