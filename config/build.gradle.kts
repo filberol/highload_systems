@@ -37,7 +37,7 @@ kotlin {
 }
 
 tasks.jar {
-    manifest.attributes["Main-Class"] = "ru.itmo.config.ConfigApplication"
+    manifest.attributes["Main-Class"] = "ru.itmo.config.ConfigApplicationKt"
 }
 
 tasks {
