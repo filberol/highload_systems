@@ -5,4 +5,4 @@ spring:
   application:
     name: eureka
   config:
-    import: config:http://localhost:8888
+    import: optional:config:http://localhost:8888
