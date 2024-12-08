@@ -9,7 +9,7 @@ spring:
       server:
         git:
           uri: https://github.com/anekoss/configs.git
-          default-label: master
+          default-label: main
 
 eureka:
   client:
