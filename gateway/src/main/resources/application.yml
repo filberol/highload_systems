@@ -4,31 +4,5 @@ server:
 spring:
   application:
     name: gateway
-  cloud:
-    gateway:
-      discovery:
-        locator:
-          enabled: true
-          lower-case-service-id: true
-      routes:
-        - id: auth
-          uri: http://localhost:8085
-          predicates:
-            - Path=/users/**,/auth/**,/admin/**
-        - id: department
-          uri: http://localhost:8086/
-          predicates:
-            - Path=/departments/**, /rooms/**
-        - id: order
-          uri: http://localhost:8087/
-          predicates:
-            - Path=/orders/**
-        - id: oxygen
-          uri: http://localhost:8096/
-          predicates:
-            - Path=/storages/**, /oxygen-supply/**
-
-eureka:
-  client:
-    serviceUrl:
-      defaultZone: http://localhost:8761/eureka/
+  config:
+    import: optional:config:http://config:8888

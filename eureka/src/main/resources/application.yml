@@ -4,17 +4,5 @@ server:
 spring:
   application:
     name: eureka
-
-eureka:
-  client:
-    register-with-eureka: false
-    fetch-registry: false
-    service-url:
-      defaultZone:
-        - "http://localhost:${server.port}/eureka"
-        -
-management:
-  endpoints:
-    web:
-      exposure:
-        include: '*'
+  config:
+    import: optional:config:http://config:8888
