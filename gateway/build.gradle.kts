@@ -26,10 +26,6 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-actuator:3.4.0")
     implementation("org.springframework.cloud:spring-cloud-starter-netflix-hystrix:2.2.10.RELEASE")
 
-
-    // Eureka
-    implementation("org.springframework.cloud:spring-cloud-starter-netflix-eureka-client:4.1.3")
-
     implementation("org.springframework.cloud:spring-cloud-starter-gateway:4.1.5")
     implementation("org.springframework.cloud:spring-cloud-starter-openfeign:4.1.4")
     implementation(kotlin("stdlib"))
