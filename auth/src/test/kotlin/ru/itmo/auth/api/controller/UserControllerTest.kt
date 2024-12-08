@@ -10,7 +10,7 @@ import org.springframework.security.test.context.support.WithAnonymousUser
 import org.springframework.test.context.jdbc.Sql
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
-import ru.itmo.auth.AuthServiceApplication
+import ru.itmo.auth.AuthApplication
 import ru.itmo.auth.api.dto.*
 import ru.itmo.auth.common.AbstractDatabaseTest
 import ru.itmo.auth.infra.repository.UserRepository
@@ -19,7 +19,7 @@ import java.nio.charset.StandardCharsets
 import java.util.*
 
 @AutoConfigureMockMvc
-@SpringBootTest(classes = [AuthServiceApplication::class])
+@SpringBootTest(classes = [AuthApplication::class])
 @Sql(value = ["classpath:db/users.sql"], executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
 class UserControllerTest : AbstractDatabaseTest() {
 

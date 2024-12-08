@@ -12,5 +12,5 @@ interface OxygenStorageRepository : JpaRepository<OxygenStorage, UUID> {
     @Query("SELECT o FROM OxygenStorage o WHERE (o.size - :size) >= 0")
     fun findByCapacityGreaterThan(
         @Param("size") value: Long
-    ): Optional<OxygenStorage>
+    ): List<OxygenStorage>
 }

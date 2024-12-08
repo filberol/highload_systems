@@ -36,20 +36,6 @@ class UserService(
     }
 
     @Transactional
-    fun register(request: RegisterRequest): UserResponse {
-        findOptionalByLogin(request.login)
-            .ifPresent {
-                throw IllegalArgumentException(
-                    "Пользователь с логином %s уже существует".format(
-                        request.login
-                    )
-                )
-            }
-        val user = userMapper.toEntity(request)
-        return userMapper.toResponse(userRepository.save(user))
-    }
-
-    @Transactional
     fun update(request: UpdateUserRequest): UserResponse {
         val user = findOptionalByLogin(request.login)
             .orElseThrow {
@@ -87,12 +73,11 @@ class UserService(
         return userMapper.toResponse(user)
     }
 
-    @Transactional(readOnly = true)
     private fun findOptionalByLogin(login: String): Optional<User> {
         return userRepository.findByLogin(login)
     }
 
     override fun loadUserByUsername(username: String): UserDetails {
-        return userMapper.toDetails(findByLogin(username))
+        return findOptionalByLogin(username).orElseThrow()
     }
 }

@@ -10,11 +10,15 @@ import java.util.*
 class OxygenSupply(
     @Id @UuidGenerator
     var id: UUID? = null,
+    @Column(name = "size")
     var size: Long? = null,
     @ManyToOne
     var oxygenStorage: OxygenStorage? = null,
+    @Column(name = "department_id")
     var departmentId: UUID? = null,
+    @Column(name = "created_at")
     var createdAt: OffsetDateTime? = null,
+    @Column(name = "updated_at")
     var updatedAt: OffsetDateTime? = null
 ) {
     @PrePersist

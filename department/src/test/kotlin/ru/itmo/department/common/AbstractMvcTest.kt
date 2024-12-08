@@ -5,10 +5,10 @@ import org.springframework.context.annotation.Import
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.MockMvc
 import org.testcontainers.shaded.com.fasterxml.jackson.databind.ObjectMapper
-import ru.itmo.department.DepartmentServiceApplication
+import ru.itmo.department.DepartmentApplication
 
 
-@ContextConfiguration(classes = [DepartmentServiceApplication::class])
+@ContextConfiguration(classes = [DepartmentApplication::class])
 @Import(
     value = [
         ObjectMapper::class

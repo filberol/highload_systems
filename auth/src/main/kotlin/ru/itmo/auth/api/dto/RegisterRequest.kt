@@ -1,20 +1,18 @@
 package ru.itmo.auth.api.dto
 
-import com.fasterxml.jackson.databind.PropertyNamingStrategies
-import com.fasterxml.jackson.databind.annotation.JsonNaming
 import jakarta.validation.constraints.Email
 import jakarta.validation.constraints.NotBlank
 
-@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy::class)
+
 data class RegisterRequest(
-    @NotBlank(message = "name cannot be blank!")
+    @field:NotBlank(message = "Имя не может быть пустым!")
     val name: String,
-    @NotBlank(message = "login cannot be blank!")
-    @Email(
+    @field:NotBlank(message = "Логин не может быть пустым!")
+    @field:Email(
         regexp = "^[a-zA-Z0-9_!#$%&'*+/=?`{|}~^.-]+@[a-zA-Z0-9.-]+$",
-        message = "login must be an email!"
+        message = "Логин должен быть почтой!"
     )
     val login: String,
-    @NotBlank(message = "password cannot be blank!")
+    @field:NotBlank(message = "Пароль не может быть пустым!")
     val password: String
 )

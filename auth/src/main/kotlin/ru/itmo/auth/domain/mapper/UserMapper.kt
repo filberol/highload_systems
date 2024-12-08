@@ -8,7 +8,6 @@ import org.springframework.security.crypto.password.PasswordEncoder
 import ru.itmo.auth.api.dto.CreateUserRequest
 import ru.itmo.auth.api.dto.RegisterRequest
 import ru.itmo.auth.api.dto.UserResponse
-import ru.itmo.auth.infra.auth.UserDetails
 import ru.itmo.auth.infra.model.User
 
 @Mapper(
@@ -38,5 +37,5 @@ abstract class UserMapper {
 
     abstract fun toResponse(entity: User): UserResponse
 
-    abstract fun toDetails(userResponse: UserResponse): UserDetails
+    abstract fun toEntity(response: UserResponse): User
 }

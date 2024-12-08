@@ -34,7 +34,7 @@ class OxygenStorageController(
 
     @PreAuthorize("hasAnyAuthority('ADMIN')")
     @PostMapping("/storages")
-    fun createStorage(@RequestParam @Positive size: Long): OxygenStorageResponse {
+    fun createStorage(@Positive @RequestParam size: Long): OxygenStorageResponse {
         return oxygenStorageService.create(size)
     }
 }

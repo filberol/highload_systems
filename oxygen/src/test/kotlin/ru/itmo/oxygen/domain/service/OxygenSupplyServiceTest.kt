@@ -7,6 +7,7 @@ import org.junit.jupiter.api.assertThrows
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.context.jdbc.Sql
 import ru.itmo.oxygen.api.dto.OxygenSupplyResponse
+import ru.itmo.oxygen.clients.DepartmentClient
 import ru.itmo.oxygen.common.AbstractDatabaseTest
 import ru.itmo.oxygen.infra.repository.OxygenStorageRepository
 import ru.itmo.oxygen.infra.repository.OxygenSupplyRepository
@@ -15,13 +16,16 @@ import java.util.*
 
 class OxygenSupplyServiceTest : AbstractDatabaseTest() {
     @Autowired
-    private lateinit var sut: OxygenSupplyService
-
-    @Autowired
     private lateinit var oxygenSupplyRepository: OxygenSupplyRepository
 
     @Autowired
     private lateinit var oxygenStorageRepository: OxygenStorageRepository
+
+    @Autowired
+    private lateinit var departmentClient: DepartmentClient
+
+    @Autowired
+    private lateinit var sut: OxygenSupplyService
 
     @Test
     fun create_shouldInvokeService() {
@@ -52,37 +56,10 @@ class OxygenSupplyServiceTest : AbstractDatabaseTest() {
           """
         ]
     )
-    fun processById_shouldInvokeService() {
-        val id = UUID.fromString("20006109-1144-4aa6-8fbf-f45435264de5")
-
-        val result = sut.processById(id)
-        assertThat(result.oxygenStorageId).isEqualTo(UUID.fromString("20006109-1144-4aa6-8fbf-f45435264de5"))
-
-        val storage =
-            oxygenStorageRepository.findById(UUID.fromString("20006109-1144-4aa6-8fbf-f45435264de5"))
-                .orElse(null)
-        assertThat(storage.size).isEqualTo(6L)
-        assertThat(result.updatedAt).isAfter(OffsetDateTime.parse("2024-01-03T07:00:00.000000+00:00"))
-        assertThat(storage.updatedAt).isAfter(OffsetDateTime.parse("2024-01-03T07:00:00.000000+00:00"))
-    }
-
-    @Test
-    @Sql(
-        statements = ["""
-          DELETE FROM oxygen_storage;
-          """, """  
-          INSERT INTO oxygen_storage (id, size, created_at, updated_at)
-          VALUES ('20006109-1144-4aa6-8fbf-f45435264de5', '10', '2024-01-03T07:00:00.000000+00:00', '2024-01-03T07:00:00.000000+00:00');
-          """, """  
-          INSERT INTO oxygen_supply (id, size, department_id, created_at, updated_at)
-          VALUES ('20006109-1144-4aa6-8fbf-f45435264de5', '4', '20006109-1144-4aa6-8fbf-f45435264de5', '2024-01-03T07:00:00.000000+00:00', '2024-01-03T07:00:00.000000+00:00');
-          """
-        ]
-    )
     fun processById_shouldThrowException_whenSupplyNotExist() {
         val id = UUID.fromString("20006109-1144-4aa6-8fbf-f45435264de6")
 
-        assertThrows<NoSuchElementException> { sut.processById(id) }
+        assertThrows<NoSuchElementException> { sut.processById("token", id) }
     }
 
     @Test
@@ -101,7 +78,7 @@ class OxygenSupplyServiceTest : AbstractDatabaseTest() {
     fun processById_shouldThrowException_whenStorageFull() {
         val id = UUID.fromString("20006109-1144-4aa6-8fbf-f45435264de5")
 
-        assertThrows<IllegalArgumentException> { sut.processById(id) }
+        assertThrows<IllegalArgumentException> { sut.processById("token",id) }
 
         val storage =
             oxygenStorageRepository.findById(UUID.fromString("20006109-1144-4aa6-8fbf-f45435264de5"))

@@ -162,7 +162,7 @@ class OxygenSupplyControllerTest : AbstractMvcTest() {
             createdAt = OffsetDateTime.now(),
             updatedAt = OffsetDateTime.now()
         )
-        every { oxygenSupplyService.processById(UUID.fromString(id)) }
+        every { oxygenSupplyService.processById(any(), UUID.fromString(id)) }
             .returns(expected)
 
         // when
@@ -170,6 +170,7 @@ class OxygenSupplyControllerTest : AbstractMvcTest() {
             post("/oxygen-supply/{id}", id)
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
+                .header("Authorization", "Authorization")
                 .with(csrf())
         ).andExpect(status().isOk)
             .andReturn().response.getContentAsString(StandardCharsets.UTF_8)
@@ -180,6 +181,6 @@ class OxygenSupplyControllerTest : AbstractMvcTest() {
         )
             .usingRecursiveComparison()
             .isEqualTo(expected)
-        verify(exactly = 1) { oxygenSupplyService.processById(UUID.fromString(id)) }
+        verify(exactly = 1) { oxygenSupplyService.processById(any(), UUID.fromString(id)) }
     }
 }

@@ -4,10 +4,10 @@ import jakarta.validation.constraints.Email
 import jakarta.validation.constraints.NotBlank
 
 data class UpdateUserRequest(
-    @NotBlank(message = "login cannot be blank!")
-    @Email(
+    @field:NotBlank(message = "Имя не может быть пустым!")
+    @field:Email(
         regexp = "^[a-zA-Z0-9_!#$%&'*+/=?`{|}~^.-]+@[a-zA-Z0-9.-]+$",
-        message = "login must be an email!"
+        message = "Логин должен быть почтой!"
     )
     val login: String,
     val role: RoleRequestResponse

@@ -1,11 +1,7 @@
 package ru.itmo.department.domain.service
 
-import org.assertj.core.api.Assertions.assertThat
-import org.assertj.core.internal.OffsetDateTimeByInstantComparator
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertThrows
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Sort
 import org.springframework.data.domain.Sort.Direction
@@ -14,8 +10,6 @@ import reactor.test.expectError
 import ru.itmo.department.api.dto.RoomNormResponse
 import ru.itmo.department.api.dto.RoomResponse
 import ru.itmo.department.common.AbstractDatabaseTest
-import ru.itmo.department.infra.model.Department
-import ru.itmo.department.infra.model.Room
 import java.time.OffsetDateTime
 import java.util.*
 
@@ -31,22 +25,17 @@ class RoomServiceTest : AbstractDatabaseTest() {
             id = roomId,
             departmentId = UUID.fromString("20006109-1144-4aa6-8fbf-f45435264de5"),
             capacity = 40L,
-            createdAt = OffsetDateTime.parse("2024-01-03T07:00:00.000000+00:00"),
-            updatedAt = OffsetDateTime.parse("2024-01-03T07:00:00.000000+00:00")
+            createdAt = OffsetDateTime.parse("2024-01-03T10:00+03:00"),
+            updatedAt = OffsetDateTime.parse("2024-01-03T10:00+03:00")
         )
 
         // when
         val result = sut.findById(roomId)
 
         // then
-        StepVerifier.create(result).expectNextCount(1)
-//        assertThat(result)
-//            .usingComparatorForType(
-//                OffsetDateTimeByInstantComparator.getInstance(),
-//                OffsetDateTime::class.java
-//            )
-//            .usingRecursiveComparison()
-//            .isEqualTo(expected)
+        StepVerifier.create(result)
+            .expectNext(expected)
+            .verifyComplete()
     }
 
     @Test
@@ -55,8 +44,9 @@ class RoomServiceTest : AbstractDatabaseTest() {
 
         // when & then
         val result = sut.findById(id)
-        StepVerifier.create(result).expectError(NoSuchElementException::class)
-
+        StepVerifier.create(result)
+            .expectError(NoSuchElementException::class)
+            .verify()
     }
 
 
@@ -68,56 +58,37 @@ class RoomServiceTest : AbstractDatabaseTest() {
             peopleCount = 1L,
             balanceOxygen = 10L,
             avgPersonNorm = 30 / 1,
-            createdAt = OffsetDateTime.parse("2024-01-03T07:00:00.000000+00:00"),
-            updatedAt = OffsetDateTime.parse("2024-01-03T07:00:00.000000+00:00")
+            createdAt = OffsetDateTime.parse("2024-01-03T10:00+03:00"),
+            updatedAt = OffsetDateTime.parse("2024-01-03T10:00+03:00")
         )
 
         // when
         val result = sut.findWithNormById(roomId)
 
-        StepVerifier.create(result).expectNextCount(1)
-
-        // then
-//        assertThat(result)
-//            .usingComparatorForType(
-//                OffsetDateTimeByInstantComparator.getInstance(),
-//                OffsetDateTime::class.java
-//            )
-//            .usingRecursiveComparison()
-//            .isEqualTo(expected)
+        StepVerifier.create(result)
+            .expectNext(expected)
+            .verifyComplete()
     }
 
     @Test
-    fun findByDepartmentIdAndPersonOxygenNorm_shouldInvokeRepository() {
+    fun checkIn_shouldInvokeRepository() {
         val departmentId = UUID.fromString("20006109-1144-4aa6-8fbf-f45435264de5")
         val personOxygenNorm = 10L
-        val department = Department(
+        val expected = RoomNormResponse(
             id = departmentId,
-            name = "department",
-            createdAt = OffsetDateTime.parse("2024-01-03T07:00:00.000000+00:00")
-        )
-        val room = Room(
-            id = UUID.fromString("20006109-1144-4aa6-8fbf-f45435264de5"),
-            department = department,
-            capacity = 40L,
-            createdAt = OffsetDateTime.parse("2024-01-03T07:00:00.000000+00:00"),
-            updatedAt = OffsetDateTime.parse("2024-01-03T07:00:00.000000+00:00")
+            peopleCount = 2L,
+            balanceOxygen = 10L,
+            avgPersonNorm = 15L,
+            createdAt = OffsetDateTime.parse("2024-01-03T10:00+03:00"),
+            updatedAt = OffsetDateTime.parse("2024-01-03T10:00+03:00")
         )
 
         // when
-        val result = sut.findByDepartmentIdAndPersonOxygenNorm(departmentId, personOxygenNorm)
+        val result = sut.checkIn(departmentId, personOxygenNorm)
 
-        StepVerifier.create(result).expectNextCount(1)
-
-        // then
-//        assertThat(result)
-//            .usingComparatorForType(
-//                OffsetDateTimeByInstantComparator.getInstance(),
-//                OffsetDateTime::class.java
-//            )
-//            .usingRecursiveComparison()
-//            .ignoringFields("roomNorm", "department.rooms")
-//            .isEqualTo(room)
+        StepVerifier.create(result)
+            .expectNext(expected)
+            .verifyComplete()
     }
 
     @Test
@@ -127,31 +98,17 @@ class RoomServiceTest : AbstractDatabaseTest() {
         val personOxygenNorm = 10L
 
         // when & then
-
-        val result = sut.findByDepartmentIdAndPersonOxygenNorm(
+        val result = sut.checkIn(
             departmentId,
             personOxygenNorm
         )
-
         StepVerifier.create(result).expectError(IllegalArgumentException::class)
-
+            .verify()
     }
 
     @Test
     fun findAllByDepartmentId_shouldInvokeService() {
         val departmentId = UUID.fromString("20006109-1144-4aa6-8fbf-f45435264de5")
-        val department = Department(
-            id = departmentId,
-            name = "department",
-            createdAt = OffsetDateTime.parse("2024-01-03T07:00:00.000000+00:00")
-        )
-        val room = Room(
-            id = UUID.fromString("20006109-1144-4aa6-8fbf-f45435264de5"),
-            department = department,
-            capacity = 40L,
-            createdAt = OffsetDateTime.parse("2024-01-03T07:00:00.000000+00:00"),
-            updatedAt = OffsetDateTime.parse("2024-01-03T07:00:00.000000+00:00")
-        )
         val pageable = PageRequest.of(
             0,
             50,
@@ -160,61 +117,36 @@ class RoomServiceTest : AbstractDatabaseTest() {
 
         val expected = RoomResponse(
             id = UUID.fromString("20006109-1144-4aa6-8fbf-f45435264de5"),
-            departmentId = department.id!!,
-            capacity = room.capacity,
-            createdAt = room.createdAt,
-            updatedAt = room.updatedAt
+            departmentId = departmentId,
+            capacity = 40L,
+            createdAt = OffsetDateTime.parse("2024-01-03T10:00+03:00"),
+            updatedAt = OffsetDateTime.parse("2024-01-03T10:00+03:00"),
         )
         val result = sut.findAllByDepartmentId(departmentId, pageable)
-        StepVerifier.create(result).expectNextCount(1)
-
-//        assertThat(result)
-//            .usingComparatorForType(
-//                OffsetDateTimeByInstantComparator.getInstance(),
-//                OffsetDateTime::class.java
-//            )
-//            .usingRecursiveComparison()
-//            .isEqualTo(PageImpl(listOf(expected), pageable, 1))
+        StepVerifier.create(result)
+            .expectNext(expected)
+            .verifyComplete()
     }
 
     @Test
     fun supplyOxygen_shouldInvokeService() {
         val departmentId = UUID.fromString("20006109-1144-4aa6-8fbf-f45435264de5")
-        val department = Department(
-            id = departmentId,
-            name = "department",
-            createdAt = OffsetDateTime.parse("2024-01-03T07:00:00.000000+00:00")
-        )
-        val room = Room(
-            id = UUID.fromString("20006109-1144-4aa6-8fbf-f45435264de5"),
-            department = department,
-            capacity = 40L,
-            createdAt = OffsetDateTime.parse("2024-01-03T07:00:00.000000+00:00"),
-            updatedAt = OffsetDateTime.parse("2024-01-03T07:00:00.000000+00:00")
-        )
 
         val expected = RoomNormResponse(
-            id = room.id,
+            id = UUID.fromString("20006109-1144-4aa6-8fbf-f45435264de5"),
             peopleCount = 1L,
             balanceOxygen = 2L,
             avgPersonNorm = 38L,
-            createdAt = room.createdAt,
-            updatedAt = room.updatedAt
+            createdAt = OffsetDateTime.parse("2024-01-03T10:00+03:00"),
+            updatedAt = OffsetDateTime.parse("2024-01-03T10:00+03:00")
         )
 
         // when
-        val result = sut.supplyOxygen(room.id!!, 8L)
+        val result = sut.supplyOxygen(departmentId, 8L)
 
-        StepVerifier.create(result).expectNextCount(1)
-
-        // then
-//        assertThat(result)
-//            .usingComparatorForType(
-//                OffsetDateTimeByInstantComparator.getInstance(),
-//                OffsetDateTime::class.java
-//            )
-//            .usingRecursiveComparison()
-//            .isEqualTo(expected)
+        StepVerifier.create(result)
+            .expectNext(expected)
+            .verifyComplete()
     }
 
 
@@ -224,7 +156,8 @@ class RoomServiceTest : AbstractDatabaseTest() {
 
         // when & then
         val result = sut.supplyOxygen(roomId, 11L)
-        StepVerifier.create(result).expectError(IllegalArgumentException::class)
-
+        StepVerifier.create(result)
+            .expectError(IllegalArgumentException::class)
+            .verify()
     }
 }

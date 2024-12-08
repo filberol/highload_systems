@@ -1,23 +1,12 @@
 databaseChangeLog:
   - changeSet:
-      id: v1.0/01-role-ddl
+      id: v1.0/01-users-ddl
       author: an.i.chernova
       changes:
         - sqlFile:
-            path: 01-role-ddl.sql
+            path: 01-users-ddl.sql
             relativeToChangelogFile: true
       rollback:
         - sqlFile:
-            path: 01-role-ddl-rollback.sql
-            relativeToChangelogFile: true
-  - changeSet:
-      id: v1.0/02-users-ddl
-      author: an.i.chernova
-      changes:
-        - sqlFile:
-            path: 02-users-ddl.sql
-            relativeToChangelogFile: true
-      rollback:
-        - sqlFile:
-            path: 02-users-ddl-rollback.sql
+            path: 01-users-ddl-rollback.sql
             relativeToChangelogFile: true

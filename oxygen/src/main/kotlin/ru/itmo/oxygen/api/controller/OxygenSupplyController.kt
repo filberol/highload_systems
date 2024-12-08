@@ -4,11 +4,11 @@ import jakarta.validation.constraints.Positive
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.web.PageableDefault
+import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.*
 import ru.itmo.oxygen.api.dto.OxygenSupplyResponse
 import ru.itmo.oxygen.domain.service.OxygenSupplyService
 import java.util.*
-import org.springframework.security.access.prepost.PreAuthorize
 
 @RestController
 class OxygenSupplyController(
@@ -26,8 +26,11 @@ class OxygenSupplyController(
 
     @PreAuthorize("hasAnyAuthority('SUPPLIER', 'ADMIN')")
     @PostMapping("/oxygen-supply/{id}")
-    fun process(@PathVariable id: UUID): OxygenSupplyResponse {
-        return oxygenSupplyService.processById(id)
+    fun process(
+        @RequestHeader("Authorization") token: String,
+        @PathVariable id: UUID
+    ): OxygenSupplyResponse {
+        return oxygenSupplyService.processById(token, id)
     }
 
     @PreAuthorize("hasAnyAuthority('MANAGER', 'SUPPLIER', 'ADMIN')")

@@ -5,10 +5,10 @@ import org.springframework.context.annotation.Import
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.MockMvc
 import org.testcontainers.shaded.com.fasterxml.jackson.databind.ObjectMapper
-import ru.itmo.oxygen.OxygenServiceApplication
+import ru.itmo.oxygen.OxygenApplication
 
 
-@ContextConfiguration(classes = [OxygenServiceApplication::class])
+@ContextConfiguration(classes = [OxygenApplication::class])
 @Import(
     value = [
         ObjectMapper::class

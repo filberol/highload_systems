@@ -27,8 +27,10 @@ class OxygenStorageService(
         return oxygenStorageApiMapper.toDto(oxygenStorage)
     }
 
+    @Transactional
     fun create(size: Long): OxygenStorageResponse {
         val storage = OxygenStorage(size = size)
-        return oxygenStorageApiMapper.toDto(oxygenStorageRepository.save(storage))
+        val saved = oxygenStorageRepository.save(storage)
+        return oxygenStorageApiMapper.toDto(saved)
     }
 }

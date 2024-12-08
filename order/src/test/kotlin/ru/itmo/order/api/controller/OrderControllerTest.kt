@@ -83,17 +83,18 @@ class OrderControllerTest : AbstractMvcTest() {
             roomId = UUID.randomUUID()
         )
 
-        every { orderService.process(id) }.returns(Mono.just(expected))
+        every { orderService.process(id, any()) }.returns(Mono.just(expected))
 
         // when
         mockMvc.perform(
             post("/orders/{id}", id.toString())
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
+                .header("Authorization", "Authorization")
                 .with(csrf())
         ).andExpect(status().isOk)
 
-        verify(exactly = 1) { orderService.process(id) }
+        verify(exactly = 1) { orderService.process(id, any()) }
     }
 
     @Test
@@ -111,7 +112,7 @@ class OrderControllerTest : AbstractMvcTest() {
             updatedAt = OffsetDateTime.now()
         )
         every { orderService.cancelExpiredOrders(expiredAt) }
-            .returns(Mono.just(listOf(expected)))
+            .returns(Flux.fromIterable((listOf(expected))))
 
         // when
         mockMvc.perform(
@@ -137,7 +138,7 @@ class OrderControllerTest : AbstractMvcTest() {
             createdAt = OffsetDateTime.now(),
             updatedAt = OffsetDateTime.now()
         )
-        every { orderService.cancelById(id) }.returns(Flux.just(expected))
+        every { orderService.cancelById(id) }.returns(Mono.just(expected))
         // when
         mockMvc.perform(
             post("/orders/{id}/cancel", id.toString())
@@ -172,7 +173,7 @@ class OrderControllerTest : AbstractMvcTest() {
                 pageable
             )
         }
-            .returns(Mono.just(page))
+            .returns(Flux.just(page))
 
         // when
         mockMvc.perform(
@@ -197,7 +198,7 @@ class OrderControllerTest : AbstractMvcTest() {
             createdAt = OffsetDateTime.now(),
             updatedAt = OffsetDateTime.now()
         )
-        every { orderService.findById(id) }.returns(Flux.just(expected))
+        every { orderService.findById(id) }.returns(Mono.just(expected))
         // when
         mockMvc.perform(
             get("/orders/{id}", id.toString())

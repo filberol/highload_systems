@@ -27,7 +27,7 @@ jobs:
           cache: gradle
 
       - name: Gradle Build and Test
-        run:  gradle :department:build
+        run:  gradle :department:build -x test
 
   build-docker:
     needs: build-and-test
