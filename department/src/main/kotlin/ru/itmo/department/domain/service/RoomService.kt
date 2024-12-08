@@ -14,13 +14,13 @@ import ru.itmo.department.infra.repository.RoomRepository
 import java.util.*
 
 @Service
-@Transactional(readOnly = true)
 class RoomService(
     private val roomRepository: RoomRepository,
     private val roomNormRepository: RoomNormRepository,
     private val roomApiMapper: RoomApiMapper
 ) {
 
+    @Transactional(readOnly = true)
     fun findById(id: UUID): Mono<RoomResponse> {
         return roomRepository.findById(id)
             .switchIfEmpty(Mono.error(NoSuchElementException("Комната с id %s не найдена")))
@@ -36,8 +36,8 @@ class RoomService(
             .publishOn(Schedulers.boundedElastic())
             .map { room ->
                 val roomNorm = roomNormRepository.findByRoomId(room.id!!).block()
-                roomNorm!!.peopleCount += 1 // Increment people count
-                roomNormRepository.save(roomNorm!!)
+                roomNorm!!.peopleCount = roomNorm.peopleCount+1
+                roomNormRepository.save(roomNorm).block()
                 roomApiMapper.toResponse(room, roomNorm)
             }
     }
@@ -50,11 +50,12 @@ class RoomService(
             .map { room ->
                 val roomNorm = roomNormRepository.findByRoomId(room!!.id!!).block()
                 roomNorm!!.size = roomNorm.size + size
-                roomNormRepository.save(roomNorm)
+                roomNormRepository.save(roomNorm).block()
                 roomApiMapper.toResponse(room, roomNorm)
             }
     }
 
+    @Transactional(readOnly = true)
     fun findWithNormById(id: UUID): Mono<RoomNormResponse> {
         return roomRepository.findById(id)
             .flatMap { room ->
@@ -65,6 +66,7 @@ class RoomService(
             }
     }
 
+    @Transactional(readOnly = true)
     fun findAllByDepartmentId(departmentId: UUID, pageable: Pageable): Flux<RoomResponse> {
         return roomRepository.findByDepartmentId(departmentId, pageable)
             .map(roomApiMapper::toResponse)
