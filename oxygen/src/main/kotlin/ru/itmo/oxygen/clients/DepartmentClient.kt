@@ -12,7 +12,7 @@ import java.util.*
 
 @FeignClient(
     name = "department",
-    url = "gateway:8080",
+    url = "localhost:8080",
     fallback = DepartmentClient.DepartmentClientFallback::class
 )
 interface DepartmentClient {

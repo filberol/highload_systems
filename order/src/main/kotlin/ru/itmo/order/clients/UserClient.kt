@@ -8,7 +8,7 @@ import ru.itmo.order.clients.dto.UserResponse
 import ru.itmo.order.clients.exception.InternalServerException
 import java.util.*
 
-@FeignClient(name = "auth", url = "gateway:8080", fallback = UserClient.UserClientFallback::class)
+@FeignClient(name = "auth", url = "localhost:8080", fallback = UserClient.UserClientFallback::class)
 interface UserClient {
 
     @GetMapping("users/id/{id}")

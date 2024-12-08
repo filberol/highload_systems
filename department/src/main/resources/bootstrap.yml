@@ -5,4 +5,4 @@ spring:
   application:
     name: department
   config:
-    import: optional:config:http://config:8888
+    import: config:http://localhost:8888
