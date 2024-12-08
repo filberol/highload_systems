@@ -1,5 +1,40 @@
+server:
+  port: 8085
+
 spring:
   application:
     name: auth
-  config:
-    import: optional:configserver:http://config:8888
+  datasource:
+    url: jdbc:postgresql://localhost:5432/postgres
+    username: postgres
+    password: postgres
+    driverClassName: org.postgresql.Driver
+  liquibase:
+    enabled: true
+    drop-first: false
+    change-log: classpath:db/changelog/db.changelog-master.yaml
+  jpa:
+    show-sql: true
+    open-in-view: false
+    hibernate:
+      ddl-auto: none
+  jackson:
+    property-naming-strategy: SNAKE_CASE
+  main:
+    allow-circular-references: true
+  cloud:
+    openfeign:
+      circuitbreaker:
+        enabled: true
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/
+    enabled: true
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: refresh

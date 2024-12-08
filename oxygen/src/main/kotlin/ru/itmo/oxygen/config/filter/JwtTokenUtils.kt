@@ -6,12 +6,15 @@ import io.jsonwebtoken.SignatureAlgorithm
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.userdetails.UserDetails
+import org.springframework.stereotype.Service
 import java.util.*
 
+@Suppress("DEPRECATION")
+@Service
 class JwtTokenUtils {
 
-    @Value("\${token.secret.key:eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQSflKxwRJSMeKKF2QT4fwpMeJf36POk6yJVadQssw5c}")
-    private lateinit var jwtSecret: String
+    private var jwtSecret =
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQSflKxwRJSMeKKF2QT4fwpMeJf36POk6yJVadQssw5c";
 
     @Value("\${token.secret.expiration:1000000}")
     private var jwtExpirationMs: Long? = null

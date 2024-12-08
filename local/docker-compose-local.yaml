@@ -32,7 +32,6 @@ services:
     ports:
       - "8086:8086"
     depends_on:
-      - config
       - postgres
     networks:
       - app-network

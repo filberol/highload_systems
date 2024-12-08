@@ -19,6 +19,8 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
+    implementation("org.springframework.boot:spring-boot-starter-actuator:3.4.0")
+
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 
@@ -33,33 +35,5 @@ dependencies {
 kotlin {
     compilerOptions {
         freeCompilerArgs.addAll("-Xjsr305=strict")
-    }
-}
-
-tasks.withType<Jar>() {
-    manifest {
-        attributes["Main-Class"] = "ru.itmo.config.ConfigApplicationKt"
-    }
-    configurations["compileClasspath"].forEach { file: File ->
-        from(zipTree(file.absoluteFile))
-    }
-}
-
-tasks {
-    val bootJarTask = named("bootJar")
-
-    val buildDockerImage by creating(Exec::class) {
-        group = "docker"
-        description = "Build Docker image for the Spring Boot application"
-
-        dependsOn(bootJarTask)
-
-        val projectName = project.name
-
-        commandLine("docker", "build",
-            "-t", "config:local",
-            "--build-arg", "JAR_FILE=$projectName.jar",
-            ".")
-
     }
 }

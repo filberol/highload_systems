@@ -1,7 +1,6 @@
 package ru.itmo.auth.config.filter
 
 import jakarta.servlet.FilterChain
-import jakarta.servlet.ServletException
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import org.springframework.http.HttpHeaders
@@ -13,7 +12,6 @@ import org.springframework.web.filter.OncePerRequestFilter
 import ru.itmo.auth.domain.mapper.UserMapper
 import ru.itmo.auth.domain.service.JwtService
 import ru.itmo.auth.domain.service.UserService
-import java.io.IOException
 
 @Component
 class JwtFilter(
@@ -21,23 +19,21 @@ class JwtFilter(
     private val userService: UserService,
     private val userMapper: UserMapper
 ) : OncePerRequestFilter() {
-    private val BEARER = "Bearer"
+    private val bearer = "Bearer"
 
-    @Throws(ServletException::class, IOException::class)
     override fun doFilterInternal(
         request: HttpServletRequest,
         response: HttpServletResponse,
         filterChain: FilterChain
     ) {
         val authHeader = request.getHeader(HttpHeaders.AUTHORIZATION)
-        if (authHeader == null || !authHeader.startsWith(BEARER)) {
+        if (authHeader == null || !authHeader.startsWith(bearer)) {
             filterChain.doFilter(request, response)
             return
         }
-        val jwt = authHeader.substring(BEARER.length + 1)
+        val jwt = authHeader.substring(bearer.length + 1)
         val login: String = jwtService.extractLogin(jwt)
-        val user = userService.findByLogin(login)
-        val userDetails = userMapper.toDetails(user)
+        val userDetails = userMapper.toEntity(userService.findByLogin(login))
         if (jwtService.isTokenValid(jwt, userDetails)) {
             val authToken = UsernamePasswordAuthenticationToken(
                 userDetails,
@@ -47,7 +43,7 @@ class JwtFilter(
             authToken.details =
                 WebAuthenticationDetailsSource().buildDetails(request) // session and ip
             SecurityContextHolder.getContext().authentication = authToken
-            request.setAttribute("userId", user.id)
+            request.setAttribute("userId", userDetails.id)
             request.setAttribute("username", userDetails.username)
             request.setAttribute("authorities", userDetails.authorities)
         }

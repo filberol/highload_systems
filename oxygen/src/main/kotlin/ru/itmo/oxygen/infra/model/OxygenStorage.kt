@@ -11,8 +11,11 @@ class OxygenStorage(
     @Id
     @UuidGenerator
     var id: UUID? = null,
+    @Column(name = "size")
     var size: Long? = null,
+    @Column(name = "created_at")
     var createdAt: OffsetDateTime? = null,
+    @Column(name = "updated_at")
     var updatedAt: OffsetDateTime? = null
 ) {
 

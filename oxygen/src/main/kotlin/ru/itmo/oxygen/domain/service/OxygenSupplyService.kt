@@ -5,6 +5,7 @@ import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import ru.itmo.oxygen.api.dto.OxygenSupplyResponse
+import ru.itmo.oxygen.clients.DepartmentClient
 import ru.itmo.oxygen.domain.mapper.OxygenSupplyApiMapper
 import ru.itmo.oxygen.infra.model.OxygenSupply
 import ru.itmo.oxygen.infra.repository.OxygenStorageRepository
@@ -16,7 +17,8 @@ import java.util.*
 class OxygenSupplyService(
     private val oxygenSupplyRepository: OxygenSupplyRepository,
     private val oxygenStorageRepository: OxygenStorageRepository,
-    private val oxygenSupplyApiMapper: OxygenSupplyApiMapper
+    private val oxygenSupplyApiMapper: OxygenSupplyApiMapper,
+    private val departmentClient: DepartmentClient
 ) {
 
     @Transactional
@@ -29,21 +31,24 @@ class OxygenSupplyService(
     }
 
     @Transactional
-    fun processById(id: UUID): OxygenSupplyResponse {
+    fun processById(token: String, id: UUID): OxygenSupplyResponse {
         val supply = findEntityById(id)
-        val storage = oxygenStorageRepository.findByCapacityGreaterThan(supply.size!!)
-            .orElseThrow {
-                IllegalArgumentException(
-                    "Нет доступного воздуха размера: %s для перевозки в департамент с id: %".format(
-                        supply.departmentId,
-                        supply.size
-                    )
+        val storages = oxygenStorageRepository.findByCapacityGreaterThan(supply.size!!)
+        if (storages.isEmpty()) {
+            throw IllegalArgumentException(
+                "Нет доступного воздуха размера: %s для перевозки в департамент с id: %".format(
+                    supply.departmentId,
+                    supply.size
                 )
-            }
+            )
+        }
+        val response = departmentClient.supplyOxygen(token, supply.departmentId!!, supply.size!!)
+        if (!response.statusCode.is2xxSuccessful || response.body == null) {
+            throw IllegalArgumentException("Поставка воздуха не доступна")
+        }
+        val storage = storages.first()
         storage.size = storage.size?.minus(supply.size!!)
-        storage.onSaveHook()
         supply.oxygenStorage = storage
-        supply.onSaveHook()
         oxygenStorageRepository.save(storage)
         return oxygenSupplyApiMapper.toDto(oxygenSupplyRepository.save(supply))
     }

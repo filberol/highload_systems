@@ -4,16 +4,15 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.context.annotation.Import
 import org.springframework.test.context.ContextConfiguration
-import org.springframework.test.context.jdbc.Sql
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.transaction.annotation.Transactional
 import org.testcontainers.shaded.com.fasterxml.jackson.databind.ObjectMapper
-import ru.itmo.auth.AuthServiceApplication
+import ru.itmo.auth.AuthApplication
 import ru.itmo.auth.common.config.TestContainersConfiguration
 
 @Transactional
-@ContextConfiguration(classes = [AuthServiceApplication::class])
-@SpringBootTest(classes = [AuthServiceApplication::class])
+@ContextConfiguration(classes = [AuthApplication::class])
+@SpringBootTest(classes = [AuthApplication::class])
 @Import(
     value = [
         ObjectMapper::class,

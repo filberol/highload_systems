@@ -30,6 +30,7 @@ dependencies {
     implementation("io.jsonwebtoken:jjwt-api:0.12.5")
     runtimeOnly("io.jsonwebtoken:jjwt-impl:0.12.5")
     runtimeOnly("io.jsonwebtoken:jjwt-jackson:0.12.5")
+    implementation("org.springframework.boot:spring-boot-starter-actuator:3.4.0")
 
     // Libs
     implementation("org.jetbrains.kotlin:kotlin-reflect")
@@ -51,6 +52,7 @@ dependencies {
     // Test
     testImplementation("org.springframework.security:spring-security-test:6.2.4")
 
+    testImplementation("io.projectreactor:reactor-test:3.7.0")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.springframework.boot:spring-boot-testcontainers")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
@@ -69,48 +71,4 @@ kotlin {
 
 tasks.withType<Test> {
     useJUnitPlatform()
-}
-
-tasks.jacocoTestReport {
-    dependsOn(tasks.test)
-    classDirectories.setFrom(
-        sourceSets.main.get().output.asFileTree.matching {
-            exclude(
-                "**/generated/**",
-                "ru/itmo/highload_systems/*.class",
-                "ru/itmo/highload_systems/controller/ControllerExceptionHandler.class"
-            )
-        }
-    )
-    reports {
-        xml.required.set(true)
-        xml.outputLocation.set(file("${layout.buildDirectory.get().asFile.path}/jacoco/jacoco.xml"))
-
-        csv.required.set(true)
-        csv.outputLocation.set(file("${layout.buildDirectory.get().asFile.path}/jacoco/jacoco.csv"))
-    }
-}
-
-tasks.jar {
-    manifest.attributes["Main-Class"] = "ru.itmo.order.OrderApplication"
-}
-
-
-tasks {
-    val bootJarTask = named("bootJar")
-
-    val buildDockerImage by creating(Exec::class) {
-        group = "docker"
-        description = "Build Docker image for the Spring Boot application"
-
-        dependsOn(bootJarTask)
-
-        val projectName = project.name
-
-        commandLine("docker", "build",
-            "-t", "order:local",
-            "--build-arg", "JAR_FILE=$projectName.jar",
-            ".")
-
-    }
 }

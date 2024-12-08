@@ -7,7 +7,7 @@ import org.springframework.context.annotation.ComponentScan
 import org.springframework.context.annotation.Import
 
 @TestConfiguration
-@ComponentScan(basePackages = ["ru.itmo.highload_systems.domain.mapper"])
+@ComponentScan(basePackages = ["ru.itmo.oxygen.domain.mapper"])
 @Import(ObjectMapper::class)
 class DomainMapperTestConfiguration {
 

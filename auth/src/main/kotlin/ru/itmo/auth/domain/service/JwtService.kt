@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service
 import java.security.Key
 import java.util.*
 import java.util.function.Function
-import kotlin.collections.HashMap
 
 @Suppress("DEPRECATION")
 @Service
@@ -41,7 +40,7 @@ class JwtService {
         userDetails: UserDetails
     ): String {
         val roles = userDetails.authorities
-        extraClaims.put("roles", roles)
+        extraClaims["roles"] = roles
         return Jwts
             .builder()
             .setClaims(extraClaims)

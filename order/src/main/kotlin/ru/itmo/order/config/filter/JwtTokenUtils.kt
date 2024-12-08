@@ -10,8 +10,8 @@ import java.util.*
 
 class JwtTokenUtils {
 
-    @Value("\${token.secret.key:eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQSflKxwRJSMeKKF2QT4fwpMeJf36POk6yJVadQssw5c}")
-    private lateinit var jwtSecret: String
+    private var jwtSecret =
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQSflKxwRJSMeKKF2QT4fwpMeJf36POk6yJVadQssw5c"
 
     @Value("\${token.secret.expiration:1000000}")
     private var jwtExpirationMs: Long? = null
