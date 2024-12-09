@@ -36,16 +36,10 @@ class OxygenSupplyService(
         val storages = oxygenStorageRepository.findByCapacityGreaterThan(supply.size!!)
         if (storages.isEmpty()) {
             throw IllegalArgumentException(
-                "Нет доступного воздуха размера: %s для перевозки в департамент с id: %".format(
-                    supply.departmentId,
-                    supply.size
-                )
+                "Нет доступного воздуха размера: ${supply.size} для перевозки в департамент с ${supply.departmentId}: %"
             )
         }
-        val response = departmentClient.supplyOxygen(token, supply.departmentId!!, supply.size!!)
-        if (!response.statusCode.is2xxSuccessful || response.body == null) {
-            throw IllegalArgumentException("Поставка воздуха не доступна")
-        }
+        departmentClient.supplyOxygen(token, supply.departmentId!!, supply.size!!)
         val storage = storages.first()
         storage.size = storage.size?.minus(supply.size!!)
         supply.oxygenStorage = storage
