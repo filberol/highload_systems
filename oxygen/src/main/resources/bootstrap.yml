@@ -1,8 +1,21 @@
-server:
-  port: 8096
-
 spring:
-  application:
-    name: oxygen
-  config:
-    import: optional:configserver:http://config:8888
+  datasource:
+    url: jdbc:postgresql://localhost:5432/oxygen
+    username: postgres
+    password: postgres
+  liquibase:
+    url: jdbc:postgresql://localhost:5432/oxygen
+    user: postgres
+    password: postgres
+    drop-first: true
+  cloud:
+    config:
+      enabled: false
+    discovery:
+      enabled: false
+  main:
+    allow-circular-references: true
+
+eureka:
+  client:
+    enabled: false
