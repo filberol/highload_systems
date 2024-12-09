@@ -19,7 +19,7 @@ class JwtService {
     @Value("\${token.secret.key:eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQSflKxwRJSMeKKF2QT4fwpMeJf36POk6yJVadQssw5c}")
     private lateinit var jwtSecret: String
 
-    @Value("\${token.secret.expiration:1000000}")
+    @Value("\${token.secret.expiration:10000000}")
     private var jwtExpirationMs: Long? = null
 
     fun extractLogin(token: String): String {

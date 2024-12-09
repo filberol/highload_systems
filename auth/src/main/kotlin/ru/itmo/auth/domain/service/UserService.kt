@@ -5,7 +5,6 @@ import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import ru.itmo.auth.api.dto.CreateUserRequest
-import ru.itmo.auth.api.dto.RegisterRequest
 import ru.itmo.auth.api.dto.UpdateUserRequest
 import ru.itmo.auth.api.dto.UserResponse
 import ru.itmo.auth.domain.mapper.RoleMapper
