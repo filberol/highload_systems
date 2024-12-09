@@ -25,9 +25,11 @@ dependencies {
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
     implementation("org.springframework.boot:spring-boot-starter-actuator:3.4.0")
     implementation("org.springframework.cloud:spring-cloud-starter-netflix-hystrix:2.2.10.RELEASE")
-
+    implementation("org.springframework.cloud:spring-cloud-starter-netflix-eureka-client:4.1.3")
     implementation("org.springframework.cloud:spring-cloud-starter-gateway:4.1.5")
     implementation("org.springframework.cloud:spring-cloud-starter-openfeign:4.1.4")
+    implementation("org.springframework.cloud:spring-cloud-starter-config:4.1.3")
+
     implementation(kotlin("stdlib"))
 }
 
