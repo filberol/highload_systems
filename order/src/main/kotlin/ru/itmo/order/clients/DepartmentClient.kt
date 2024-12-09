@@ -31,6 +31,6 @@ class DepartmentClientFallback : DepartmentClient {
         @PathVariable id: UUID,
         @RequestParam userId: UUID
     ): CheckInResponse {
-        throw IllegalArgumentException("Заселение в департамент id %s недоступно")
+        throw IllegalArgumentException("Заселение в департамент id $id недоступно")
     }
 }

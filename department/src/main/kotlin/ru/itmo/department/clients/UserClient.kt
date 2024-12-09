@@ -1,7 +1,6 @@
 package ru.itmo.department.clients
 
 import feign.FeignException.InternalServerError
-import feign.FeignException.NotFound
 import org.springframework.cloud.openfeign.FallbackFactory
 import org.springframework.cloud.openfeign.FeignClient
 import org.springframework.http.ResponseEntity
