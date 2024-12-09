@@ -31,7 +31,7 @@ class OrderController(
 
     @PreAuthorize("hasAnyAuthority('MANAGER', 'ADMIN')")
     @PostMapping("/orders/{id}")
-    fun process(@RequestHeader("Authorization") token: String, @PathVariable @NotNull id: UUID): Mono<CheckInResponse> {
+    fun process(@RequestHeader("Authorization") token: String, @PathVariable id: UUID): Mono<CheckInResponse> {
         return orderService.process(id, token)
     }
 
@@ -45,7 +45,7 @@ class OrderController(
 
     @PreAuthorize("hasAnyAuthority('MANAGER', 'ADMIN')")
     @PostMapping("/orders/{id}/cancel")
-    fun cancelById(@PathVariable @NotNull id: UUID): Mono<OrderResponse> {
+    fun cancelById(@PathVariable id: UUID): Mono<OrderResponse> {
         return orderService.cancelById(id)
     }
 
@@ -59,7 +59,7 @@ class OrderController(
 
     @PreAuthorize("hasAnyAuthority('MANAGER', 'ADMIN')")
     @GetMapping("/orders/{id}")
-    fun getOrderById(@PathVariable @NotNull id: UUID): Mono<OrderResponse> {
+    fun getOrderById(@PathVariable id: UUID): Mono<OrderResponse> {
         return orderService.findById(id)
     }
 }
