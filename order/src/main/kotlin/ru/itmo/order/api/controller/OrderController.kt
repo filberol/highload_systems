@@ -31,21 +31,21 @@ class OrderController(
 
     @PreAuthorize("hasAnyAuthority('MANAGER', 'ADMIN')")
     @PostMapping("/orders/{id}")
-    fun process(@PathVariable @NotNull id: UUID): Mono<CheckInResponse> {
-        return orderService.process(id)
+    fun process(@RequestHeader("Authorization") token: String, @PathVariable id: UUID): Mono<CheckInResponse> {
+        return orderService.process(id, token)
     }
 
     @PreAuthorize("hasAnyAuthority('MANAGER', 'ADMIN')")
     @PostMapping("/orders/cancel")
     fun cancel(
         @RequestParam expiredAt: OffsetDateTime
-    ): Mono<List<OrderResponse>> {
+    ): Flux<OrderResponse> {
         return orderService.cancelExpiredOrders(expiredAt)
     }
 
     @PreAuthorize("hasAnyAuthority('MANAGER', 'ADMIN')")
     @PostMapping("/orders/{id}/cancel")
-    fun cancelById(@PathVariable @NotNull id: UUID): Flux<OrderResponse> {
+    fun cancelById(@PathVariable id: UUID): Mono<OrderResponse> {
         return orderService.cancelById(id)
     }
 
@@ -53,13 +53,13 @@ class OrderController(
     @GetMapping("/orders")
     fun getOrders(
         @PageableDefault(sort = ["id"], size = 50) pageable: Pageable
-    ): Mono<Page<OrderResponse>> {
+    ): Flux<Page<OrderResponse>> {
         return orderService.findAll(pageable)
     }
 
     @PreAuthorize("hasAnyAuthority('MANAGER', 'ADMIN')")
     @GetMapping("/orders/{id}")
-    fun getOrderById(@PathVariable @NotNull id: UUID): Flux<OrderResponse> {
+    fun getOrderById(@PathVariable id: UUID): Mono<OrderResponse> {
         return orderService.findById(id)
     }
 }

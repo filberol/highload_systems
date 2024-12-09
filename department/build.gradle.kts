@@ -31,6 +31,8 @@ dependencies {
     implementation("org.springframework.cloud:spring-cloud-starter-netflix-hystrix:2.2.10.RELEASE")
     implementation("org.springframework.boot:spring-boot-starter-data-r2dbc:3.4.0")
     implementation("org.postgresql:r2dbc-postgresql:1.0.7.RELEASE")
+    implementation("org.springframework.boot:spring-boot-starter-actuator:3.4.0")
+
 
     // Libs
     implementation("org.jetbrains.kotlin:kotlin-reflect")
@@ -49,6 +51,7 @@ dependencies {
 
     // Eureka
     implementation("org.springframework.cloud:spring-cloud-starter-netflix-eureka-client:4.1.3")
+    implementation("org.springframework.cloud:spring-cloud-starter-circuitbreaker-resilience4j:3.1.3")
 
     // Test
     testImplementation("org.springframework.security:spring-security-test:6.2.4")
@@ -72,43 +75,4 @@ kotlin {
 
 tasks.withType<Test> {
     useJUnitPlatform()
-}
-
-tasks.jacocoTestReport {
-    dependsOn(tasks.test)
-    classDirectories.setFrom(
-        sourceSets.main.get().output.asFileTree.matching {
-            exclude(
-                "**/generated/**",
-                "ru/itmo/department/*.class",
-                "ru/itmo/department/controller/ControllerExceptionHandler.class"
-            )
-        }
-    )
-    reports {
-        xml.required.set(true)
-        xml.outputLocation.set(file("${layout.buildDirectory.get().asFile.path}/jacoco/jacoco.xml"))
-
-        csv.required.set(true)
-        csv.outputLocation.set(file("${layout.buildDirectory.get().asFile.path}/jacoco/jacoco.csv"))
-    }
-}
-
-tasks {
-    val bootJarTask = named("bootJar")
-
-    val buildDockerImage by creating(Exec::class) {
-        group = "docker"
-        description = "Build Docker image for the Spring Boot application"
-
-        dependsOn(bootJarTask)
-
-        val projectName = project.name
-
-        commandLine("docker", "build",
-            "-t", "department:local",
-            "--build-arg", "JAR_FILE=$projectName.jar",
-            ".")
-
-    }
 }

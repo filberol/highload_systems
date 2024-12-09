@@ -1,13 +1,11 @@
 package ru.itmo.order.api.controller.handler
 
-import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestControllerAdvice
 import ru.itmo.order.api.controller.OrderController
-import java.security.InvalidParameterException
 
 
 @RestControllerAdvice(assignableTypes = [OrderController::class])

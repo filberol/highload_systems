@@ -1,5 +1,7 @@
 package ru.itmo.department.api.controller
 
+import jakarta.validation.constraints.Min
+import jakarta.validation.constraints.NotNull
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.*
 import reactor.core.publisher.Mono
@@ -22,7 +24,10 @@ class RoomController(
     @PostMapping("/rooms/{id}/supply-oxygen")
     fun supplyOxygen(
         @PathVariable id: UUID,
-        @RequestParam("size") size: Long
+        @Min(
+            value = 1,
+            message = "Размер воздуха должен быть больше нуля"
+        ) @RequestParam("size") size: Long
     ): Mono<RoomNormResponse> {
         return roomService.supplyOxygen(id, size)
     }

@@ -1,7 +1,12 @@
 package ru.itmo.department.infra.model
 
-import jakarta.persistence.*
+import jakarta.persistence.Entity
+import jakarta.persistence.GeneratedValue
+import jakarta.persistence.PrePersist
+import jakarta.persistence.PreUpdate
 import org.hibernate.annotations.UuidGenerator
+import org.springframework.data.annotation.Id
+import org.springframework.data.relational.core.mapping.Column
 import org.springframework.data.relational.core.mapping.Table
 import java.time.OffsetDateTime
 import java.util.*
@@ -10,13 +15,18 @@ import java.util.*
 @Table(name = "room_norm")
 class RoomNorm(
     @Id
-    @UuidGenerator
+    @jakarta.persistence.Id @GeneratedValue @UuidGenerator
+    @Column("id")
     var id: UUID? = null,
-    @OneToOne
-    var room: Room? = null,
-    var size: Long? = null,
-    var peopleCount: Long? = null,
+    @Column("room_id")
+    var roomId: UUID? = null,
+    @Column("size")
+    var size: Long = 0L,
+    @Column("people_count")
+    var peopleCount: Long = 0L,
+    @Column("created_at")
     var createdAt: OffsetDateTime? = null,
+    @Column("updated_at")
     var updatedAt: OffsetDateTime? = null
 ) {
     @PrePersist

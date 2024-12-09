@@ -1,7 +1,11 @@
 package ru.itmo.department.infra.model
 
-import jakarta.persistence.*
+import jakarta.persistence.Entity
+import jakarta.persistence.GeneratedValue
+import jakarta.persistence.PrePersist
+import jakarta.persistence.PreUpdate
 import org.hibernate.annotations.UuidGenerator
+import org.springframework.data.annotation.Id
 import org.springframework.data.relational.core.mapping.Column
 import org.springframework.data.relational.core.mapping.Table
 import java.time.OffsetDateTime
@@ -11,17 +15,19 @@ import java.util.*
 @Table(name = "room")
 class Room(
     @Id
-    @UuidGenerator
+    @jakarta.persistence.Id @GeneratedValue @UuidGenerator
+    @Column("id")
     var id: UUID? = null,
-    @OneToOne(mappedBy = "room")
-    var roomNorm: RoomNorm? = null,
-    @ManyToOne
-    var department: Department? = null,
+    @Column("department_id")
+    var departmentId: UUID? = null,
     @Column("capacity")
-    var capacity: Long? = null,
+    var capacity: Long? = 0L,
+    @Column("created_at")
     var createdAt: OffsetDateTime? = null,
+    @Column("updated_at")
     var updatedAt: OffsetDateTime? = null
 ) {
+
     @PrePersist
     @PreUpdate
     fun onSaveHook() {

@@ -2,11 +2,11 @@ services:
   # Postgres local instance
   postgres:
     image: postgres:15
-    container_name: postgres-db
+    container_name: postgres
     environment:
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
     volumes:
       - /tmp/postgres-data:/var/lib/postgresql/data
     ports:
@@ -14,19 +14,81 @@ services:
     networks:
       - app-network
 
-  # Main spring boot service in docker network
-  spring-boot-app:
-    image: spring-highload:local
-    container_name: spring-highload
-    environment:
-      POSTGRES_DB_URL: jdbc:postgresql://postgres-db:5432/
-      POSTGRES_DB: ${POSTGRES_DB}
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+  # Config
+  config:
+    image: ghcr.io/filberol/highload_systems/config:latest
+    container_name: config
+    ports:
+      - "8888:8888"
+    depends_on:
+      - postgres
+    networks:
+      - app-network
+
+  # Department
+  department:
+    image: ghcr.io/filberol/highload_systems/department:latest
+    container_name: department
+    ports:
+      - "8086:8086"
+    depends_on:
+      - postgres
+      - config
+      - eureka
+    networks:
+      - app-network
+  # Auth
+  auth:
+    image: ghcr.io/filberol/highload_systems/auth:latest
+    container_name: auth
+    ports:
+      - "8085:8085"
+    depends_on:
+      - config
+      - postgres
+      - eureka
+    networks:
+      - app-network
+  # Eureka
+  eureka:
+    image: ghcr.io/filberol/highload_systems/eureka:latest
+    container_name: eureka
+    ports:
+      - "8761:8761"
+    networks:
+      - app-network
+  # Gateway
+  gateway:
+    image: ghcr.io/filberol/highload_systems/gateway:latest
+    container_name: gateway
     ports:
       - "8080:8080"
     depends_on:
+      - config
+    networks:
+      - app-network
+  # Eureka
+  order:
+    image: ghcr.io/filberol/highload_systems/order:latest
+    container_name: order
+    ports:
+      - "8087:8087"
+    depends_on:
+      - config
       - postgres
+      - eureka
+    networks:
+      - app-network
+  # Oxygen
+  oxygen:
+    image: ghcr.io/filberol/highload_systems/oxygen:latest
+    container_name: oxygen
+    ports:
+      - "8096:8096"
+    depends_on:
+      - config
+      - postgres
+      - eureka
     networks:
       - app-network
 

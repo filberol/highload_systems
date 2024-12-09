@@ -29,7 +29,10 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-security")
     implementation("org.springframework.cloud:spring-cloud-starter-openfeign:4.1.3")
     implementation("org.springframework.boot:spring-boot-starter-webflux:3.4.0")
-    implementation("org.springframework.boot:spring-boot-starter-webflux:3.4.0")
+    implementation("org.springframework.boot:spring-boot-starter-actuator:3.4.0")
+    implementation("org.springframework.cloud:spring-cloud-starter-circuitbreaker-resilience4j:3.1.3")
+
+
     implementation("io.jsonwebtoken:jjwt-api:0.12.5")
     runtimeOnly("io.jsonwebtoken:jjwt-impl:0.12.5")
     runtimeOnly("io.jsonwebtoken:jjwt-jackson:0.12.5")
@@ -69,43 +72,4 @@ kotlin {
 
 tasks.withType<Test> {
     useJUnitPlatform()
-}
-
-tasks.jacocoTestReport {
-    dependsOn(tasks.test)
-    classDirectories.setFrom(
-        sourceSets.main.get().output.asFileTree.matching {
-            exclude(
-                "**/generated/**",
-                "ru/itmo/highload_systems/*.class",
-                "ru/itmo/highload_systems/controller/ControllerExceptionHandler.class"
-            )
-        }
-    )
-    reports {
-        xml.required.set(true)
-        xml.outputLocation.set(file("${layout.buildDirectory.get().asFile.path}/jacoco/jacoco.xml"))
-
-        csv.required.set(true)
-        csv.outputLocation.set(file("${layout.buildDirectory.get().asFile.path}/jacoco/jacoco.csv"))
-    }
-}
-
-tasks {
-    val bootJarTask = named("bootJar")
-
-    val buildDockerImage by creating(Exec::class) {
-        group = "docker"
-        description = "Build Docker image for the Spring Boot application"
-
-        dependsOn(bootJarTask)
-
-        val projectName = project.name
-
-        commandLine("docker", "build",
-            "-t", "oxygen:local",
-            "--build-arg", "JAR_FILE=$projectName.jar",
-            ".")
-
-    }
 }

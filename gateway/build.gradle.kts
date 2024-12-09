@@ -23,35 +23,18 @@ dependencies {
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
-
-    // Eureka
+    implementation("org.springframework.boot:spring-boot-starter-actuator:3.4.0")
+    implementation("org.springframework.cloud:spring-cloud-starter-netflix-hystrix:2.2.10.RELEASE")
     implementation("org.springframework.cloud:spring-cloud-starter-netflix-eureka-client:4.1.3")
+    implementation("org.springframework.cloud:spring-cloud-starter-gateway:4.1.5")
+    implementation("org.springframework.cloud:spring-cloud-starter-openfeign:4.1.4")
+    implementation("org.springframework.cloud:spring-cloud-starter-config:4.1.3")
 
-    implementation("org.springframework.cloud:spring-cloud-config-server:4.1.3")
     implementation(kotlin("stdlib"))
 }
 
 kotlin {
     compilerOptions {
         freeCompilerArgs.addAll("-Xjsr305=strict")
-    }
-}
-
-tasks {
-    val bootJarTask = named("bootJar")
-
-    val buildDockerImage by creating(Exec::class) {
-        group = "docker"
-        description = "Build Docker image for the Spring Boot application"
-
-        dependsOn(bootJarTask)
-
-        val projectName = project.name
-
-        commandLine("docker", "build",
-            "-t", "gateway:local",
-            "--build-arg", "JAR_FILE=$projectName.jar",
-            ".")
-
     }
 }

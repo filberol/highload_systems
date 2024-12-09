@@ -5,7 +5,6 @@ import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import ru.itmo.auth.api.dto.CreateUserRequest
-import ru.itmo.auth.api.dto.RegisterRequest
 import ru.itmo.auth.api.dto.UpdateUserRequest
 import ru.itmo.auth.api.dto.UserResponse
 import ru.itmo.auth.domain.mapper.RoleMapper
@@ -23,20 +22,6 @@ class UserService(
 
     @Transactional
     fun create(request: CreateUserRequest): UserResponse {
-        findOptionalByLogin(request.login)
-            .ifPresent {
-                throw IllegalArgumentException(
-                    "Пользователь с логином %s уже существует".format(
-                        request.login
-                    )
-                )
-            }
-        val user = userMapper.toEntity(request)
-        return userMapper.toResponse(userRepository.save(user))
-    }
-
-    @Transactional
-    fun register(request: RegisterRequest): UserResponse {
         findOptionalByLogin(request.login)
             .ifPresent {
                 throw IllegalArgumentException(
@@ -87,12 +72,11 @@ class UserService(
         return userMapper.toResponse(user)
     }
 
-    @Transactional(readOnly = true)
     private fun findOptionalByLogin(login: String): Optional<User> {
         return userRepository.findByLogin(login)
     }
 
     override fun loadUserByUsername(username: String): UserDetails {
-        return userMapper.toDetails(findByLogin(username))
+        return findOptionalByLogin(username).orElseThrow()
     }
 }

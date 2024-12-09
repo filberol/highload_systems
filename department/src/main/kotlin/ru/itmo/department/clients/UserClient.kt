@@ -1,4 +1,4 @@
-package ru.itmo.order.clients
+package ru.itmo.department.clients
 
 import feign.FeignException.InternalServerError
 import org.springframework.cloud.openfeign.FallbackFactory
@@ -7,7 +7,7 @@ import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Component
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
-import ru.itmo.order.clients.dto.UserResponse
+import ru.itmo.department.clients.dto.UserResponse
 import java.util.*
 
 @FeignClient(

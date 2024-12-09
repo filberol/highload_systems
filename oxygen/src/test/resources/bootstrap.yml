@@ -1,10 +1,10 @@
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/order
+    url: jdbc:postgresql://localhost:5432/oxygen
     username: postgres
     password: postgres
   liquibase:
-    url: jdbc:postgresql://localhost:5432/order
+    url: jdbc:postgresql://localhost:5432/oxygen
     user: postgres
     password: postgres
     drop-first: true
