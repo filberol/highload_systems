@@ -36,7 +36,7 @@ class RoomService(
             .publishOn(Schedulers.boundedElastic())
             .map { room ->
                 val roomNorm = roomNormRepository.findByRoomId(room.id!!).block()
-                roomNorm!!.peopleCount = roomNorm.peopleCount+1
+                roomNorm!!.peopleCount = roomNorm.peopleCount + 1
                 roomNormRepository.save(roomNorm).block()
                 roomApiMapper.toResponse(room, roomNorm)
             }

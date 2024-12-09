@@ -1,12 +1,12 @@
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/postgres
-    username: test
-    password: test
+    url: jdbc:postgresql://localhost:5432/test
+    username: postgres
+    password: postgres
   liquibase:
-    url: jdbc:postgresql://localhost:5432/postgres
-    user: test
-    password: test
+    url: jdbc:postgresql://localhost:5432/test
+    user: postgres
+    password: postgres
   cloud:
     config:
       enabled: false

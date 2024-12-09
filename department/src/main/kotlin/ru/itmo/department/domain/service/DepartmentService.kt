@@ -21,8 +21,7 @@ class DepartmentService(
     private val userClient: UserClient,
     private val departmentApiMapper: DepartmentApiMapper,
     private val departmentRepository: DepartmentRepository,
-    private val departmentUserRepository: DepartmentUserRepository,
-    private val error: View
+    private val departmentUserRepository: DepartmentUserRepository
 ) {
 
     fun getDepartments(): Flux<DepartmentResponse> {
@@ -32,23 +31,28 @@ class DepartmentService(
 
     @Transactional
     fun checkIn(id: UUID, userId: UUID): Mono<CheckInResponse> {
-        val response = userClient.getById(userId)
-        if (!response.statusCode.is2xxSuccessful || response.body == null) {
-            throw NoSuchElementException("Пользователь с id: $userId не найден")
-        }
-        return roomService.checkIn(id, 10L)
-            .map { room ->
-                val departmentUser = DepartmentUser(
-                    userId = userId,
-                    departmentId = id
-                )
-                departmentUserRepository.save(departmentUser).block()
-                CheckInResponse(
-                    departmentId = id,
-                    roomId = room!!.id!!,
-                    personCount = room.peopleCount!!
-                )
+        userClient.getById(userId)
+        return departmentUserRepository.findByUserId(userId)
+            .flatMap { existingUser ->
+                Mono.error<CheckInResponse>(IllegalArgumentException("Пользователь с id $userId уже заселен"))
             }
+            .switchIfEmpty(
+                roomService.checkIn(id, 10L)
+                    .flatMap { room ->
+                        val departmentUser = DepartmentUser(
+                            userId = userId,
+                            departmentId = id
+                        )
+                        departmentUserRepository.save(departmentUser)
+                            .map {
+                                CheckInResponse(
+                                    departmentId = id,
+                                    roomId = room.id!!,
+                                    personCount = room.peopleCount!!
+                                )
+                            }
+                    }
+            )
     }
 
 }
