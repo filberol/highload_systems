@@ -32,6 +32,7 @@ dependencies {
     runtimeOnly("io.jsonwebtoken:jjwt-jackson:0.12.5")
     implementation("org.springframework.boot:spring-boot-starter-actuator:3.4.0")
     implementation("org.springframework.cloud:spring-cloud-starter-circuitbreaker-resilience4j:3.1.3")
+    implementation("org.springframework.kafka:spring-kafka:3.3.1")
 
     // Libs
     implementation("org.jetbrains.kotlin:kotlin-reflect")

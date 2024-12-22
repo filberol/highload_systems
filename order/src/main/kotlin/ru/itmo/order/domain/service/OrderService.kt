@@ -7,6 +7,7 @@ import org.springframework.transaction.annotation.Transactional
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import ru.itmo.order.api.dto.OrderResponse
+import ru.itmo.order.asyncapi.OrderPublisher
 import ru.itmo.order.clients.DepartmentClient
 import ru.itmo.order.clients.UserClient
 import ru.itmo.order.clients.dto.CheckInResponse
@@ -23,7 +24,8 @@ class OrderService(
     private val orderRepository: OrderRepository,
     private val orderApiMapper: OrderApiMapper,
     private val userClient: UserClient,
-    private val departmentClient: DepartmentClient
+    private val departmentClient: DepartmentClient,
+    private val orderPublisher: OrderPublisher
 ) {
 
     @Transactional(readOnly = false)
@@ -40,6 +42,12 @@ class OrderService(
                         )
                     )
                 )
+                    .flatMap { response ->
+                        Mono.fromCallable {
+                            orderPublisher.send(orderApiMapper.toEvent(response))
+                        }
+                            .thenReturn(response)
+                    }
             } else {
                 return@flatMapMany Mono.error(NoSuchElementException("User с id: $userId не найден"))
             }
@@ -63,11 +71,13 @@ class OrderService(
                     .flatMap { checkInResponse ->
                         order.status = OrderStatus.DONE
                         order.onSaveHook()
-                        orderRepository.save(order)
-                        return@flatMap Mono.just(checkInResponse)
+                        val saved = orderRepository.save(order)
+                        return@flatMap Mono.fromCallable {
+                            orderPublisher.send(orderApiMapper.toEvent(saved))
+                        }
+                            .thenReturn(checkInResponse)
                     }
             }
-
     }
 
     @Transactional(readOnly = false)
@@ -84,7 +94,10 @@ class OrderService(
             .flatMapMany { orders ->
                 Flux.fromIterable(orderRepository.saveAll(orders))
             }
-            .map(orderApiMapper::toResponse)
+            .map { order ->
+                orderPublisher.send(orderApiMapper.toEvent(order))
+                return@map orderApiMapper.toResponse(order)
+            }
     }
 
     @Transactional(readOnly = false)
@@ -95,6 +108,7 @@ class OrderService(
                 if (order.status == OrderStatus.NEW) {
                     order.status = OrderStatus.CANCEL
                     val savedOrder = orderRepository.save(order)
+                    orderPublisher.send(orderApiMapper.toEvent(savedOrder))
                     sink.next(orderApiMapper.toResponse(savedOrder))
                     return@handle
                 }

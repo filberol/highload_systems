@@ -8,6 +8,8 @@ import reactor.core.publisher.Mono
 import reactor.core.scheduler.Schedulers
 import ru.itmo.department.api.dto.RoomNormResponse
 import ru.itmo.department.api.dto.RoomResponse
+import ru.itmo.department.asyncapi.DepartmentPublisher
+import ru.itmo.department.asyncapi.model.DepartmentEvent
 import ru.itmo.department.domain.mapper.RoomApiMapper
 import ru.itmo.department.infra.repository.RoomNormRepository
 import ru.itmo.department.infra.repository.RoomRepository
@@ -17,7 +19,8 @@ import java.util.*
 class RoomService(
     private val roomRepository: RoomRepository,
     private val roomNormRepository: RoomNormRepository,
-    private val roomApiMapper: RoomApiMapper
+    private val roomApiMapper: RoomApiMapper,
+    private val departmentPublisher: DepartmentPublisher
 ) {
 
     @Transactional(readOnly = true)
@@ -51,6 +54,7 @@ class RoomService(
                 val roomNorm = roomNormRepository.findByRoomId(room!!.id!!).block()
                 roomNorm!!.size = roomNorm.size + size
                 roomNormRepository.save(roomNorm).block()
+                departmentPublisher.send(DepartmentEvent(id, size))
                 roomApiMapper.toResponse(room, roomNorm)
             }
     }

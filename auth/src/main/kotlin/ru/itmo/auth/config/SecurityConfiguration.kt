@@ -42,6 +42,9 @@ class SecurityConfiguration(
                 auth
                     .requestMatchers("/auth/**").permitAll()
                     .requestMatchers("/users/id/**").permitAll()
+                    .requestMatchers("/swagger-ui/**").permitAll()
+                    .requestMatchers("/swagger-ui.html/**").permitAll()
+                    .requestMatchers("/v3/**").permitAll()
                     .anyRequest().authenticated()
             }.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter::class.java)
         return http.build()

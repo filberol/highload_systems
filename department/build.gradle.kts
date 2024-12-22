@@ -32,7 +32,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-data-r2dbc:3.4.0")
     implementation("org.postgresql:r2dbc-postgresql:1.0.7.RELEASE")
     implementation("org.springframework.boot:spring-boot-starter-actuator:3.4.0")
-
+    implementation("org.springframework.kafka:spring-kafka:3.3.1")
 
     // Libs
     implementation("org.jetbrains.kotlin:kotlin-reflect")
