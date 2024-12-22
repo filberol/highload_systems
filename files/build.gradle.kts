@@ -26,7 +26,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.springframework.boot:spring-boot-starter-validation")
-    implementation("org.springframework.boot:spring-boot-starter-security")
+//    implementation("org.springframework.boot:spring-boot-starter-security")
     implementation("io.jsonwebtoken:jjwt-api:0.12.5")
     runtimeOnly("io.jsonwebtoken:jjwt-impl:0.12.5")
     runtimeOnly("io.jsonwebtoken:jjwt-jackson:0.12.5")
@@ -34,6 +34,7 @@ dependencies {
     implementation("org.springframework.cloud:spring-cloud-starter-circuitbreaker-resilience4j:3.1.3")
     implementation("io.minio:minio:8.5.13")
     implementation("org.springframework.boot:spring-boot-starter-data-r2dbc:3.4.0")
+    implementation("org.postgresql:r2dbc-postgresql:1.0.7.RELEASE")
 
     // Libs
     implementation("org.jetbrains.kotlin:kotlin-reflect")
@@ -51,6 +52,8 @@ dependencies {
     implementation("org.springframework.cloud:spring-cloud-starter-config:4.1.3")
     implementation("org.springframework.cloud:spring-cloud-starter-bootstrap:4.1.4")
     implementation("org.springframework.cloud:spring-cloud-starter-openfeign:4.1.3")
+    implementation("org.springframework.boot:spring-boot-starter-webflux:3.4.0")
+
 
     // Test
     testImplementation("org.springframework.security:spring-security-test:6.2.4")

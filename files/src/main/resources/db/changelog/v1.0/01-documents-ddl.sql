@@ -1,0 +1,9 @@
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+
+CREATE TABLE IF NOT EXISTS documents
+(
+    id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+    bucket VARCHAR(20) NOT NULL,
+    key VARCHAR(20) NOT NULL
+);
+

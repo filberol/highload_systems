@@ -5,7 +5,7 @@ spring:
   application:
     name: auth
   datasource:
-    url: jdbc:postgresql://localhost:5432/postgres
+    url: jdbc:postgresql://postgres:5432/postgres
     username: postgres
     password: postgres
     driverClassName: org.postgresql.Driver
@@ -31,8 +31,11 @@ eureka:
   client:
     serviceUrl:
       defaultZone: http://eureka:8761/eureka
-    enabled: false
-
+    enabled: true
+token:
+  secret:
+    key: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQSflKxwRJSMeKKF2QT4fwpMeJf36POk6yJVadQssw5c
+    expiration: 10000000
 management:
   endpoints:
     web:

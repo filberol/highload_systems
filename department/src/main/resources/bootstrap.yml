@@ -4,5 +4,53 @@ server:
 spring:
   application:
     name: department
-  config:
-    import: optional:configserver:http://config:8888
+  r2dbc:
+    url: r2dbc:postgresql://postgres:5432/postgres
+    username: postgres
+    password: postgres
+  jpa:
+    show-sql: true
+  liquibase:
+    enabled: true
+    drop-first: false
+    change-log: classpath:db/changelog/db.changelog-master.yaml
+    url: jdbc:postgresql://postgres:5432/postgres
+    user: postgres
+    password: postgres
+  jackson:
+    property-naming-strategy: SNAKE_CASE
+  main:
+    allow-circular-references: true
+  cloud:
+    openfeign:
+      circuitbreaker:
+        enabled: true
+    circuitbreaker:
+      hystrix:
+        enabled: true
+  kafka:
+    bootstrap-servers:
+      - PLAINTEXT://broker-1:19092
+      - PLAINTEXT://broker-2:19092
+      - PLAINTEXT://broker-3:19092
+    admin:
+      auto-create: true
+    topics:
+        name: department_update_in
+        partitions: 3
+        replicas: 1
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      department-update-in: "department_update_in"
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://eureka:8761/eureka
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: refresh

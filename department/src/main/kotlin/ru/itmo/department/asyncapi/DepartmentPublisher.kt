@@ -12,7 +12,7 @@ class DepartmentPublisher(
 ) {
     private val logger = LoggerFactory.getLogger(DepartmentPublisher::class.java)
 
-    @Value("\${spring.kafka.topics.department-update-in.name}")
+    @Value("\${spring.kafka.producer.department-update-in}")
     lateinit var topic: String
 
     fun send(event: DepartmentEvent) {
