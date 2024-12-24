@@ -25,13 +25,6 @@ class SecurityConfiguration(
     fun filterChain(http: HttpSecurity): SecurityFilterChain {
         http.csrf { value -> value.disable() }
             .sessionManagement { config -> config.sessionCreationPolicy(SessionCreationPolicy.STATELESS) }
-            .authorizeHttpRequests { auth ->
-                auth
-                    .requestMatchers("/swagger-ui/**").permitAll()
-                    .requestMatchers("/swagger-ui.html/**").permitAll()
-                    .requestMatchers("/v3/**").permitAll()
-                    .anyRequest().authenticated()
-            }
             .addFilterBefore(
                 jwtFilter, UsernamePasswordAuthenticationFilter::class.java
             )
