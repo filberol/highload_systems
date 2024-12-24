@@ -11,7 +11,7 @@ class OrderPublisher(private val kafkaTemplate: KafkaTemplate<String, OrderUpdat
 
     private val logger = LoggerFactory.getLogger(OrderPublisher::class.java)
 
-    @Value("\${spring.kafka.topics.order-update-in.name}")
+    @Value("\${spring.kafka.producer.order-update-in}")
     lateinit var topic: String
 
     fun send(event: OrderUpdateEvent) {

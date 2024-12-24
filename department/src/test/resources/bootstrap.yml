@@ -15,7 +15,11 @@ spring:
       enabled: false
   main:
     allow-circular-references: true
-
+  kafka:
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      department-update-in: "department_update_in"
 eureka:
   client:
     enabled: false

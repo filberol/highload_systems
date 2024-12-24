@@ -1,21 +1,5 @@
 spring:
-  datasource:
-    url: jdbc:postgresql://localhost:5432/order
-    username: postgres
-    password: postgres
-  liquibase:
-    url: jdbc:postgresql://localhost:5432/order
-    user: postgres
-    password: postgres
-    drop-first: true
-  cloud:
-    config:
-      enabled: false
-    discovery:
-      enabled: false
-  main:
-    allow-circular-references: true
-
-eureka:
-  client:
-    enabled: false
+  application:
+    name: order
+  config:
+    import: optional:configserver:http://config:8888
