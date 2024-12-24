@@ -1,29 +1,5 @@
-server:
-  port: 8091
-
 spring:
   application:
     name: notification
-  kafka:
-    consumer:
-      properties:
-        spring.json.trusted.packages: "*"
-      key-serializer: org.apache.kafka.common.serialization.StringSerializer
-      value-serializer: org.apache.kafka.common.serialization.StringSerializer
-    bootstrap-servers:
-      - PLAINTEXT://broker-1:19092
-      - PLAINTEXT://broker-2:19092
-      - PLAINTEXT://broker-3:19092
-    topics:
-      department-update-in:
-        name: "department_update_in"
-        group-id: "department_group"
-      order-update-in:
-        name: "order_update_in"
-        group-id: "order_group"
-
-eureka:
-  client:
-    serviceUrl:
-      defaultZone: http://eureka:8761/eureka/
-    enabled: false
+  config:
+    import: optional:configserver:http://config:8888

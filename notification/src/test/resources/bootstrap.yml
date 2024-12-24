@@ -1,13 +1,4 @@
 spring:
-  datasource:
-    url: jdbc:postgresql://localhost:5432/order
-    username: postgres
-    password: postgres
-  liquibase:
-    url: jdbc:postgresql://localhost:5432/order
-    user: postgres
-    password: postgres
-    drop-first: true
   cloud:
     config:
       enabled: false

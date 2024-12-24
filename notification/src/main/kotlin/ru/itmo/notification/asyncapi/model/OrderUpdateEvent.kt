@@ -7,9 +7,9 @@ import java.util.*
 
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy::class)
 data class OrderUpdateEvent(
-    val id: UUID,
-    val userId: UUID,
-    val departmentId: UUID,
-    val status: OrderStatus,
-    val updatedAt: OffsetDateTime
+    val id: UUID? = null,
+    val userId: UUID? = null,
+    val departmentId: UUID? = null,
+    val status: OrderStatus? = null,
+    val updatedAt: OffsetDateTime? = null
 )

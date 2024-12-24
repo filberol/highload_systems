@@ -33,13 +33,13 @@ class DepartmentListener(
         }
     }
 
-    protected fun <T> parseMessage(message: String, targetType: Class<T>): T {
+    private fun <T> parseMessage(message: String, targetType: Class<T>): T {
         val parsedMessage: T = objectMapper.readValue(message, targetType)
         logger.info("Received message from Kafka: $parsedMessage")
         return parsedMessage
     }
 
-    protected fun send(notification: String) {
+    private fun send(notification: String) {
         messagingTemplate.convertAndSend("/topic/department", notification)
         logger.info("Send notification to /topic/department : $notification")
     }
