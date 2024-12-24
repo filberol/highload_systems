@@ -1,5 +1,5 @@
 spring:
   application:
-    name: order
+    name: department
   config:
     import: optional:configserver:http://config:8888

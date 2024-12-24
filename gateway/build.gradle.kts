@@ -18,7 +18,9 @@ repositories {
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
-    implementation("org.springdoc:springdoc-openapi-common:1.8.0")
+//    implementation("org.springdoc:springdoc-openapi-common:1.8.0")
+    implementation("org.springdoc:springdoc-openapi-starter-webflux-ui:2.6.0")
+
     implementation("io.swagger.core.v3:swagger-annotations:2.2.25")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")

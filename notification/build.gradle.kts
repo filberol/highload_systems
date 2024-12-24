@@ -49,7 +49,7 @@ dependencies {
     implementation("org.springframework.cloud:spring-cloud-starter-netflix-hystrix:2.2.10.RELEASE")
 
     // Cloud
-//    implementation("org.springframework.cloud:spring-cloud-starter-config:4.1.3")
+    implementation("org.springframework.cloud:spring-cloud-starter-config:4.1.3")
     implementation("org.springframework.cloud:spring-cloud-starter-bootstrap:4.1.4")
     implementation("org.springframework.cloud:spring-cloud-starter-openfeign:4.1.3")
 

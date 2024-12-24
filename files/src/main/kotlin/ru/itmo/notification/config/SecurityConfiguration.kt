@@ -17,13 +17,6 @@ class SecurityConfiguration(
     @Bean
     fun springSecurityFilterChain(http: ServerHttpSecurity): SecurityWebFilterChain {
         http
-            .authorizeExchange { exchanges ->
-                exchanges
-                    .pathMatchers("/webjars/**").permitAll()
-                    .pathMatchers("/v3/api-docs/**").permitAll()
-                    .pathMatchers("/files").authenticated()
-                    .pathMatchers("/files/**").authenticated()
-            }
             .addFilterAt(jwtFilter, SecurityWebFiltersOrder.AUTHENTICATION)
             .httpBasic { it.disable() }
             .csrf { it.disable() }

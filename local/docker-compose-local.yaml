@@ -16,7 +16,8 @@ services:
 
   # Config
   config:
-    image: ghcr.io/filberol/highload_systems/config:latest
+    build: ../config
+#    image: ghcr.io/filberol/highload_systems/config:latest
     container_name: config
     ports:
       - "8888:8888"
@@ -28,7 +29,7 @@ services:
   # Department
   department:
     build: ../department
-    #    image: ghcr.io/filberol/highload_systems/department:latest
+#    image: ghcr.io/filberol/highload_systems/department:latest
     container_name: department
     ports:
       - "8086:8086"
@@ -40,10 +41,11 @@ services:
       - app-network
   # Auth
   auth:
+#    image: ghcr.io/filberol/highload_systems/auth:latest
     build: ../auth
     container_name: auth
     ports:
-      - "8084:8085"
+      - "8085:8085"
     depends_on:
       #      - config
       - postgres
@@ -71,7 +73,8 @@ services:
       - app-network
   # Gateway
   gateway:
-    image: ghcr.io/filberol/highload_systems/gateway:latest
+    build: ../gateway
+#    image: ghcr.io/filberol/highload_systems/gateway:latest
     container_name: gateway
     ports:
       - "8080:8080"
@@ -79,9 +82,20 @@ services:
       - config
     networks:
       - app-network
+  file:
+    build: ../files
+#    image: ghcr.io/filberol/highload_systems/files:latest
+    container_name: file
+    ports:
+      - "8090:8090"
+    depends_on:
+      - config
+    networks:
+      - app-network
   # Eureka
   order:
-    image: ghcr.io/filberol/highload_systems/order:latest
+    build: ../order
+#    image: ghcr.io/filberol/highload_systems/order:latest
     container_name: order
     ports:
       - "8087:8087"

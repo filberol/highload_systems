@@ -12,7 +12,7 @@ import org.springframework.context.annotation.Configuration
 @Configuration
 @OpenAPIDefinition(
     servers = [
-        Server(url = "http://localhost:8080/file")
+        Server(url = "http://localhost:8090")
     ]
 )
 class SwaggerConfiguration {

@@ -1,52 +1,5 @@
-server:
-  port: 8087
-
 spring:
   application:
     name: order
-  datasource:
-    url: jdbc:postgresql://postgres:5432/postgres
-    username: postgres
-    password: postgres
-    driverClassName: org.postgresql.Driver
-  liquibase:
-    enabled: true
-    drop-first: false
-    change-log: classpath:db/changelog/db.changelog-master.yaml
-  jackson:
-    property-naming-strategy: SNAKE_CASE
-  main:
-    allow-circular-references: true
-  cloud:
-    openfeign:
-      circuitbreaker:
-        enabled: true
-    circuitbreaker:
-      hystrix:
-        enabled: true
-  kafka:
-    bootstrap-servers:
-      - PLAINTEXT://broker-1:19092
-      - PLAINTEXT://broker-2:19092
-      - PLAINTEXT://broker-3:19092
-    admin:
-      auto-create: true
-    topics:
-      - name: order_update_in
-        partitions: 3
-        replicas: 1
-    producer:
-      key-serializer: org.apache.kafka.common.serialization.StringSerializer
-      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
-      new-place-feedback-topic: "order_update_in"
-
-eureka:
-  client:
-    serviceUrl:
-      defaultZone: http://eureka:8761/eureka
-
-management:
-  endpoints:
-    web:
-      exposure:
-        include: refresh
+  config:
+    import: optional:configserver:http://config:8888
