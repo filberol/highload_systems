@@ -54,7 +54,6 @@ class RoomService(
                 val roomNorm = roomNormRepository.findByRoomId(room!!.id!!).block()
                 roomNorm!!.size = roomNorm.size + size
                 roomNormRepository.save(roomNorm).block()
-                departmentPublisher.send(DepartmentEvent(id, size))
                 roomApiMapper.toResponse(room, roomNorm)
             }
     }

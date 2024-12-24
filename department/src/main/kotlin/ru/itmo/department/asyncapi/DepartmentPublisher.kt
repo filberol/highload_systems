@@ -16,7 +16,7 @@ class DepartmentPublisher(
     lateinit var topic: String
 
     fun send(event: DepartmentEvent) {
-        kafkaTemplate.send(topic, event)
-        logger.info("Sent to Kafka $topic: $event")
+        kafkaTemplate.send(topic, event.departmentId.toString(), event)
+        logger.info("Sent to Kafka $topic: x$event")
     }
 }

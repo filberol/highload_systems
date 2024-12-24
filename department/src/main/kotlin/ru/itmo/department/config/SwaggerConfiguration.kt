@@ -18,7 +18,7 @@ import org.springframework.context.annotation.Configuration
 class SwaggerConfiguration {
     var schemeName: String = "bearerAuth"
     var bearerFormat: String = "JWT"
-    var scheme: String = "bearer"
+    var scheme: String = "Bearer"
 
     @Bean
     fun caseOpenAPI(): OpenAPI {
