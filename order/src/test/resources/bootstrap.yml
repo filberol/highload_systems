@@ -1,5 +1,25 @@
 spring:
-  application:
-    name: order
-  config:
-    import: optional:configserver:http://config:8888
+  datasource:
+    url: jdbc:postgresql://localhost:5432/order
+    username: postgres
+    password: postgres
+  liquibase:
+    url: jdbc:postgresql://localhost:5432/order
+    user: postgres
+    password: postgres
+    drop-first: true
+  cloud:
+    config:
+      enabled: false
+    discovery:
+      enabled: false
+  main:
+    allow-circular-references: true
+  kafka:
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      order-update_in: "order_update_in"
+eureka:
+  client:
+    enabled: false
