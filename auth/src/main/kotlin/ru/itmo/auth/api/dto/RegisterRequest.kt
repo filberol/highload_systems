@@ -1,9 +1,11 @@
 package ru.itmo.auth.api.dto
 
+import com.fasterxml.jackson.databind.PropertyNamingStrategies
+import com.fasterxml.jackson.databind.annotation.JsonNaming
 import jakarta.validation.constraints.Email
 import jakarta.validation.constraints.NotBlank
 
-
+@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy::class)
 data class RegisterRequest(
     @field:NotBlank(message = "Имя не может быть пустым!")
     val name: String,

@@ -19,13 +19,13 @@ abstract class UserMapper {
     @Autowired
     protected lateinit var passwordEncoder: PasswordEncoder
 
-
     @Mapping(
         target = "password",
         expression = "java(passwordEncoder.encode(request.getPassword()))"
     )
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "role", ignore = true)
+    @Mapping(target = "authorities", ignore = true)
     abstract fun toEntity(request: RegisterRequest): User
 
     @Mapping(
@@ -33,9 +33,11 @@ abstract class UserMapper {
         expression = "java(passwordEncoder.encode(request.getPassword()))"
     )
     @Mapping(target = "id", ignore = true)
+    @Mapping(target = "authorities", ignore = true)
     abstract fun toEntity(request: CreateUserRequest): User
 
     abstract fun toResponse(entity: User): UserResponse
 
+    @Mapping(target = "authorities", ignore = true)
     abstract fun toEntity(response: UserResponse): User
 }
