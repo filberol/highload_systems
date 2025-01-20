@@ -9,6 +9,7 @@ import ru.itmo.auth.api.dto.AuthResponse
 import ru.itmo.auth.api.dto.RegisterRequest
 import ru.itmo.auth.domain.mapper.UserMapper
 import ru.itmo.auth.infra.repository.UserRepository
+import java.util.NoSuchElementException
 
 @Service
 class AuthService(
@@ -43,7 +44,14 @@ class AuthService(
                 request.login, request.password
             )
         )
-        val user = userRepository.findByLogin(request.login).orElseThrow()
+        val user = userRepository.findByLogin(request.login)
+            .orElseThrow {
+                NoSuchElementException(
+                    "Пользователь с логином %s не найден".format(
+                        request.login
+                    )
+                )
+            }
         val jwt = jwtService.generateToken(user)
         return AuthResponse(
             userId = user.id!!,
