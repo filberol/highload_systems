@@ -33,6 +33,9 @@ class OxygenSupplyService(
     @Transactional
     fun processById(token: String, id: UUID): OxygenSupplyResponse {
         val supply = findEntityById(id)
+        if (supply.oxygenStorage != null) {
+            throw IllegalArgumentException("Перевозка с id $id уже выполнена")
+        }
         val storages = oxygenStorageRepository.findByCapacityGreaterThan(supply.size!!)
         if (storages.isEmpty()) {
             throw IllegalArgumentException(
