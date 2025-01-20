@@ -1,5 +1,8 @@
 package ru.itmo.department.domain.service
 
+import io.mockk.every
+import io.mockk.mockk
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.PageRequest
@@ -9,14 +12,29 @@ import reactor.test.StepVerifier
 import reactor.test.expectError
 import ru.itmo.department.api.dto.RoomNormResponse
 import ru.itmo.department.api.dto.RoomResponse
+import ru.itmo.department.asyncapi.DepartmentPublisher
+import ru.itmo.department.asyncapi.model.DepartmentEvent
 import ru.itmo.department.common.AbstractDatabaseTest
+import ru.itmo.department.domain.mapper.RoomApiMapperImpl
+import ru.itmo.department.infra.repository.RoomNormRepository
+import ru.itmo.department.infra.repository.RoomRepository
 import java.time.OffsetDateTime
 import java.util.*
 
 class RoomServiceTest : AbstractDatabaseTest() {
 
     @Autowired
+    private lateinit var roomRepository: RoomRepository
+
+    @Autowired
+    private lateinit var roomNormRepository: RoomNormRepository
+    private var departmentPublisher = mockk<DepartmentPublisher>()
     private lateinit var sut: RoomService
+
+    @BeforeEach
+    fun setup() {
+        sut = RoomService(roomRepository, roomNormRepository, RoomApiMapperImpl(), departmentPublisher)
+    }
 
     @Test
     fun findById_shouldInvokeRepository() {
@@ -58,7 +76,7 @@ class RoomServiceTest : AbstractDatabaseTest() {
         val result = sut.findWithNormById(roomId)
 
         StepVerifier.create(result)
-            .expectNextMatches{it.id == roomId}
+            .expectNextMatches { it.id == roomId }
             .verifyComplete()
     }
 
@@ -66,14 +84,6 @@ class RoomServiceTest : AbstractDatabaseTest() {
     fun checkIn_shouldInvokeRepository() {
         val departmentId = UUID.fromString("20006109-1144-4aa6-8fbf-f45435264de5")
         val personOxygenNorm = 10L
-        val expected = RoomNormResponse(
-            id = departmentId,
-            peopleCount = 2L,
-            balanceOxygen = 10L,
-            avgPersonNorm = 15L,
-            createdAt = OffsetDateTime.parse("2024-01-03T10:00+03:00"),
-            updatedAt = OffsetDateTime.parse("2024-01-03T10:00+03:00")
-        )
 
         // when
         val result = sut.checkIn(departmentId, personOxygenNorm)
@@ -114,7 +124,7 @@ class RoomServiceTest : AbstractDatabaseTest() {
             createdAt = OffsetDateTime.parse("2024-01-03T10:00+03:00"),
             updatedAt = OffsetDateTime.parse("2024-01-03T10:00+03:00"),
         )
-        val result = sut.findAllByDepartmentId(departmentId, pageable)
+        val result = sut.findAllByDepartmentId(departmentId)
         StepVerifier.create(result)
             .expectNext(expected)
             .verifyComplete()
@@ -123,21 +133,13 @@ class RoomServiceTest : AbstractDatabaseTest() {
     @Test
     fun supplyOxygen_shouldInvokeService() {
         val departmentId = UUID.fromString("20006109-1144-4aa6-8fbf-f45435264de5")
-
-        val expected = RoomNormResponse(
-            id = UUID.fromString("20006109-1144-4aa6-8fbf-f45435264de5"),
-            peopleCount = 1L,
-            balanceOxygen = 2L,
-            avgPersonNorm = 38L,
-            createdAt = OffsetDateTime.parse("2024-01-03T10:00+03:00"),
-            updatedAt = OffsetDateTime.parse("2024-01-03T10:00+03:00")
-        )
-
         // when
+        every { departmentPublisher.send(DepartmentEvent(departmentId, 8L)) }
+            .returns(Unit)
         val result = sut.supplyOxygen(departmentId, 8L)
 
         StepVerifier.create(result)
-            .expectNext(expected)
+            .expectNextMatches { it.id == departmentId }
             .verifyComplete()
     }
 

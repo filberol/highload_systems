@@ -26,6 +26,6 @@ interface RoomRepository : ReactiveCrudRepository<Room, UUID> {
         @Param("size") size: Long
     ): Mono<Room>
 
-    fun findByDepartmentId(departmentId: UUID, pageable: Pageable): Flux<Room>
+    fun findByDepartmentId(departmentId: UUID): Flux<Room>
 
 }

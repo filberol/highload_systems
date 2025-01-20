@@ -23,15 +23,18 @@ dependencies {
     implementation("org.postgresql:postgresql")
 
     // Spring
-    implementation("org.springframework.boot:spring-boot-starter-web")
+    implementation("org.springframework.boot:spring-boot-starter-webflux")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.springframework.boot:spring-boot-starter-validation")
     implementation("org.springframework.boot:spring-boot-starter-security")
+    implementation("org.springframework.boot:spring-boot-starter-data-r2dbc")
+    implementation("org.springframework.boot:spring-boot-starter-actuator")
+    implementation("org.springdoc:springdoc-openapi-starter-webflux-ui:2.6.0")
+    implementation("org.springframework.boot:spring-boot-starter-oauth2-resource-server")
+
     implementation("org.springframework.cloud:spring-cloud-starter-openfeign:4.1.3")
     implementation("org.springframework.cloud:spring-cloud-starter-netflix-hystrix:2.2.10.RELEASE")
-    implementation("org.springframework.boot:spring-boot-starter-data-r2dbc:3.4.0")
     implementation("org.postgresql:r2dbc-postgresql:1.0.7.RELEASE")
-    implementation("org.springframework.boot:spring-boot-starter-actuator:3.4.0")
     implementation("org.springframework.kafka:spring-kafka:3.3.1")
 
     // Libs
@@ -40,11 +43,10 @@ dependencies {
     implementation("org.liquibase:liquibase-core")
     implementation("org.mapstruct:mapstruct:1.6.0")
     kapt("org.mapstruct:mapstruct-processor:1.6.0")
-    implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.6.0")
 
     // Cloud
     implementation("org.springframework.cloud:spring-cloud-starter-config:4.1.3")
-    implementation("org.springframework.cloud:spring-cloud-starter-bootstrap:4.1.4")
+    implementation("org.springframework.cloud:spring-cloud-starter-bootstrap:4.1.3")
     implementation("io.jsonwebtoken:jjwt-api:0.12.5")
     runtimeOnly("io.jsonwebtoken:jjwt-impl:0.12.5")
     runtimeOnly("io.jsonwebtoken:jjwt-jackson:0.12.5")

@@ -1,7 +1,5 @@
 package ru.itmo.department.api.controller
 
-import org.springframework.data.domain.Pageable
-import org.springframework.data.web.PageableDefault
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.*
 import reactor.core.publisher.Flux
@@ -35,9 +33,8 @@ class DepartmentController(
     @PreAuthorize("permitAll()")
     @GetMapping("/departments/{id}/rooms")
     fun getRooms(
-        @PathVariable id: UUID,
-        @PageableDefault(sort = ["id"], size = 50) pageable: Pageable
+        @PathVariable id: UUID
     ): Flux<RoomResponse> {
-        return roomService.findAllByDepartmentId(id, pageable)
+        return roomService.findAllByDepartmentId(id)
     }
 }

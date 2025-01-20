@@ -12,5 +12,4 @@ import ru.itmo.department.infra.model.Department
 interface DepartmentApiMapper {
 
     fun toResponse(entity: Department): DepartmentResponse
-
 }

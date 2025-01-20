@@ -26,7 +26,7 @@ class RoomService(
     @Transactional(readOnly = true)
     fun findById(id: UUID): Mono<RoomResponse> {
         return roomRepository.findById(id)
-            .switchIfEmpty(Mono.error(NoSuchElementException("Комната с id %s не найдена")))
+            .switchIfEmpty(Mono.error(NoSuchElementException("Комната с id $id не найдена")))
             .map { room -> roomApiMapper.toResponse(room) }
     }
 
@@ -62,6 +62,7 @@ class RoomService(
     @Transactional(readOnly = true)
     fun findWithNormById(id: UUID): Mono<RoomNormResponse> {
         return roomRepository.findById(id)
+            .switchIfEmpty(Mono.error(NoSuchElementException("Комната с id $id не найдена")))
             .flatMap { room ->
                 roomNormRepository.findByRoomId(id)
                     .map { roomNorm ->
@@ -71,8 +72,8 @@ class RoomService(
     }
 
     @Transactional(readOnly = true)
-    fun findAllByDepartmentId(departmentId: UUID, pageable: Pageable): Flux<RoomResponse> {
-        return roomRepository.findByDepartmentId(departmentId, pageable)
+    fun findAllByDepartmentId(departmentId: UUID): Flux<RoomResponse> {
+        return roomRepository.findByDepartmentId(departmentId)
             .map(roomApiMapper::toResponse)
     }
 }
