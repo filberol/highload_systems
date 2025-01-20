@@ -8,7 +8,7 @@ services:
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: postgres
     volumes:
-      - /tmp/postgres-data:/var/lib/postgresql/data
+      - ./postgres-data:/var/lib/postgresql/data
     ports:
       - "5432:5432"
     networks:
@@ -18,6 +18,7 @@ services:
   config:
     build: ../config
 #    image: ghcr.io/filberol/highload_systems/config:latest
+    platform: linux/amd64
     container_name: config
     ports:
       - "8888:8888"
@@ -30,6 +31,7 @@ services:
   department:
     build: ../department
 #    image: ghcr.io/filberol/highload_systems/department:latest
+    platform: linux/amd64
     container_name: department
     ports:
       - "8086:8086"
@@ -37,65 +39,106 @@ services:
       - postgres
       - config
       - eureka
+      - kafka1
+      - kafka2
+      - kafka3
+    environment:
+      DEPARTMENT_DB_URL: r2dbc:postgresql://postgres:5432/postgres
+      DEPARTMENT_DB_USERNAME: postgres
+      DEPARTMENT_DB_PASSWORD: postgres
+      EUREKA_CLIENT_URL: http://eureka:8761/eureka
     networks:
       - app-network
   # Auth
   auth:
 #    image: ghcr.io/filberol/highload_systems/auth:latest
+    platform: linux/amd64
     build: ../auth
     container_name: auth
     ports:
       - "8085:8085"
     depends_on:
-      #      - config
+      - config
       - postgres
-    #      - eureka
+      - eureka
+    environment:
+      AUTH_DB_URL: jdbc:postgresql://postgres:5432/postgres
+      AUTH_DB_USERNAME: postgres
+      AUTH_DB_PASSWORD: postgres
+      EUREKA_CLIENT_URL: http://eureka:8761/eureka
     networks:
       - app-network
   notification:
     build: ../notification
     container_name: notification
+    platform: linux/amd64
     ports:
       - "8091:8091"
-    #    depends_on:
-    #      - config
-    #      - postgres
-    #      - eureka
+    depends_on:
+      - kafka1
+      - kafka2
+      - kafka3
+      - eureka
+    environment:
+      EUREKA_CLIENT_URL: http://eureka:8761/eureka
     networks:
       - app-network
   # Eureka
   eureka:
-    image: ghcr.io/filberol/highload_systems/eureka:latest
+    build: ../eureka
+#    image: ghcr.io/filberol/highload_systems/eureka:latest
+    platform: linux/amd64
     container_name: eureka
     ports:
       - "8761:8761"
     networks:
       - app-network
+    environment:
+      EUREKA_SERVER_URL: http://eureka:8761/eureka
+    depends_on:
+      - config
   # Gateway
   gateway:
     build: ../gateway
 #    image: ghcr.io/filberol/highload_systems/gateway:latest
+    platform: linux/amd64
     container_name: gateway
     ports:
       - "8080:8080"
     depends_on:
       - config
+      - eureka
+    environment:
+      EUREKA_CLIENT_URL: http://eureka:8761/eureka
     networks:
       - app-network
   file:
     build: ../files
 #    image: ghcr.io/filberol/highload_systems/files:latest
+    platform: linux/amd64
     container_name: file
     ports:
       - "8090:8090"
     depends_on:
       - config
+      - minio
+      - postgres
+    environment:
+      FILE_DB_URL: r2dbc:postgresql://postgres:5432/postgres
+      FILE_DB_USERNAME: postgres
+      FILE_DB_PASSWORD: postgres
+      MINIO_ENDPOINT: http://minio:9000
+      MINIO_ACCESS_KEY: admin
+      MINIO_SECRET_KEY: admin123
+      MINIO_BUCKET: oxygen-bucket
+      EUREKA_CLIENT_URL: http://eureka:8761/eureka
     networks:
       - app-network
   # Eureka
   order:
     build: ../order
 #    image: ghcr.io/filberol/highload_systems/order:latest
+    platform: linux/amd64
     container_name: order
     ports:
       - "8087:8087"
@@ -103,11 +146,18 @@ services:
       - config
       - postgres
       - eureka
+    environment:
+      ORDER_DB_URL: jdbc:postgresql://postgres:5432/postgres
+      ORDER_DB_USERNAME: postgres
+      ORDER_DB_PASSWORD: postgres
+      EUREKA_CLIENT_URL: http://eureka:8761/eureka
     networks:
       - app-network
   # Oxygen
   oxygen:
-    image: ghcr.io/filberol/highload_systems/oxygen:latest
+    build: ../oxygen
+#    image: ghcr.io/filberol/highload_systems/oxygen:latest
+    platform: linux/amd64
     container_name: oxygen
     ports:
       - "8096:8096"
@@ -115,10 +165,16 @@ services:
       - config
       - postgres
       - eureka
+    environment:
+      OXYGEN_DB_URL: jdbc:postgresql://postgres:5432/postgres
+      OXYGEN_DB_USERNAME: postgres
+      OXYGEN_DB_PASSWORD: postgres
+      OXYGEN_CLIENT_URL: http://eureka:8761/eureka
     networks:
       - app-network
   minio:
     image: quay.io/minio/minio:RELEASE.2024-10-13T13-34-11Z
+    platform: linux/amd64
     command: server --console-address ":9001" /data
     ports:
       - "127.0.0.1:9000:9000"
@@ -131,127 +187,94 @@ services:
       - app-network
     volumes:
       - minio-data:/data
-  controller-1:
-    networks:
-      - app-network
+  kafka1:
     image: apache/kafka:latest
-    container_name: controller-1
-    environment:
-      KAFKA_NODE_ID: 1
-      KAFKA_PROCESS_ROLES: controller
-      KAFKA_LISTENERS: CONTROLLER://:9093
-      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
-      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
-      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@controller-1:9093,2@controller-2:9093,3@controller-3:9093
-      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
-
-  controller-2:
-    networks:
-      - app-network
-    image: apache/kafka:latest
-    container_name: controller-2
-    environment:
-      KAFKA_NODE_ID: 2
-      KAFKA_PROCESS_ROLES: controller
-      KAFKA_LISTENERS: CONTROLLER://:9093
-      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
-      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
-      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@controller-1:9093,2@controller-2:9093,3@controller-3:9093
-      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
-
-  controller-3:
-    networks:
-      - app-network
-    image: apache/kafka:latest
-    container_name: controller-3
-    environment:
-      KAFKA_NODE_ID: 3
-      KAFKA_PROCESS_ROLES: controller
-      KAFKA_LISTENERS: CONTROLLER://:9093
-      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
-      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
-      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@controller-1:9093,2@controller-2:9093,3@controller-3:9093
-      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
-
-  broker-1:
-    networks:
-      - app-network
-    image: apache/kafka:latest
-    container_name: broker-1
     ports:
-      - 29092:9092
+      - 29092:29092
+      - 9092:9092
+    hostname: kafka1
+    platform: linux/amd64
     environment:
-      KAFKA_NODE_ID: 4
-      KAFKA_PROCESS_ROLES: broker
-      KAFKA_LISTENERS: 'PLAINTEXT://broker-1:19092,PLAINTEXT_HOST://:9092'
-      KAFKA_ADVERTISED_LISTENERS: 'PLAINTEXT://broker-1:19092,PLAINTEXT_HOST://localhost:29092'
+      KAFKA_BROKER_ID: 1
+      KAFKA_LOG_DIRS: /var/lib/kafka/data
+      KAFKA_LISTENERS: PLAINTEXT://:29092,PLAINTEXT_HOST://:9092, CONTROLLER://:19092
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka1:29092,PLAINTEXT_HOST://localhost:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT,CONTROLLER:PLAINTEXT
       KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
       KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
-      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@controller-1:9093,2@controller-2:9093,3@controller-3:9093
-      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
-    depends_on:
-      - controller-1
-      - controller-2
-      - controller-3
-
-  broker-2:
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 2
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: true
+      KAFKA_PROCESS_ROLES: broker,controller
+      KAFKA_CONTROLLER_QUORUM_VOTERS:  1@kafka1:19092, 2@kafka2:19092, 3@kafka3:19092
+    volumes:
+      - kafka1-data:/var/lib/kafka/data
     networks:
       - app-network
+  kafka2:
     image: apache/kafka:latest
-    container_name: broker-2
     ports:
-      - 39092:9092
+      - 29093:29092
+      - 9093:9092
+    hostname: kafka2
+    platform: linux/amd64
     environment:
-      KAFKA_NODE_ID: 5
-      KAFKA_PROCESS_ROLES: broker
-      KAFKA_LISTENERS: 'PLAINTEXT://broker-2:19092,PLAINTEXT_HOST://:9092'
-      KAFKA_ADVERTISED_LISTENERS: 'PLAINTEXT://broker-2:19092,PLAINTEXT_HOST://localhost:39092'
+      KAFKA_BROKER_ID: 2
+      KAFKA_LOG_DIRS: /var/lib/kafka/data
+      KAFKA_LISTENERS: PLAINTEXT://:29093,PLAINTEXT_HOST://:9093, CONTROLLER://:19092
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka2:29093,PLAINTEXT_HOST://localhost:9093
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT,CONTROLLER:PLAINTEXT
       KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
       KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
-      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@controller-1:9093,2@controller-2:9093,3@controller-3:9093
-      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
-    depends_on:
-      - controller-1
-      - controller-2
-      - controller-3
-
-  broker-3:
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 2
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: true
+      KAFKA_PROCESS_ROLES: broker,controller
+      KAFKA_CONTROLLER_QUORUM_VOTERS:  1@kafka1:19092, 2@kafka2:19092, 3@kafka3:19092
+    volumes:
+      - kafka2-data:/var/lib/kafka/data
     networks:
       - app-network
+  kafka3:
     image: apache/kafka:latest
-    container_name: broker-3
     ports:
-      - 49092:9092
+      - 29094:29092
+      - 9094:9092
+    hostname: kafka3
+    platform: linux/amd64
     environment:
-      KAFKA_NODE_ID: 6
-      KAFKA_PROCESS_ROLES: broker
-      KAFKA_LISTENERS: 'PLAINTEXT://broker-3:19092,PLAINTEXT_HOST://:9092'
-      KAFKA_ADVERTISED_LISTENERS: 'PLAINTEXT://broker-3:19092,PLAINTEXT_HOST://localhost:49092'
+      KAFKA_BROKER_ID: 3
+      KAFKA_LOG_DIRS: /var/lib/kafka/data
+      KAFKA_LISTENERS: PLAINTEXT://:29094,PLAINTEXT_HOST://:9094, CONTROLLER://:19092
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka3:29094,PLAINTEXT_HOST://localhost:9094
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT,CONTROLLER:PLAINTEXT
       KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
       KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
-      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@controller-1:9093,2@controller-2:9093,3@controller-3:9093
-      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
-    depends_on:
-      - controller-1
-      - controller-2
-      - controller-3
-
-  ui:
-    image: provectuslabs/kafka-ui:v0.7.2
-    ports:
-      - "8585:8080"
-    environment:
-      KAFKA_CLUSTERS_0_BOOTSTRAP_SERVERS: "broker-1:19092"
-      KAFKA_CLUSTERS_0_NAME: broker-1
-      DYNAMIC_CONFIG_ENABLED: 'true'
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 2
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: true
+      KAFKA_PROCESS_ROLES: broker,controller
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@kafka1:19092, 2@kafka2:19092, 3@kafka3:19092
+    volumes:
+      - kafka3-data:/var/lib/kafka/data
     networks:
       - app-network
+#  kafka-ui:
+#    image: provectuslabs/kafka-ui
+#    container_name: kafka-ui
+#    ports:
+#      - 8090:8080
+#    restart: always
+#    environment:
+#      - KAFKA_CLUSTERS_0_NAME=local
+#      - KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS=kafka1:29092,kafka2:29093,kafka3:29094
+#    links:
+#      - kafka1
+#      - kafka2
+#      - kafka3
 
 volumes:
   minio-data:
+  kafka1-data:
+  kafka2-data:
+  kafka3-data:
 
 networks:
   app-network:
