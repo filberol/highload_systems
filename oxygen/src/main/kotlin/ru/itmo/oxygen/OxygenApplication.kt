@@ -15,3 +15,4 @@ class OxygenApplication
 fun main(args: Array<String>) {
     runApplication<OxygenApplication>(*args)
 }
+

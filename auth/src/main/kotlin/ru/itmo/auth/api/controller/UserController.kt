@@ -1,5 +1,6 @@
 package ru.itmo.auth.api.controller
 
+import io.swagger.v3.oas.annotations.Hidden
 import jakarta.validation.constraints.Email
 import jakarta.validation.constraints.NotBlank
 import org.springframework.http.ResponseEntity
@@ -32,16 +33,18 @@ class UserController(
     @GetMapping("/users/{login}")
     @PreAuthorize("hasAnyAuthority('ADMIN')")
     fun findByLogin(
+        @PathVariable
+        @Validated
         @NotBlank(message = "Имя не может быть пустым!")
         @Email(
             regexp = "^[a-zA-Z0-9_!#$%&'*+/=?`{|}~^.-]+@[a-zA-Z0-9.-]+$",
             message = "Логин должен быть почтой!"
-        )
-        @PathVariable login: String
+        ) login: String
     ): UserResponse {
         return userService.findByLogin(login)
     }
 
+    @Hidden
     @GetMapping("users/id/{id}")
     fun getById(@PathVariable id: UUID): ResponseEntity<UserResponse> {
         return ResponseEntity.ok(userService.findById(id))

@@ -14,5 +14,4 @@ interface RoleMapper {
     fun toResponse(entity: UserRole): RoleRequestResponse
 
     fun toEntity(dto: RoleRequestResponse): UserRole
-
 }

@@ -21,7 +21,7 @@ class OrderController(
 ) {
 
     @PostMapping("/orders")
-    @PreAuthorize("hasAnyAuthority('USER', 'ADMIN')")
+    @PreAuthorize("hasAnyAuthority('MANAGER', 'ADMIN')")
     fun create(
         @RequestParam @Valid departmentId: UUID,
         @RequestParam @Valid userId: UUID

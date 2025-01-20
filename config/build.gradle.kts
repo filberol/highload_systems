@@ -16,17 +16,18 @@ repositories {
 }
 
 dependencies {
+    // Spring
     implementation("org.springframework.boot:spring-boot-starter")
-    implementation("org.jetbrains.kotlin:kotlin-reflect")
-    testImplementation("org.springframework.boot:spring-boot-starter-test")
-    implementation("org.springframework.boot:spring-boot-starter-actuator:3.4.0")
+    implementation("org.springframework.boot:spring-boot-starter-actuator")
+    implementation("org.springframework.cloud:spring-cloud-config-server:4.1.3")
+    implementation("org.springframework.cloud:spring-cloud-starter-netflix-eureka-client:4.1.3")
 
+    // Kotlin
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
-
-    // Config server
-    implementation("org.springframework.cloud:spring-cloud-config-server:4.1.3")
     implementation("org.jetbrains.kotlin:kotlin-stdlib:1.9.0")
+    implementation("org.jetbrains.kotlin:kotlin-reflect")
+    testImplementation("org.springframework.boot:spring-boot-starter-test")
 }
 
 kotlin {

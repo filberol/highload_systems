@@ -13,7 +13,6 @@ import ru.itmo.auth.domain.service.AuthService
 
 
 @RestController
-@RequestMapping("/auth")
 class SecurityController(
     private val authService: AuthService
 ) {

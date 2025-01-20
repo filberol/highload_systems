@@ -3,6 +3,7 @@ package ru.itmo.order.infra.repository
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Repository
 import ru.itmo.order.infra.model.Order
+import ru.itmo.order.infra.model.enums.OrderStatus
 import java.time.OffsetDateTime
 import java.util.*
 
@@ -13,4 +14,5 @@ interface OrderRepository : JpaRepository<Order, UUID> {
         expiredAt: OffsetDateTime
     ): List<Order>
 
+    fun existsByUserIdAndStatusNotIn(userId: UUID, statuses: List<OrderStatus>): Boolean
 }

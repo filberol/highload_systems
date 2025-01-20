@@ -37,8 +37,76 @@ class UserControllerTest : AbstractDatabaseTest() {
 
         // when
         mockMvc.perform(
-            post("/auth/register")
+            post("/register")
                 .content(objectMapper.writeValueAsString(request))
+                .contentType(MediaType.APPLICATION_JSON)
+        ).andExpect(status().isOk)
+    }
+
+    @Test
+    @WithAnonymousUser
+    fun register_shouldThrowException_whenLoginIsEmpty() {
+        val request = RegisterRequest(
+            name = "",
+            login = "added-user@yandex.ru",
+            password = "password"
+        )
+
+        // when
+        mockMvc.perform(
+            post("/register")
+                .content(objectMapper.writeValueAsString(request))
+                .contentType(MediaType.APPLICATION_JSON)
+        ).andExpect(status().isBadRequest)
+    }
+
+    @Test
+    @WithAnonymousUser
+    fun register_shouldThrowException_whenLoginAlreadyExists() {
+        val request = RegisterRequest(
+            name = "Added user",
+            login = "added-user@yandex.ru",
+            password = "password"
+        )
+
+        // when
+        mockMvc.perform(
+            post("/register")
+                .content(objectMapper.writeValueAsString(request))
+                .contentType(MediaType.APPLICATION_JSON)
+        ).andExpect(status().isOk)
+
+        // when
+        mockMvc.perform(
+            post("/register")
+                .content(objectMapper.writeValueAsString(request))
+                .contentType(MediaType.APPLICATION_JSON)
+        ).andExpect(status().isBadRequest)
+    }
+
+    @Test
+    @WithAnonymousUser
+    fun authenticate_shouldInvokeService() {
+        val registerRequest = RegisterRequest(
+            name = "Added user",
+            login = "added-user@yandex.ru",
+            password = "password"
+        )
+
+        mockMvc.perform(
+            post("/register")
+                .content(objectMapper.writeValueAsString(registerRequest))
+                .contentType(MediaType.APPLICATION_JSON)
+        ).andExpect(status().isOk)
+
+        val authRequest = AuthRequest(
+            login = "added-user@yandex.ru",
+            password = "password"
+        )
+        // when & then
+        mockMvc.perform(
+            post("/authenticate")
+                .content(objectMapper.writeValueAsString(authRequest))
                 .contentType(MediaType.APPLICATION_JSON)
         ).andExpect(status().isOk)
     }
@@ -52,7 +120,6 @@ class UserControllerTest : AbstractDatabaseTest() {
             password = "password",
             role = RoleRequestResponse.MANAGER
         )
-        val before = userRepository.findAll()
 
         // when
         mockMvc.perform(
@@ -95,7 +162,6 @@ class UserControllerTest : AbstractDatabaseTest() {
             login = "manager@yandex.ru",
             role = RoleRequestResponse.SUPPLIER
         )
-        val before = userRepository.findAll()
 
         // when
         mockMvc.perform(
@@ -183,5 +249,4 @@ class UserControllerTest : AbstractDatabaseTest() {
                 .contentType(MediaType.APPLICATION_JSON)
         ).andExpect(status().isForbidden)
     }
-
 }

@@ -51,7 +51,7 @@ class UserService(
     fun findByLogin(login: String): UserResponse {
         val user = findOptionalByLogin(login)
             .orElseThrow {
-                throw NoSuchElementException(
+                NoSuchElementException(
                     "Пользователь с логином %s не найден".format(
                         login
                     )
@@ -63,7 +63,7 @@ class UserService(
     fun findById(id: UUID): UserResponse {
         val user = userRepository.findById(id)
             .orElseThrow {
-                throw NoSuchElementException(
+                NoSuchElementException(
                     "Пользователь с id %s не найден".format(
                         id
                     )

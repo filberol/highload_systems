@@ -1,4 +1,4 @@
-package ru.itmo.auth.infra.model;
+package ru.itmo.auth.infra.model
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import jakarta.persistence.*

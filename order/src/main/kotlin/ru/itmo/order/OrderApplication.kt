@@ -15,3 +15,4 @@ class OrderApplication
 fun main(args: Array<String>) {
     runApplication<OrderApplication>(*args)
 }
+

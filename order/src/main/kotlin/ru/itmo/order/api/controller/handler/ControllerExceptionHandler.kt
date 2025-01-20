@@ -22,4 +22,10 @@ class ControllerExceptionHandler {
     fun handleException(exception: IllegalArgumentException): ResponseEntity<String> {
         return ResponseEntity(exception.message, HttpStatus.BAD_REQUEST)
     }
+
+    @ExceptionHandler(IllegalStateException::class)
+    @ResponseStatus(HttpStatus.SERVICE_UNAVAILABLE)
+    fun handleException(exception: IllegalStateException): ResponseEntity<String> {
+        return ResponseEntity(exception.message, HttpStatus.SERVICE_UNAVAILABLE)
+    }
 }

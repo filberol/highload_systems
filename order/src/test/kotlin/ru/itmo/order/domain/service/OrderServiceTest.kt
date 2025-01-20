@@ -1,12 +1,18 @@
 package ru.itmo.order.domain.service
 
+import io.mockk.every
+import io.mockk.mockk
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.test.context.TestConfiguration
+import org.springframework.context.annotation.Bean
+import org.springframework.context.annotation.Import
 import org.springframework.test.context.jdbc.Sql
 import reactor.test.StepVerifier
 import ru.itmo.order.api.dto.OrderResponse
 import ru.itmo.order.api.dto.OrderStatusRequestResponse
+import ru.itmo.order.asyncapi.OrderPublisher
 import ru.itmo.order.common.AbstractDatabaseTest
 import ru.itmo.order.infra.model.Order
 import ru.itmo.order.infra.model.enums.OrderStatus
@@ -14,6 +20,7 @@ import ru.itmo.order.infra.repository.OrderRepository
 import java.time.OffsetDateTime
 import java.util.*
 
+@Import(OrderServiceTest.OrderServiceTestConfig::class)
 class OrderServiceTest : AbstractDatabaseTest() {
 
     @Autowired
@@ -21,6 +28,15 @@ class OrderServiceTest : AbstractDatabaseTest() {
 
     @Autowired
     private lateinit var orderRepository: OrderRepository
+
+    @Autowired
+    private lateinit var orderPublisher: OrderPublisher
+
+    @TestConfiguration
+    internal class OrderServiceTestConfig {
+        @Bean
+        fun orderPublisher() = mockk<OrderPublisher>()
+    }
 
     @Test
     @Sql(
@@ -35,6 +51,8 @@ class OrderServiceTest : AbstractDatabaseTest() {
     fun process_shouldThrowException_whenStatusInvalid() {
         val id = UUID.fromString("20006109-1144-4aa6-8fbf-f45435264de5")
 
+        every { orderPublisher.send(any()) }
+            .returns(Unit)
         // when & then
         StepVerifier.create(sut.process(id, "token"))
             .expectError(IllegalArgumentException::class.java)
@@ -56,7 +74,8 @@ class OrderServiceTest : AbstractDatabaseTest() {
         val expiredAt = OffsetDateTime.now()
         val expiredId = UUID.fromString("20006109-1144-4aa6-8fbf-f45435264de5")
         val notExpiredId = UUID.fromString("20006109-1144-4aa6-8fbf-f45435264de6")
-
+        every { orderPublisher.send(any()) }
+            .returns(Unit)
         // when & then
         StepVerifier.create(sut.cancelExpiredOrders(expiredAt))
             .expectNextCount(1)
@@ -83,7 +102,8 @@ class OrderServiceTest : AbstractDatabaseTest() {
     )
     fun cancelExpiredOrders_shouldReturnEmptyList_whenExpiredOrdersNotExist() {
         val expiredAt = OffsetDateTime.parse("2024-01-02T07:00:00.000000+00:00")
-
+        every { orderPublisher.send(any()) }
+            .returns(Unit)
         // when & then
         StepVerifier.create(sut.cancelExpiredOrders(expiredAt))
             .expectNextCount(0)
@@ -104,9 +124,8 @@ class OrderServiceTest : AbstractDatabaseTest() {
     )
     fun cancelById_shouldInvokeService() {
         val id = UUID.fromString("20006109-1144-4aa6-8fbf-f45435264de5")
-
-        // when
-        val result = sut.cancelById(id)
+        every { orderPublisher.send(any()) }
+            .returns(Unit)
 
         // when & then
         StepVerifier.create(sut.cancelById(id))

@@ -11,3 +11,8 @@ spring:
           uri: https://github.com/anekoss/configs.git
           default-label: main
           search-paths: {application}
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://eureka:8761/eureka/

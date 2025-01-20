@@ -2,7 +2,6 @@ package ru.itmo.department.domain.service
 
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import org.springframework.web.servlet.View
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import ru.itmo.department.api.dto.CheckInResponse
@@ -54,5 +53,4 @@ class DepartmentService(
                     }
             )
     }
-
 }

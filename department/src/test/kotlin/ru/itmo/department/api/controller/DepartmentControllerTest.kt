@@ -3,80 +3,48 @@ package ru.itmo.department.api.controller
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
-import org.springframework.boot.test.context.TestConfiguration
-import org.springframework.context.annotation.Bean
-import org.springframework.context.annotation.Import
-import org.springframework.data.domain.PageRequest
-import org.springframework.data.domain.Sort
-import org.springframework.data.domain.Sort.Direction
-import org.springframework.http.MediaType
-import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
+import reactor.test.StepVerifier
 import ru.itmo.department.api.dto.CheckInResponse
 import ru.itmo.department.api.dto.DepartmentResponse
 import ru.itmo.department.api.dto.RoomResponse
-import ru.itmo.department.common.AbstractMvcTest
 import ru.itmo.department.domain.service.DepartmentService
 import ru.itmo.department.domain.service.RoomService
 import ru.itmo.department.infra.model.enums.Role
 import ru.itmo.department.security.WithMockUser
-import java.nio.charset.StandardCharsets
 import java.time.OffsetDateTime
 import java.util.*
 
-@WebMvcTest(controllers = [DepartmentController::class])
-@AutoConfigureMockMvc(addFilters = false)
-@Import(DepartmentControllerTest.DepartmentControllerTestConfig::class)
-class DepartmentControllerTest : AbstractMvcTest() {
+class DepartmentControllerTest {
 
-    @TestConfiguration
-    internal class DepartmentControllerTestConfig {
-        @Bean
-        fun departmentService() = mockk<DepartmentService>()
+    private val departmentService = mockk<DepartmentService>()
 
-        @Bean
-        fun roomService() = mockk<RoomService>()
-    }
-
-    @Autowired
-    private lateinit var departmentService: DepartmentService
-
-    @Autowired
-    private lateinit var roomService: RoomService
+    private val roomService = mockk<RoomService>()
+    private val sut = DepartmentController(departmentService, roomService)
 
 
     @Test
-    @WithMockUser(role = Role.USER)
+    @org.springframework.security.test.context.support.WithMockUser(roles = ["USER"])
     fun getDepartments_shouldInvokeService() {
         val expected = DepartmentResponse(
             id = UUID.randomUUID(),
             name = "department",
             createdAt = OffsetDateTime.now()
         )
-        val pageable = PageRequest.of(
-            0,
-            50,
-            Sort.by(Direction.ASC, "id")
-        )
         every {
             departmentService.getDepartments()
         }
             .returns(Flux.just(expected))
-        mockMvc.perform(
-            get("/departments")
-                .contentType(MediaType.APPLICATION_JSON)
-                .accept(MediaType.APPLICATION_JSON)
-                .with(csrf())
-        )
+        // when
+        val result = sut.getDepartments()
+
+        // then
+        StepVerifier.create(result)
+            .expectNext(expected)
+            .verifyComplete()
+
         verify(exactly = 1) { departmentService.getDepartments() }
     }
 
@@ -91,25 +59,21 @@ class DepartmentControllerTest : AbstractMvcTest() {
             createdAt = OffsetDateTime.now(),
             updatedAt = OffsetDateTime.now()
         )
-        val pageable = PageRequest.of(
-            0,
-            50,
-            Sort.by(Direction.ASC, "id")
-        )
         every {
             roomService.findAllByDepartmentId(
-                id,
-                pageable
+                id
             )
         }
             .returns(Flux.just(expected))
-        mockMvc.perform(
-            get("/departments/{id}/rooms", id.toString())
-                .contentType(MediaType.APPLICATION_JSON)
-                .accept(MediaType.APPLICATION_JSON)
-                .with(csrf())
-        )
-        verify(exactly = 1) { roomService.findAllByDepartmentId(eq(id), any()) }
+        // when
+        val result = sut.getRooms(id)
+
+        // then
+        StepVerifier.create(result)
+            .expectNext(expected)
+            .verifyComplete()
+
+        verify(exactly = 1) { roomService.findAllByDepartmentId(eq(id)) }
     }
 
     @Test
@@ -117,7 +81,7 @@ class DepartmentControllerTest : AbstractMvcTest() {
     fun checkIn_shouldInvokeService() {
         // given
         val departmentId = UUID.randomUUID()
-        val userId =UUID.randomUUID()
+        val userId = UUID.randomUUID()
         val roomId = UUID.randomUUID()
         val personCount = 5L
         val expected = CheckInResponse(
@@ -128,13 +92,12 @@ class DepartmentControllerTest : AbstractMvcTest() {
         every { departmentService.checkIn(departmentId, userId) }
             .returns(Mono.just(expected))
         // when
-        mockMvc.perform(
-            post("/departments/{id}/check-in", departmentId.toString())
-                .contentType(MediaType.APPLICATION_JSON)
-                .param("userId", userId.toString())
-                .accept(MediaType.APPLICATION_JSON)
-                .with(csrf())
-        ).andExpect(status().isOk)
+        val result = sut.checkIn(departmentId, userId)
+
+        // then
+        StepVerifier.create(result)
+            .expectNext(expected)
+            .verifyComplete()
         verify(exactly = 1) { departmentService.checkIn(departmentId, userId) }
     }
 }

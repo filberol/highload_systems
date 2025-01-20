@@ -1,0 +1,19 @@
+spring:
+  cloud:
+    config:
+      enabled: false
+    discovery:
+      enabled: false
+  main:
+    allow-circular-references: true
+  kafka:
+    topics:
+      department-update-in:
+        name: "department_update_in"
+        group-id: "department_group"
+      order-update-in:
+        name: "order_update_in"
+        group-id: "order_group"
+eureka:
+  client:
+    enabled: false
