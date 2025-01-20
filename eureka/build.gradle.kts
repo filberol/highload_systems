@@ -16,25 +16,27 @@ repositories {
 }
 
 dependencies {
+    // Spring
     implementation("org.springframework.boot:spring-boot-starter")
-    implementation("org.jetbrains.kotlin:kotlin-reflect")
-    testImplementation("org.springframework.boot:spring-boot-starter-test")
-    testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
-    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
-    implementation("org.springframework.boot:spring-boot-starter-actuator:3.4.0")
-
+    implementation("org.springframework.boot:spring-boot-starter-actuator")
 
     // Eureka
     implementation("org.springframework.cloud:spring-cloud-starter-netflix-eureka-server:4.1.3")
 
     // Cloud
-    implementation("org.springframework.boot:spring-boot-starter-actuator:3.4.0")
     implementation("org.springframework.cloud:spring-cloud-starter-netflix-hystrix:2.2.10.RELEASE")
     implementation("org.springframework.cloud:spring-cloud-dependencies:2023.0.3")
     implementation("org.springframework.cloud:spring-cloud-starter-config:4.1.3")
-    implementation("org.springframework.cloud:spring-cloud-starter-bootstrap:4.1.4")
-    implementation(kotlin("stdlib"))
+    implementation("org.springframework.cloud:spring-cloud-starter-bootstrap:4.1.3")
 
+    // Kotlin
+    implementation(kotlin("stdlib"))
+    implementation("org.jetbrains.kotlin:kotlin-reflect")
+    testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
+    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+
+    // Tests
+    testImplementation("org.springframework.boot:spring-boot-starter-test")
 }
 
 kotlin {
