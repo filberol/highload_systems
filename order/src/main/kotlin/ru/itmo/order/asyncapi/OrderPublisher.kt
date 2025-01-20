@@ -15,7 +15,7 @@ class OrderPublisher(private val kafkaTemplate: KafkaTemplate<String, OrderUpdat
     lateinit var topic: String
 
     fun send(event: OrderUpdateEvent) {
-        kafkaTemplate.send(topic, event)
+        kafkaTemplate.send(topic,event.departmentId.toString(), event)
         logger.info("Sent to Kafka $topic: $event")
     }
 }

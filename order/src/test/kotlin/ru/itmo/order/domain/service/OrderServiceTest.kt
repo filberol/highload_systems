@@ -5,13 +5,11 @@ import io.mockk.mockk
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Import
 import org.springframework.test.context.jdbc.Sql
 import reactor.test.StepVerifier
-import ru.itmo.order.OrderApplication
 import ru.itmo.order.api.dto.OrderResponse
 import ru.itmo.order.api.dto.OrderStatusRequestResponse
 import ru.itmo.order.asyncapi.OrderPublisher
@@ -128,8 +126,6 @@ class OrderServiceTest : AbstractDatabaseTest() {
         val id = UUID.fromString("20006109-1144-4aa6-8fbf-f45435264de5")
         every { orderPublisher.send(any()) }
             .returns(Unit)
-        // when
-        val result = sut.cancelById(id)
 
         // when & then
         StepVerifier.create(sut.cancelById(id))

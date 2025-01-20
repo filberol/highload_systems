@@ -7,7 +7,7 @@ import ru.itmo.order.common.config.TestContainersConfiguration
 
 @ContextConfiguration(classes = [TestContainersConfiguration::class])
 @SpringBootTest(classes = [OrderApplication::class])
-class OxygenServiceApplicationTests {
+class OrderApplicationTests {
 
     @Test
     fun contextLoads() {

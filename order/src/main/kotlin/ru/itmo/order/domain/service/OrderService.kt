@@ -30,28 +30,26 @@ class OrderService(
 
     @Transactional(readOnly = false)
     fun create(departmentId: UUID, userId: UUID): Flux<OrderResponse> {
-        return Mono.fromCallable { userClient.getById(userId) }.flatMapMany { response ->
-            if (response.statusCode.is2xxSuccessful) {
-                return@flatMapMany Flux.just(
-                    orderApiMapper.toResponse(
-                        orderRepository.save(
-                            Order(
-                                departmentId = departmentId,
-                                userId = userId
-                            )
-                        )
+        userClient.getById(userId)
+        if (orderRepository.existsByUserIdAndStatusNotIn(userId, listOf(OrderStatus.CANCEL))) {
+            throw IllegalArgumentException("Заявка на пользователя с id $userId уже зарегистрирована")
+        }
+        return Flux.just(
+            orderApiMapper.toResponse(
+                orderRepository.save(
+                    Order(
+                        departmentId = departmentId,
+                        userId = userId
                     )
                 )
-                    .flatMap { response ->
-                        Mono.fromCallable {
-                            orderPublisher.send(orderApiMapper.toEvent(response))
-                        }
-                            .thenReturn(response)
-                    }
-            } else {
-                return@flatMapMany Mono.error(NoSuchElementException("User с id: $userId не найден"))
+            )
+        )
+            .flatMap { response ->
+                Mono.fromCallable {
+                    orderPublisher.send(orderApiMapper.toEvent(response))
+                }
+                    .thenReturn(response)
             }
-        }
     }
 
     @Transactional(readOnly = false)
@@ -131,10 +129,10 @@ class OrderService(
     }
 
     private fun findEntityById(id: UUID): Mono<Optional<Order>> {
-        return Mono.just(id)
-            .map(orderRepository::findById)
-            .switchIfEmpty(
-                Mono.error(NoSuchElementException("Заявка c id %s не найдена".format(id)))
-            )
+        val order = orderRepository.findById(id)
+        if (order.isEmpty) {
+            throw NoSuchElementException("Заявка c id %s не найдена".format(id))
+        }
+        return Mono.just(order)
     }
 }
