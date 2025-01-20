@@ -26,14 +26,16 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.springframework.boot:spring-boot-starter-validation")
     implementation("org.springframework.boot:spring-boot-starter-security")
+    implementation("org.springframework.boot:spring-boot-starter-actuator")
+    implementation("org.springframework.boot:spring-boot-starter-data-r2dbc")
+    implementation("org.springframework.boot:spring-boot-starter-webflux")
+    implementation("org.springdoc:springdoc-openapi-starter-webflux-ui:2.6.0")
+    implementation("org.springframework.boot:spring-boot-starter-oauth2-resource-server")
+
+    // Jwt
     implementation("io.jsonwebtoken:jjwt-api:0.12.5")
     runtimeOnly("io.jsonwebtoken:jjwt-impl:0.12.5")
     runtimeOnly("io.jsonwebtoken:jjwt-jackson:0.12.5")
-    implementation("org.springframework.boot:spring-boot-starter-actuator:3.4.0")
-    implementation("org.springframework.cloud:spring-cloud-starter-circuitbreaker-resilience4j:3.1.3")
-    implementation("io.minio:minio:8.5.13")
-    implementation("org.springframework.boot:spring-boot-starter-data-r2dbc:3.4.0")
-    implementation("org.postgresql:r2dbc-postgresql:1.0.7.RELEASE")
 
     // Libs
     implementation("org.jetbrains.kotlin:kotlin-reflect")
@@ -41,7 +43,8 @@ dependencies {
     implementation("org.liquibase:liquibase-core")
     implementation("org.mapstruct:mapstruct:1.6.0")
     kapt("org.mapstruct:mapstruct-processor:1.6.0")
-    implementation("org.springdoc:springdoc-openapi-starter-webflux-ui:2.6.0")
+    implementation("io.minio:minio:8.5.13")
+    implementation("org.postgresql:r2dbc-postgresql:1.0.7.RELEASE")
 
     // Eureka
     implementation("org.springframework.cloud:spring-cloud-starter-netflix-eureka-client:4.1.3")
@@ -49,13 +52,11 @@ dependencies {
 
     // Cloud
     implementation("org.springframework.cloud:spring-cloud-starter-config:4.1.3")
-    implementation("org.springframework.cloud:spring-cloud-starter-bootstrap:4.1.4")
+    implementation("org.springframework.cloud:spring-cloud-starter-bootstrap:4.1.3")
     implementation("org.springframework.cloud:spring-cloud-starter-openfeign:4.1.3")
-    implementation("org.springframework.boot:spring-boot-starter-webflux:3.4.0")
+    implementation("org.springframework.cloud:spring-cloud-starter-circuitbreaker-resilience4j:3.1.3")
 
-
-    // Test
-    // Test
+    // Tests
     testImplementation("org.springframework.security:spring-security-test:6.2.4")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("io.projectreactor:reactor-test:3.1.0.RELEASE")
