@@ -4,12 +4,12 @@ on:
   workflow_dispatch:
   pull_request:
     paths:
-      - .github/workflows/file.yml
-      - file/**
+      - .github/workflows/files.yml
+      - files/**
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository }}/file
+  IMAGE_NAME: ${{ github.repository }}/files
 
 jobs:
   build-and-test:
@@ -27,7 +27,7 @@ jobs:
           cache: gradle
 
       - name: Gradle Build and Test
-        run:  gradle :file:build
+        run:  gradle :files:build
 
   build-docker:
     needs: build-and-test
@@ -49,6 +49,6 @@ jobs:
       - name: Build and Push Docker Image
         uses: docker/build-push-action@v5
         with:
-          context: ./file
+          context: ./files
           push: true
           tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
